@@ -28,9 +28,10 @@ class ContractController extends Controller
         }
 
         $contracts = $query->orderBy('end_date')->paginate(15);
-        $expiringContracts = Contract::expiringSoon(30)->count();
+        $suppliers = Supplier::all();
+        $expiringContracts = Contract::with('supplier')->where('end_date', '<=', now()->addDays(30))->get();
 
-        return view('contracts.index', compact('contracts', 'expiringContracts'));
+        return view('contracts.index', compact('contracts', 'suppliers', 'expiringContracts'));
     }
 
     public function create()
@@ -134,7 +135,7 @@ class ContractController extends Controller
         $newContract->end_date = $newContract->start_date->copy()->addYear();
         $newContract->status = 'active';
         $newContract->contract_number = $contract->contract_number . '-R';
-        
+
         return view('contracts.create', [
             'suppliers' => Supplier::all(),
             'contract' => $newContract,

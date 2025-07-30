@@ -14,10 +14,17 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserDocumentController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'admin'])->group(function () {
+// Redirect root to login if not authenticated, otherwise to dashboard
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
+})->name('home');
+
+Route::middleware(['admin'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     // Equipment Management
     Route::resource('equipment', EquipmentController::class);
@@ -95,4 +102,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('documents.mark-signed');
 });
 
-//require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';

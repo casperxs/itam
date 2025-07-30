@@ -33,7 +33,9 @@ class ItUserController extends Controller
         $users = $query->paginate(15);
         $departments = ItUser::distinct()->pluck('department');
 
-        return view('it-users.index', compact('users', 'departments'));
+        $itUsers = $query->with('assignments')->paginate(15);
+
+        return view('it-users.index', compact('itUsers', 'departments'));
     }
 
     public function create()
@@ -67,7 +69,7 @@ class ItUserController extends Controller
             'documents',
             'emailTickets'
         ]);
-        
+
         return view('it-users.show', compact('itUser'));
     }
 

@@ -42,6 +42,17 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('dashboard', compact('stats', 'recent_assignments', 'upcoming_maintenance', 'expiring_warranties'));
+        $totalEquipment = Equipment::count();
+        $availableEquipment = Equipment::where('status', 'available')->count();
+        $expiringSoon = Equipment::whereDate('warranty_end_date', '<=', now()->addDays(30))
+            ->whereDate('warranty_end_date', '>=', now())
+            ->count();
+        $totalUsers = \App\Models\ItUser::count();
+        $recentEquipment = Equipment::orderBy('created_at', 'desc')->limit(5)->get();
+
+        return view('dashboard.index', compact(
+            'stats', 'recent_assignments', 'upcoming_maintenance', 'expiring_warranties',
+            'totalEquipment', 'availableEquipment', 'expiringSoon', 'totalUsers', 'recentEquipment'
+        ));
     }
 }

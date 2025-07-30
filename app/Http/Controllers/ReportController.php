@@ -21,7 +21,12 @@ class ReportController extends Controller
 
     public function index()
     {
-        return view('reports.index');
+        $totalEquipment = Equipment::count();
+        $activeAssignments = Assignment::whereNull('returned_at')->count();
+        $pendingMaintenance = MaintenanceRecord::where('status', 'scheduled')->count();
+        $expiredContracts = Contract::where('end_date', '<', Carbon::now())->count();
+
+        return view('reports.index', compact('totalEquipment', 'activeAssignments', 'pendingMaintenance', 'expiredContracts'));
     }
 
     public function equipment(Request $request)
@@ -35,7 +40,7 @@ class ReportController extends Controller
         ]);
 
         $data = $this->reportService->generateEquipmentReport($filters);
-        
+
         if ($request->has('export')) {
             return $this->reportService->exportEquipmentReport($data, $request->export);
         }
@@ -54,7 +59,7 @@ class ReportController extends Controller
         ]);
 
         $data = $this->reportService->generateAssignmentReport($filters);
-        
+
         if ($request->has('export')) {
             return $this->reportService->exportAssignmentReport($data, $request->export);
         }
@@ -73,7 +78,7 @@ class ReportController extends Controller
         ]);
 
         $data = $this->reportService->generateMaintenanceReport($filters);
-        
+
         if ($request->has('export')) {
             return $this->reportService->exportMaintenanceReport($data, $request->export);
         }
@@ -91,7 +96,7 @@ class ReportController extends Controller
         ]);
 
         $data = $this->reportService->generateContractReport($filters);
-        
+
         if ($request->has('export')) {
             return $this->reportService->exportContractReport($data, $request->export);
         }
