@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ITAM System</title>
+    <title>Login - ITAM BKB</title>
     @vite(['resources/css/app.css'])
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">
-            Iniciar Sesión - ITAM System
+            Iniciar Sesión - ITAM BKB
         </h2>
 
         <form method="POST" action="{{ route('login.store') }}">
@@ -57,8 +57,8 @@
         </form>
 
         <div class="mt-6 text-center text-sm text-gray-600">
-            <p>Usuario por defecto: sistemas@bkb.mx</p>
-            <p>Contraseña: password</p>
+            <p>Aplicación para SOPORTE IT BKB</p>
+            <p>VER 1.0</p>
         </div>
     </div>
 </body>
