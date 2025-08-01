@@ -43,9 +43,9 @@ Route::middleware(['admin'])->group(function () {
         ->name('it-users.documents');
     Route::post('it-users/{itUser}/documents', [ItUserController::class, 'uploadDocument'])
         ->name('it-users.upload-document');
-    Route::get('it-users/{itUser}/documents/{document}/download', [ItUserController::class, 'downloadDocument'])
+    Route::get('it-users/{itUser}/documents/{userDocument}/download', [ItUserController::class, 'downloadDocument'])
         ->name('it-users.download-document');
-    Route::delete('it-users/{itUser}/documents/{document}', [ItUserController::class, 'deleteDocument'])
+    Route::delete('it-users/{itUser}/documents/{userDocument}', [ItUserController::class, 'deleteDocument'])
         ->name('it-users.delete-document');
 
     // Assignments

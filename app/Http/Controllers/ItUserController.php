@@ -141,32 +141,32 @@ class ItUserController extends Controller
         return redirect()->back()->with('success', 'Documento subido exitosamente.');
     }
 
-    public function downloadDocument(ItUser $itUser, UserDocument $document)
+    public function downloadDocument(ItUser $itUser, UserDocument $userDocument)
     {
-        if ($document->it_user_id !== $itUser->id) {
+        if ($userDocument->it_user_id !== $itUser->id) {
             abort(404);
         }
 
-        $filePath = storage_path('app/private/' . $document->file_path);
+        $filePath = storage_path('app/private/' . $userDocument->file_path);
         
         if (!file_exists($filePath)) {
             return redirect()->back()->with('error', 'Archivo no encontrado.');
         }
 
-        return response()->download($filePath, $document->original_name);
+        return response()->download($filePath, $userDocument->original_name);
     }
 
-    public function deleteDocument(ItUser $itUser, UserDocument $document)
+    public function deleteDocument(ItUser $itUser, UserDocument $userDocument)
     {
-        if ($document->it_user_id !== $itUser->id) {
+        if ($userDocument->it_user_id !== $itUser->id) {
             abort(404);
         }
 
         // Eliminar archivo físico
-        Storage::disk('private')->delete($document->file_path);
+        Storage::disk('private')->delete($userDocument->file_path);
         
         // Eliminar registro de la base de datos
-        $document->delete();
+        $userDocument->delete();
 
         return redirect()->back()->with('success', 'Documento eliminado exitosamente.');
     }
