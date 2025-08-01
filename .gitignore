@@ -36,3 +36,8 @@ web.config
 public/.DS_Store
 
 /.DS_Store*
+.DS_Store
+.user.ini
+web.config
+public/.DS_Store
+web.config
