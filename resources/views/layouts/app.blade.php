@@ -21,6 +21,7 @@
                 <a href="{{ route('assignments.index') }}" class="hover:text-blue-200">Asignaciones</a>
                 <a href="{{ route('maintenance.index') }}" class="hover:text-blue-200">Mantenimiento</a>
                 <a href="{{ route('contracts.index') }}" class="hover:text-blue-200">Contratos</a>
+                <a href="{{ route('suppliers.index') }}" class="hover:text-blue-200">Proveedores</a>
                 <a href="{{ route('reports.index') }}" class="hover:text-blue-200">Reportes</a>
 
                 <form method="POST" action="{{ route('logout') }}" class="inline">
