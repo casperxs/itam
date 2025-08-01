@@ -80,12 +80,22 @@
                     required
                 >
                     <option value="">Seleccionar Departamento</option>
-                    <option value="TI" {{ old('department', $itUser->department) === 'TI' ? 'selected' : '' }}>TI</option>
-                    <option value="Contabilidad" {{ old('department', $itUser->department) === 'Contabilidad' ? 'selected' : '' }}>Contabilidad</option>
-                    <option value="Recursos Humanos" {{ old('department', $itUser->department) === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
-                    <option value="Ventas" {{ old('department', $itUser->department) === 'Ventas' ? 'selected' : '' }}>Ventas</option>
-                    <option value="Marketing" {{ old('department', $itUser->department) === 'Marketing' ? 'selected' : '' }}>Marketing</option>
-                    <option value="Operaciones" {{ old('department', $itUser->department) === 'Operaciones' ? 'selected' : '' }}>Operaciones</option>
+                    <option value="Liderazgo" {{ old('department') === 'Liderazgo' ? 'selected' : '' }}>Liderazgo</option>
+                    <option value="Marketing" {{ old('department') === 'Marketing' ? 'selected' : '' }}>TI</option>
+                    <option value="Administración" {{ old('department') === 'Administración' ? 'selected' : '' }}>Administración</option>
+                    <option value="Recursos Humanos" {{ old('department') === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
+                    <option value="Training" {{ old('department') === 'Training' ? 'selected' : '' }}>Training</option>
+                    <option value="Directos (FullTruck)" {{ old('department') === 'Directos (FullTruck)' ? 'selected' : '' }}>Directos (FullTruck)</option>
+                    <option value="Bodegas" {{ old('department') === 'Bodegas' ? 'selected' : '' }}>Bodegas</option>
+                    <option value="Milk Run" {{ old('department') === 'Milk Run' ? 'selected' : '' }}>Milk Run</option>
+                    <option value="Virtuales" {{ old('department') === 'Virtuales' ? 'selected' : '' }}>Virtuales</option>
+                    <option value="Áereos" {{ old('department') === 'Áereos' ? 'selected' : '' }}>Áereos</option>
+                    <option value="Material Vehículos" {{ old('department') === 'Material Vehículos' ? 'selected' : '' }}>Material Vehículos</option>
+                    <option value="Materiales" {{ old('department') === 'Materiales' ? 'selected' : '' }}>Materiales</option>
+                    <option value="Compliance" {{ old('department') === 'Compliance' ? 'selected' : '' }}>Compliance</option>
+                    <option value="Calidad" {{ old('department') === 'Calidad' ? 'selected' : '' }}>Calidad</option>
+                    <option value="Tramitadores" {{ old('department') === 'Tramitadores' ? 'selected' : '' }}>Tramitadores</option>
+                    <option value="Servicio al Cliente" {{ old('department') === 'Servicio al Cliente' ? 'selected' : '' }}>Servicio al Cliente</option>
                 </select>
                 @error('department')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

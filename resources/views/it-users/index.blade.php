@@ -30,11 +30,23 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
                 <select name="department" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos</option>
-                    <option value="TI" {{ request('department') === 'TI' ? 'selected' : '' }}>TI</option>
-                    <option value="Contabilidad" {{ request('department') === 'Contabilidad' ? 'selected' : '' }}>Contabilidad</option>
-                    <option value="Recursos Humanos" {{ request('department') === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
-                    <option value="Ventas" {{ request('department') === 'Ventas' ? 'selected' : '' }}>Ventas</option>
-                    <option value="Marketing" {{ request('department') === 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                    <option value="">Seleccionar Departamento</option>
+                    <option value="Liderazgo" {{ old('department') === 'Liderazgo' ? 'selected' : '' }}>Liderazgo</option>
+                    <option value="Marketing" {{ old('department') === 'Marketing' ? 'selected' : '' }}>TI</option>
+                    <option value="Administración" {{ old('department') === 'Administración' ? 'selected' : '' }}>Administración</option>
+                    <option value="Recursos Humanos" {{ old('department') === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
+                    <option value="Training" {{ old('department') === 'Training' ? 'selected' : '' }}>Training</option>
+                    <option value="Directos (FullTruck)" {{ old('department') === 'Directos (FullTruck)' ? 'selected' : '' }}>Directos (FullTruck)</option>
+                    <option value="Bodegas" {{ old('department') === 'Bodegas' ? 'selected' : '' }}>Bodegas</option>
+                    <option value="Milk Run" {{ old('department') === 'Milk Run' ? 'selected' : '' }}>Milk Run</option>
+                    <option value="Virtuales" {{ old('department') === 'Virtuales' ? 'selected' : '' }}>Virtuales</option>
+                    <option value="Áereos" {{ old('department') === 'Áereos' ? 'selected' : '' }}>Áereos</option>
+                    <option value="Material Vehículos" {{ old('department') === 'Material Vehículos' ? 'selected' : '' }}>Material Vehículos</option>
+                    <option value="Materiales" {{ old('department') === 'Materiales' ? 'selected' : '' }}>Materiales</option>
+                    <option value="Compliance" {{ old('department') === 'Compliance' ? 'selected' : '' }}>Compliance</option>
+                    <option value="Calidad" {{ old('department') === 'Calidad' ? 'selected' : '' }}>Calidad</option>
+                    <option value="Tramitadores" {{ old('department') === 'Tramitadores' ? 'selected' : '' }}>Tramitadores</option>
+                    <option value="Servicio al Cliente" {{ old('department') === 'Servicio al Cliente' ? 'selected' : '' }}>Servicio al Cliente</option>
                 </select>
             </div>
             <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
