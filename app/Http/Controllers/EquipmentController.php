@@ -14,7 +14,7 @@ class EquipmentController extends Controller
     {
         $query = Equipment::with(['equipmentType', 'supplier', 'currentAssignment.itUser']);
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && !empty(trim($request->search))) {
             $search = $request->search;
             $searchTerms = explode(' ', trim($search));
             
