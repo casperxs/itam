@@ -110,9 +110,9 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex flex-wrap gap-2">
                                 <a href="{{ route('maintenance.checklist', $maintenance) }}" 
-                                   class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700" 
+                                   class="bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 font-bold inline-flex items-center" 
                                    title="Descargar Checklist PDF">
-                                    📋 Descargar Checklist
+                                    📋 DESCARGAR CHECKLIST
                                 </a>
                                 <a href="{{ route('maintenance.show', $maintenance) }}" 
                                    class="text-blue-600 hover:text-blue-900">

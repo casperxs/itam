@@ -9,8 +9,8 @@
         <p class="text-gray-600">Gestión de mantenimientos programados y ejecutados</p>
     </div>
     <div class="flex gap-3">
-        <a href="{{ route('maintenance.completed') }}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
-            📋 Checklists PDF
+        <a href="{{ route('maintenance.completed') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold">
+            📋 CHECKLISTS PDF
         </a>
         <a href="{{ route('maintenance.calendar') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
             Ver Calendario
@@ -136,8 +136,10 @@
                                 <a href="{{ route('maintenance.show', $maintenance) }}" class="text-blue-600 hover:text-blue-900">Ver</a>
 
                                 @if($maintenance->status === 'completed')
-                                    <a href="{{ route('maintenance.checklist', $maintenance) }}" class="text-green-600 hover:text-green-900" title="Descargar Checklist">
-                                        📋 PDF
+                                    <a href="{{ route('maintenance.checklist', $maintenance) }}" 
+                                       class="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700 font-semibold" 
+                                       title="Descargar Checklist PDF">
+                                        📋 CHECKLIST
                                     </a>
                                 @endif
 

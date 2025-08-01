@@ -11,8 +11,8 @@
         </div>
         <div class="flex space-x-2">
             @if($maintenance->status === 'completed')
-                <a href="{{ route('maintenance.checklist', $maintenance) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                    Descargar Checklist
+                <a href="{{ route('maintenance.checklist', $maintenance) }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-bold">
+                    📋 DESCARGAR CHECKLIST PDF
                 </a>
             @endif
             <a href="{{ route('maintenance.edit', $maintenance) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">

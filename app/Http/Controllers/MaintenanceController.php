@@ -147,7 +147,7 @@ class MaintenanceController extends Controller
             return redirect()->back()->with('error', 'Solo se puede generar checklist para mantenimientos completados.');
         }
 
-        $maintenance->load(['equipment.equipmentType.supplier', 'equipment.currentAssignment.itUser', 'performedBy']);
+        $maintenance->load(['equipment.equipmentType', 'equipment.supplier', 'equipment.currentAssignment.itUser', 'performedBy']);
         
         return $this->pdfService->generateMaintenanceChecklist($maintenance);
     }
