@@ -69,7 +69,7 @@ Route::middleware(['admin'])->group(function () {
         ->name('maintenance.complete');
     Route::get('maintenance/{maintenance}/checklist', [MaintenanceController::class, 'downloadChecklist'])
         ->name('maintenance.checklist');
-    Route::get('maintenance-completed', [MaintenanceController::class, 'completedMaintenance'])
+    Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
         ->name('maintenance.completed');
 
     // Contracts
