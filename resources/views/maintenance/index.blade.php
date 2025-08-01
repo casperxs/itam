@@ -9,6 +9,9 @@
         <p class="text-gray-600">Gestión de mantenimientos programados y ejecutados</p>
     </div>
     <div class="flex gap-3">
+        <a href="{{ route('maintenance.completed') }}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+            📋 Checklists PDF
+        </a>
         <a href="{{ route('maintenance.calendar') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
             Ver Calendario
         </a>
@@ -129,31 +132,39 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('maintenance.show', $maintenance) }}" class="text-blue-600 hover:text-blue-900 mr-3">Ver</a>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('maintenance.show', $maintenance) }}" class="text-blue-600 hover:text-blue-900">Ver</a>
 
-                            @if($maintenance->status === 'scheduled')
-                                <form method="POST" action="{{ route('maintenance.start', $maintenance) }}" class="inline mr-3">
+                                @if($maintenance->status === 'completed')
+                                    <a href="{{ route('maintenance.checklist', $maintenance) }}" class="text-green-600 hover:text-green-900" title="Descargar Checklist">
+                                        📋 PDF
+                                    </a>
+                                @endif
+
+                                @if($maintenance->status === 'scheduled')
+                                    <form method="POST" action="{{ route('maintenance.start', $maintenance) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-green-600 hover:text-green-900">Iniciar</button>
+                                    </form>
+                                @endif
+
+                                @if($maintenance->status === 'in_progress')
+                                    <form method="POST" action="{{ route('maintenance.complete', $maintenance) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-purple-600 hover:text-purple-900">Completar</button>
+                                    </form>
+                                @endif
+
+                                <a href="{{ route('maintenance.edit', $maintenance) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+
+                                <form method="POST" action="{{ route('maintenance.destroy', $maintenance) }}" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-green-600 hover:text-green-900">Iniciar</button>
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Está seguro?')">
+                                        Eliminar
+                                    </button>
                                 </form>
-                            @endif
-
-                            @if($maintenance->status === 'in_progress')
-                                <form method="POST" action="{{ route('maintenance.complete', $maintenance) }}" class="inline mr-3">
-                                    @csrf
-                                    <button type="submit" class="text-purple-600 hover:text-purple-900">Completar</button>
-                                </form>
-                            @endif
-
-                            <a href="{{ route('maintenance.edit', $maintenance) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</a>
-
-                            <form method="POST" action="{{ route('maintenance.destroy', $maintenance) }}" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Está seguro?')">
-                                    Eliminar
-                                </button>
-                            </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

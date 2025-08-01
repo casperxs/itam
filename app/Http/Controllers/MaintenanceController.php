@@ -152,6 +152,24 @@ class MaintenanceController extends Controller
         return $this->pdfService->generateMaintenanceChecklist($maintenance);
     }
 
+    public function completedMaintenance(Request $request)
+    {
+        $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy'])
+            ->where('status', 'completed');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->whereHas('equipment', function($q) use ($search) {
+                $q->where('serial_number', 'like', "%{$search}%")
+                  ->orWhere('asset_tag', 'like', "%{$search}%");
+            });
+        }
+
+        $completedMaintenances = $query->orderBy('completed_date', 'desc')->paginate(15);
+        
+        return view('maintenance.completed', compact('completedMaintenances'));
+    }
+
     public function calendar()
     {
         $maintenanceRecords = MaintenanceRecord::with(['equipment.equipmentType'])
