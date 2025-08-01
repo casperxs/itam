@@ -35,6 +35,20 @@ class PdfGeneratorService
         return $pdf->stream('reporte_mantenimientos_' . date('Y-m-d') . '.pdf');
     }
 
+    public function generateAssignmentReport($assignments, $filters = [])
+    {
+        $pdf = PDF::loadView('reports.pdf.assignments', compact('assignments', 'filters'));
+        
+        return $pdf->stream('reporte_asignaciones_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function generateContractReport($contracts, $filters = [])
+    {
+        $pdf = PDF::loadView('reports.pdf.contracts', compact('contracts', 'filters'));
+        
+        return $pdf->stream('reporte_contratos_' . date('Y-m-d') . '.pdf');
+    }
+
     public function generateMaintenanceChecklist($maintenance)
     {
         $pdf = PDF::loadView('maintenance.pdf.checklist', compact('maintenance'));

@@ -6,6 +6,7 @@ use App\Models\Assignment;
 use App\Models\MaintenanceRecord;
 use App\Models\Contract;
 use App\Models\ItUser;
+use App\Services\PdfGeneratorService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -179,15 +180,17 @@ class ReportService
     {
         if ($format === 'excel') {
             return $this->exportToExcel($data['assignments'], 'asignaciones');
+        } elseif ($format === 'pdf') {
+            return (new PdfGeneratorService())->generateAssignmentReport($data['assignments']);
         }
     }
 
     public function exportMaintenanceReport($data, $format)
     {
         if ($format === 'excel') {
-            return $this->exportToExcel($data['maintenance_records'], 'mantenimientos');
+            return $this->exportToExcel($data['maintenance'], 'mantenimientos');
         } elseif ($format === 'pdf') {
-            return (new PdfGeneratorService())->generateMaintenanceReport($data['maintenance_records']);
+            return (new PdfGeneratorService())->generateMaintenanceReport($data['maintenance']);
         }
     }
 
@@ -195,6 +198,8 @@ class ReportService
     {
         if ($format === 'excel') {
             return $this->exportToExcel($data['contracts'], 'contratos');
+        } elseif ($format === 'pdf') {
+            return (new PdfGeneratorService())->generateContractReport($data['contracts']);
         }
     }
 
@@ -225,6 +230,44 @@ class ReportService
                         $item->supplier->name,
                         $item->purchase_price,
                         $item->purchase_date?->format('Y-m-d'),
+                    ]);
+                }
+            } elseif ($type === 'asignaciones') {
+                fputcsv($file, ['Equipo', 'Usuario', 'Departamento', 'Fecha Asignación', 'Fecha Retorno', 'Estado']);
+                foreach ($data as $item) {
+                    fputcsv($file, [
+                        $item->equipment->equipmentType->name . ' - ' . $item->equipment->serial_number,
+                        $item->itUser->full_name,
+                        $item->itUser->department,
+                        $item->assigned_at?->format('Y-m-d'),
+                        $item->returned_at?->format('Y-m-d') ?: 'Activa',
+                        $item->returned_at ? 'Retornada' : 'Activa',
+                    ]);
+                }
+            } elseif ($type === 'mantenimientos') {
+                fputcsv($file, ['Equipo', 'Tipo', 'Estado', 'Fecha Programada', 'Fecha Completado', 'Técnico', 'Notas']);
+                foreach ($data as $item) {
+                    fputcsv($file, [
+                        $item->equipment->equipmentType->name . ' - ' . $item->equipment->serial_number,
+                        $item->type,
+                        $item->status,
+                        $item->scheduled_date?->format('Y-m-d'),
+                        $item->completed_at?->format('Y-m-d'),
+                        $item->performedBy->name ?? 'N/A',
+                        $item->notes,
+                    ]);
+                }
+            } elseif ($type === 'contratos') {
+                fputcsv($file, ['Proveedor', 'Número', 'Tipo', 'Estado', 'Fecha Inicio', 'Fecha Fin', 'Valor']);
+                foreach ($data as $item) {
+                    fputcsv($file, [
+                        $item->supplier->name,
+                        $item->contract_number,
+                        $item->type,
+                        $item->status,
+                        $item->start_date?->format('Y-m-d'),
+                        $item->end_date?->format('Y-m-d'),
+                        $item->value,
                     ]);
                 }
             }

@@ -41,8 +41,8 @@ class ReportController extends Controller
 
         $data = $this->reportService->generateEquipmentReport($filters);
 
-        if ($request->has('export')) {
-            return $this->reportService->exportEquipmentReport($data, $request->export);
+        if ($request->has('format') && in_array($request->format, ['pdf', 'excel'])) {
+            return $this->reportService->exportEquipmentReport($data, $request->format);
         }
 
         return view('reports.equipment', compact('data', 'filters'));
@@ -60,8 +60,8 @@ class ReportController extends Controller
 
         $data = $this->reportService->generateAssignmentReport($filters);
 
-        if ($request->has('export')) {
-            return $this->reportService->exportAssignmentReport($data, $request->export);
+        if ($request->has('format') && in_array($request->format, ['pdf', 'excel'])) {
+            return $this->reportService->exportAssignmentReport($data, $request->format);
         }
 
         return view('reports.assignments', compact('data', 'filters'));
@@ -79,8 +79,8 @@ class ReportController extends Controller
 
         $data = $this->reportService->generateMaintenanceReport($filters);
 
-        if ($request->has('export')) {
-            return $this->reportService->exportMaintenanceReport($data, $request->export);
+        if ($request->has('format') && in_array($request->format, ['pdf', 'excel'])) {
+            return $this->reportService->exportMaintenanceReport($data, $request->format);
         }
 
         return view('reports.maintenance', compact('data', 'filters'));
@@ -97,8 +97,8 @@ class ReportController extends Controller
 
         $data = $this->reportService->generateContractReport($filters);
 
-        if ($request->has('export')) {
-            return $this->reportService->exportContractReport($data, $request->export);
+        if ($request->has('format') && in_array($request->format, ['pdf', 'excel'])) {
+            return $this->reportService->exportContractReport($data, $request->format);
         }
 
         return view('reports.contracts', compact('data', 'filters'));

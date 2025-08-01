@@ -140,7 +140,7 @@
         <p class="text-sm text-gray-600">Genera reportes con filtros específicos</p>
     </div>
     <div class="px-6 py-4">
-        <form method="GET" action="{{ route('reports.equipment') }}" class="space-y-4">
+        <form method="GET" action="{{ route('reports.equipment') }}" class="space-y-4" id="customReportForm">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Reporte</label>
@@ -258,4 +258,25 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('customReportForm');
+    const reportTypeSelect = form.querySelector('select[name="report_type"]');
+    
+    reportTypeSelect.addEventListener('change', function() {
+        const reportType = this.value;
+        const routes = {
+            'equipment': '{{ route("reports.equipment") }}',
+            'assignments': '{{ route("reports.assignments") }}',
+            'maintenance': '{{ route("reports.maintenance") }}', 
+            'contracts': '{{ route("reports.contracts") }}'
+        };
+        
+        if (routes[reportType]) {
+            form.action = routes[reportType];
+        }
+    });
+});
+</script>
 @endsection
