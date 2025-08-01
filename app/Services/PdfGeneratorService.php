@@ -34,4 +34,14 @@ class PdfGeneratorService
         
         return $pdf->stream('reporte_mantenimientos_' . date('Y-m-d') . '.pdf');
     }
+
+    public function generateMaintenanceChecklist($maintenance)
+    {
+        $pdf = PDF::loadView('maintenance.pdf.checklist', compact('maintenance'));
+        $pdf->setPaper('A4', 'portrait');
+        
+        $fileName = 'checklist_mantenimiento_' . $maintenance->id . '_' . date('Y-m-d') . '.pdf';
+        
+        return $pdf->stream($fileName);
+    }
 }

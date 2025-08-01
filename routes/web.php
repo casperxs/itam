@@ -67,6 +67,8 @@ Route::middleware(['admin'])->group(function () {
         ->name('maintenance.start');
     Route::post('maintenance/{maintenance}/complete', [MaintenanceController::class, 'completeMaintenance'])
         ->name('maintenance.complete');
+    Route::get('maintenance/{maintenance}/checklist', [MaintenanceController::class, 'downloadChecklist'])
+        ->name('maintenance.checklist');
 
     // Contracts
     Route::resource('contracts', ContractController::class);

@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\MaintenanceRecord;
 use App\Models\Equipment;
 use App\Models\User;
+use App\Services\PdfGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MaintenanceController extends Controller
 {
+    protected $pdfService;
+
+    public function __construct(PdfGeneratorService $pdfService)
+    {
+        $this->pdfService = $pdfService;
+    }
     public function index(Request $request)
     {
         $query = MaintenanceRecord::with(['equipment.equipmentType', 'performedBy']);
@@ -132,6 +139,17 @@ class MaintenanceController extends Controller
 
         return redirect()->route('maintenance.show', $maintenance)
             ->with('success', 'Mantenimiento completado exitosamente.');
+    }
+
+    public function downloadChecklist(MaintenanceRecord $maintenance)
+    {
+        if ($maintenance->status !== 'completed') {
+            return redirect()->back()->with('error', 'Solo se puede generar checklist para mantenimientos completados.');
+        }
+
+        $maintenance->load(['equipment.equipmentType.supplier', 'equipment.currentAssignment.itUser', 'performedBy']);
+        
+        return $this->pdfService->generateMaintenanceChecklist($maintenance);
     }
 
     public function calendar()
