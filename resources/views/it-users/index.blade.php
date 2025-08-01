@@ -30,22 +30,11 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
                 <select name="department" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos</option>
-                    <option value="Liderazgo" {{ request('department') === 'Liderazgo' ? 'selected' : '' }}>Liderazgo</option>
-                    <option value="TI" {{ request('department') === 'TI' ? 'selected' : '' }}>TI</option>
-                    <option value="Administración" {{ request('department') === 'Administración' ? 'selected' : '' }}>Administración</option>
-                    <option value="Recursos Humanos" {{ request('department') === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
-                    <option value="Training" {{ request('department') === 'Training' ? 'selected' : '' }}>Training</option>
-                    <option value="Directos (FullTruck)" {{ request('department') === 'Directos (FullTruck)' ? 'selected' : '' }}>Directos (FullTruck)</option>
-                    <option value="Bodegas" {{ request('department') === 'Bodegas' ? 'selected' : '' }}>Bodegas</option>
-                    <option value="Milk Run" {{ request('department') === 'Milk Run' ? 'selected' : '' }}>Milk Run</option>
-                    <option value="Virtuales" {{ request('department') === 'Virtuales' ? 'selected' : '' }}>Virtuales</option>
-                    <option value="Áereos" {{ request('department') === 'Áereos' ? 'selected' : '' }}>Áereos</option>
-                    <option value="Material Vehículos" {{ request('department') === 'Material Vehículos' ? 'selected' : '' }}>Material Vehículos</option>
-                    <option value="Materiales" {{ request('department') === 'Materiales' ? 'selected' : '' }}>Materiales</option>
-                    <option value="Compliance" {{ request('department') === 'Compliance' ? 'selected' : '' }}>Compliance</option>
-                    <option value="Calidad" {{ request('department') === 'Calidad' ? 'selected' : '' }}>Calidad</option>
-                    <option value="Tramitadores" {{ request('department') === 'Tramitadores' ? 'selected' : '' }}>Tramitadores</option>
-                    <option value="Servicio al Cliente" {{ request('department') === 'Servicio al Cliente' ? 'selected' : '' }}>Servicio al Cliente</option>
+                    @foreach($departments as $department)
+                        <option value="{{ $department }}" {{ request('department') === $department ? 'selected' : '' }}>
+                            {{ $department }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
