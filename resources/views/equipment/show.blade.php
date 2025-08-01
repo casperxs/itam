@@ -88,16 +88,16 @@
                     @if($equipment->purchase_date)
                     <div>
                         <strong class="text-gray-600">Fecha de Compra:</strong>
-                        <p class="text-gray-800">{{ $equipment->purchase_date->format('d/m/Y') }}</p>
+                        <p class="text-gray-800">{{ $equipment->purchase_date ? $equipment->purchase_date->format('d/m/Y') : 'N/A' }}</p>
                     </div>
                     @endif
 
                     @if($equipment->warranty_end_date)
                     <div>
                         <strong class="text-gray-600">Fin de Garantía:</strong>
-                        <p class="text-gray-800 {{ $equipment->warranty_end_date->isPast() ? 'text-red-600 font-semibold' : '' }}">
-                            {{ $equipment->warranty_end_date->format('d/m/Y') }}
-                            @if($equipment->warranty_end_date->isPast())
+                        <p class="text-gray-800 {{ $equipment->warranty_end_date && $equipment->warranty_end_date->isPast() ? 'text-red-600 font-semibold' : '' }}">
+                            {{ $equipment->warranty_end_date ? $equipment->warranty_end_date->format('d/m/Y') : 'N/A' }}
+                            @if($equipment->warranty_end_date && $equipment->warranty_end_date->isPast())
                                 (Expirada)
                             @endif
                         </p>
@@ -149,7 +149,7 @@
                 </div>
                 <div>
                     <strong class="text-gray-600">Fecha de Asignación:</strong>
-                    <p class="text-gray-800">{{ $equipment->currentAssignment->assignment_date->format('d/m/Y') }}</p>
+                    <p class="text-gray-800">{{ $equipment->currentAssignment->assignment_date ? $equipment->currentAssignment->assignment_date->format('d/m/Y') : 'N/A' }}</p>
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
                                 {{ $assignment->itUser->name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $assignment->assignment_date->format('d/m/Y') }}
+                                {{ $assignment->assignment_date ? $assignment->assignment_date->format('d/m/Y') : 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $assignment->return_date ? $assignment->return_date->format('d/m/Y') : 'N/A' }}
@@ -235,7 +235,7 @@
                                 {{ $maintenance->description }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $maintenance->scheduled_date->format('d/m/Y') }}
+                                {{ $maintenance->scheduled_date ? $maintenance->scheduled_date->format('d/m/Y') : 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 rounded-full text-xs font-medium

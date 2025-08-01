@@ -75,7 +75,7 @@
                 >
                     <option value="">Seleccionar Departamento</option>
                     <option value="Liderazgo" {{ old('department') === 'Liderazgo' ? 'selected' : '' }}>Liderazgo</option>
-                    <option value="Marketing" {{ old('department') === 'Marketing' ? 'selected' : '' }}>TI</option>
+                    <option value="TI" {{ old('department') === 'TI' ? 'selected' : '' }}>TI</option>
                     <option value="Administración" {{ old('department') === 'Administración' ? 'selected' : '' }}>Administración</option>
                     <option value="Recursos Humanos" {{ old('department') === 'Recursos Humanos' ? 'selected' : '' }}>Recursos Humanos</option>
                     <option value="Training" {{ old('department') === 'Training' ? 'selected' : '' }}>Training</option>
@@ -85,7 +85,6 @@
                     <option value="Virtuales" {{ old('department') === 'Virtuales' ? 'selected' : '' }}>Virtuales</option>
                     <option value="Áereos" {{ old('department') === 'Áereos' ? 'selected' : '' }}>Áereos</option>
                     <option value="Material Vehículos" {{ old('department') === 'Material Vehículos' ? 'selected' : '' }}>Material Vehículos</option>
-                    <option value="Materiales" {{ old('department') === 'Materiales' ? 'selected' : '' }}>Materiales</option>
                     <option value="Compliance" {{ old('department') === 'Compliance' ? 'selected' : '' }}>Compliance</option>
                     <option value="Calidad" {{ old('department') === 'Calidad' ? 'selected' : '' }}>Calidad</option>
                     <option value="Tramitadores" {{ old('department') === 'Tramitadores' ? 'selected' : '' }}>Tramitadores</option>

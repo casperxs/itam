@@ -43,6 +43,10 @@ Route::middleware(['admin'])->group(function () {
         ->name('it-users.documents');
     Route::post('it-users/{itUser}/documents', [ItUserController::class, 'uploadDocument'])
         ->name('it-users.upload-document');
+    Route::get('it-users/{itUser}/documents/{document}/download', [ItUserController::class, 'downloadDocument'])
+        ->name('it-users.download-document');
+    Route::delete('it-users/{itUser}/documents/{document}', [ItUserController::class, 'deleteDocument'])
+        ->name('it-users.delete-document');
 
     // Assignments
     Route::resource('assignments', AssignmentController::class)->except(['edit', 'update']);

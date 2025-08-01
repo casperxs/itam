@@ -57,7 +57,7 @@
     <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
             <span class="text-sm font-medium text-gray-700">Fecha de Asignación:</span>
-            <div class="text-gray-900">{{ $assignment->assigned_at->format('d/m/Y H:i') }}</div>
+            <div class="text-gray-900">{{ $assignment->assigned_at ? $assignment->assigned_at->format('d/m/Y H:i') : 'N/A' }}</div>
         </div>
         
         <div>

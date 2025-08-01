@@ -118,26 +118,56 @@ class ItUserController extends Controller
     public function uploadDocument(Request $request, ItUser $itUser)
     {
         $validated = $request->validate([
-            'document_type' => 'required|string',
-            'document_name' => 'required|string',
-            'file' => 'required|file|mimes:pdf|max:10240',
-            'has_signature' => 'boolean',
-            'signature_type' => 'nullable|in:physical,digital',
+            'document' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'description' => 'nullable|string',
         ]);
 
-        $filePath = $request->file('file')->store('user-documents', 'private');
+        $file = $request->file('document');
+        $originalName = $file->getClientOriginalName();
+        $filename = time() . '_' . $originalName;
+        
+        $filePath = $file->storeAs('user-documents', $filename, 'private');
 
         UserDocument::create([
             'it_user_id' => $itUser->id,
-            'document_type' => $validated['document_type'],
-            'document_name' => $validated['document_name'],
+            'original_name' => $originalName,
+            'filename' => $filename,
             'file_path' => $filePath,
-            'has_signature' => $request->boolean('has_signature'),
-            'signature_type' => $validated['signature_type'],
+            'file_size' => $file->getSize(),
+            'mime_type' => $file->getMimeType(),
             'description' => $validated['description'],
         ]);
 
         return redirect()->back()->with('success', 'Documento subido exitosamente.');
+    }
+
+    public function downloadDocument(ItUser $itUser, UserDocument $document)
+    {
+        if ($document->it_user_id !== $itUser->id) {
+            abort(404);
+        }
+
+        $filePath = storage_path('app/private/' . $document->file_path);
+        
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'Archivo no encontrado.');
+        }
+
+        return response()->download($filePath, $document->original_name);
+    }
+
+    public function deleteDocument(ItUser $itUser, UserDocument $document)
+    {
+        if ($document->it_user_id !== $itUser->id) {
+            abort(404);
+        }
+
+        // Eliminar archivo físico
+        Storage::disk('private')->delete($document->file_path);
+        
+        // Eliminar registro de la base de datos
+        $document->delete();
+
+        return redirect()->back()->with('success', 'Documento eliminado exitosamente.');
     }
 }
