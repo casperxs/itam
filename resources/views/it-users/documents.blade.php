@@ -63,7 +63,19 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ strtoupper(pathinfo($document->filename, PATHINFO_EXTENSION)) }}
+                                    <div>{{ strtoupper(pathinfo($document->filename, PATHINFO_EXTENSION)) }}</div>
+                                    @if($document->document_type)
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            @switch($document->document_type)
+                                                @case('manual') Manual @break
+                                                @case('contrato') Contrato @break
+                                                @case('identificacion') Identificación @break
+                                                @case('capacitacion') Capacitación @break
+                                                @case('politica') Política @break
+                                                @default {{ ucfirst($document->document_type) }} @break
+                                            @endswitch
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $document->file_size ? number_format($document->file_size / 1024, 0) . ' KB' : 'N/A' }}
@@ -122,6 +134,20 @@
             
             <form method="POST" action="{{ route('it-users.upload-document', $itUser) }}" enctype="multipart/form-data">
                 @csrf
+                
+                <div class="mb-4">
+                    <label for="document_type" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Documento</label>
+                    <select id="document_type" name="document_type" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Seleccionar tipo</option>
+                        <option value="manual">Manual de usuario</option>
+                        <option value="contrato">Contrato/Acuerdo</option>
+                        <option value="identificacion">Identificación</option>
+                        <option value="capacitacion">Capacitación</option>
+                        <option value="politica">Política/Procedimiento</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
                 
                 <div class="mb-4">
                     <label for="document" class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Archivo</label>

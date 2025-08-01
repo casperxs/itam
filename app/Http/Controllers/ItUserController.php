@@ -119,12 +119,18 @@ class ItUserController extends Controller
     {
         $validated = $request->validate([
             'document' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'document_type' => 'required|string|in:manual,contrato,identificacion,capacitacion,politica,otro',
             'description' => 'nullable|string',
         ]);
 
         $file = $request->file('document');
         $originalName = $file->getClientOriginalName();
-        $filename = time() . '_' . $originalName;
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = now()->format('YmdHis');
+        $documentType = $validated['document_type'];
+        
+        // Formato: EMP001_manual_20250731235959.pdf
+        $filename = $itUser->employee_id . '_' . $documentType . '_' . $timestamp . '.' . $extension;
         
         $filePath = $file->storeAs('user-documents', $filename, 'private');
 
@@ -135,6 +141,7 @@ class ItUserController extends Controller
             'file_path' => $filePath,
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),
+            'document_type' => $documentType,
             'description' => $validated['description'],
         ]);
 

@@ -15,6 +15,7 @@ class UserDocument extends Model
         'file_path',
         'file_size',
         'mime_type',
+        'document_type',
         'description',
     ];
 
