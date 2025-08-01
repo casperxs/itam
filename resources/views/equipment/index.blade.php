@@ -64,6 +64,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipo</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valoración</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asignado a</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Garantía</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
@@ -97,6 +98,21 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            @if($item->valoracion)
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                    @if($item->valoracion === '100%') bg-green-100 text-green-800
+                                    @elseif($item->valoracion === '90%') bg-blue-100 text-blue-800
+                                    @elseif($item->valoracion === '80%') bg-yellow-100 text-yellow-800
+                                    @elseif($item->valoracion === '70%') bg-orange-100 text-orange-800
+                                    @else bg-red-100 text-red-800
+                                    @endif">
+                                    {{ $item->valoracion }}
+                                </span>
+                            @else
+                                <span class="text-gray-500">N/A</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             @if($item->currentAssignment)
                                 {{ $item->currentAssignment->itUser->name }}
                             @else
@@ -126,7 +142,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
                             No se encontraron equipos
                         </td>
                     </tr>

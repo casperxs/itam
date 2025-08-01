@@ -135,6 +135,24 @@
                 </div>
 
                 <div>
+                    <label for="valoracion" class="block text-sm font-medium text-gray-700 mb-2">
+                        Valoración
+                    </label>
+                    <select name="valoracion" id="valoracion" 
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seleccionar valoración</option>
+                        <option value="100%" {{ old('valoracion', $equipment->valoracion) == '100%' ? 'selected' : '' }}>100%</option>
+                        <option value="90%" {{ old('valoracion', $equipment->valoracion) == '90%' ? 'selected' : '' }}>90%</option>
+                        <option value="80%" {{ old('valoracion', $equipment->valoracion) == '80%' ? 'selected' : '' }}>80%</option>
+                        <option value="70%" {{ old('valoracion', $equipment->valoracion) == '70%' ? 'selected' : '' }}>70%</option>
+                        <option value="60%" {{ old('valoracion', $equipment->valoracion) == '60%' ? 'selected' : '' }}>60%</option>
+                    </select>
+                    @error('valoracion')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="purchase_price" class="block text-sm font-medium text-gray-700 mb-2">
                         Precio de Compra
                     </label>
