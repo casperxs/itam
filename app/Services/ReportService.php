@@ -35,15 +35,17 @@ class ReportService
             $query->where('supplier_id', $filters['supplier']);
         }
 
-        $equipment = $query->get();
+        $equipment = $query->paginate(15);
 
         return [
             'equipment' => $equipment,
-            'totals' => [
-                'total_equipment' => $equipment->count(),
-                'total_value' => $equipment->sum('purchase_price'),
-                'by_status' => $equipment->groupBy('status')->map->count(),
-                'by_type' => $equipment->groupBy('equipmentType.name')->map->count(),
+            'types' => \App\Models\EquipmentType::all(),
+            'suppliers' => \App\Models\Supplier::all(),
+            'summary' => [
+                'total' => $equipment->total(),
+                'active' => Equipment::where('status', 'active')->count(),
+                'assigned' => Equipment::whereHas('currentAssignment')->count(),
+                'total_value' => Equipment::sum('purchase_price'),
             ]
         ];
     }
@@ -78,15 +80,16 @@ class ReportService
             }
         }
 
-        $assignments = $query->get();
+        $assignments = $query->paginate(15);
 
         return [
             'assignments' => $assignments,
-            'totals' => [
-                'total_assignments' => $assignments->count(),
-                'active_assignments' => $assignments->where('returned_at', null)->count(),
-                'returned_assignments' => $assignments->where('returned_at', '!=', null)->count(),
-                'by_department' => $assignments->groupBy('itUser.department')->map->count(),
+            'users' => ItUser::all(),
+            'summary' => [
+                'total' => $assignments->total(),
+                'active' => Assignment::whereNull('returned_at')->count(),
+                'returned' => Assignment::whereNotNull('returned_at')->count(),
+                'unique_users' => Assignment::distinct('it_user_id')->count(),
             ]
         ];
     }
@@ -115,15 +118,16 @@ class ReportService
             $query->where('performed_by', $filters['technician']);
         }
 
-        $maintenanceRecords = $query->get();
+        $maintenance = $query->paginate(15);
 
         return [
-            'maintenance_records' => $maintenanceRecords,
-            'totals' => [
-                'total_maintenance' => $maintenanceRecords->count(),
-                'total_cost' => $maintenanceRecords->sum('cost'),
-                'by_type' => $maintenanceRecords->groupBy('type')->map->count(),
-                'by_status' => $maintenanceRecords->groupBy('status')->map->count(),
+            'maintenance' => $maintenance,
+            'technicians' => \App\Models\User::all(),
+            'summary' => [
+                'total' => $maintenance->total(),
+                'scheduled' => MaintenanceRecord::where('status', 'scheduled')->count(),
+                'in_progress' => MaintenanceRecord::where('status', 'in_progress')->count(),
+                'completed' => MaintenanceRecord::where('status', 'completed')->count(),
             ]
         ];
     }
@@ -148,16 +152,16 @@ class ReportService
             $query->where('supplier_id', $filters['supplier']);
         }
 
-        $contracts = $query->get();
+        $contracts = $query->paginate(15);
 
         return [
             'contracts' => $contracts,
-            'totals' => [
-                'total_contracts' => $contracts->count(),
-                'total_monthly_cost' => $contracts->sum('monthly_cost'),
-                'total_contract_value' => $contracts->sum('total_cost'),
-                'by_status' => $contracts->groupBy('status')->map->count(),
-                'expiring_soon' => $contracts->filter->needsAlert()->count(),
+            'suppliers' => \App\Models\Supplier::all(),
+            'summary' => [
+                'total' => $contracts->total(),
+                'active' => Contract::where('status', 'active')->count(),
+                'expired' => Contract::where('end_date', '<', Carbon::now())->count(),
+                'expiring' => Contract::where('end_date', '<=', Carbon::now()->addDays(30))->where('end_date', '>=', Carbon::now())->count(),
             ]
         ];
     }
