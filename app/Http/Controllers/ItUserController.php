@@ -30,9 +30,7 @@ class ItUserController extends Controller
             $query->where('department', $request->department);
         }
 
-        $users = $query->paginate(15);
         $departments = ItUser::distinct()->pluck('department');
-
         $itUsers = $query->with('assignments')->paginate(15);
 
         return view('it-users.index', compact('itUsers', 'departments'));
