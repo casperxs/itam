@@ -12,6 +12,7 @@ use App\Http\Controllers\EmailTicketController;
 use App\Http\Controllers\BulkImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserDocumentController;
+use App\Http\Controllers\DarkModeController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to login if not authenticated, otherwise to dashboard
@@ -108,6 +109,10 @@ Route::middleware(['admin'])->group(function () {
         ->name('documents.destroy');
     Route::post('documents/{document}/mark-signed', [UserDocumentController::class, 'markSigned'])
         ->name('documents.mark-signed');
+
+    // Dark Mode Toggle
+    Route::post('dark-mode/toggle', [DarkModeController::class, 'toggle'])
+        ->name('dark-mode.toggle');
 });
 
 require __DIR__.'/auth.php';

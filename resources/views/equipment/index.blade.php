@@ -5,30 +5,30 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <div>
-        <h1 class="text-3xl font-bold text-gray-800">Equipos</h1>
-        <p class="text-gray-600">Gestión de equipos informáticos</p>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Equipos</h1>
+        <p class="text-gray-600 dark:text-gray-400">Gestión de equipos informáticos</p>
     </div>
     <a href="{{ route('equipment.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
         Nuevo Equipo
     </a>
 </div>
 
-<div class="bg-white rounded-lg shadow">
-    <div class="px-6 py-4 border-b border-gray-200">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <form method="GET" class="flex gap-4 items-end">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar</label>
                 <input
                     type="text"
                     name="search"
                     value="{{ request('search') }}"
                     placeholder="Serial, Asset Tag, Marca, Modelo..."
-                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                <select name="status" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
+                <select name="status" class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos</option>
                     <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Disponible</option>
                     <option value="assigned" {{ request('status') === 'assigned' ? 'selected' : '' }}>Asignado</option>
@@ -38,8 +38,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                <select name="type" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                <select name="type" class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos</option>
                     @foreach($equipmentTypes as $type)
                         <option value="{{ $type->id }}" {{ request('type') == $type->id ? 'selected' : '' }}>
@@ -48,10 +48,10 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
+            <button type="submit" class="bg-gray-600 dark:bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-600">
                 Filtrar
             </button>
-            <a href="{{ route('equipment.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
+            <a href="{{ route('equipment.index') }}" class="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500">
                 Limpiar
             </a>
         </form>

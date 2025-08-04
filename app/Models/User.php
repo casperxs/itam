@@ -17,6 +17,7 @@ class User extends Authenticatable
         'department',
         'position',
         'employee_id',
+        'dark_mode',
     ];
 
     protected $hidden = [
@@ -27,6 +28,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'dark_mode' => 'boolean',
     ];
 
     public function assignments()
