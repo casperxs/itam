@@ -315,17 +315,17 @@
                     <div class="detail-value">
                         @php
                             $valoracion = $assignment->equipment->valoracion;
-                            $percentage = $valoracion;
+                            $percentage = (int) str_replace('%', '', $valoracion);
                             $class = '';
-                            if ($valoracion >= 90) $class = 'val-100';
-                            elseif ($valoracion >= 80) $class = 'val-90';
-                            elseif ($valoracion >= 70) $class = 'val-80';
-                            elseif ($valoracion >= 60) $class = 'val-70';
+                            if ($percentage >= 90) $class = 'val-100';
+                            elseif ($percentage >= 80) $class = 'val-90';
+                            elseif ($percentage >= 70) $class = 'val-80';
+                            elseif ($percentage >= 60) $class = 'val-70';
                             else $class = 'val-60';
                         @endphp
                         <div class="valuation-bar">
                             <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
-                                {{ $valoracion }}%
+                                {{ $valoracion }}
                             </div>
                         </div>
                     </div>
