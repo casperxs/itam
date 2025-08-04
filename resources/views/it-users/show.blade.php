@@ -88,13 +88,13 @@
                                 gap: 6px !important;
                                 box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
                                 transition: all 0.2s !important;
-                            " 
+                            "
                             onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
                                 📄 Generar Documento Consolidado
                             </button>
                         </form>
-                        
+
                         @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
                             <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
                                 background: linear-gradient(135deg, #22c55e, #16a34a) !important;
@@ -163,7 +163,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-500 text-center py-4">No tiene equipos asignados actualmente</p>
+                    <h3 class="text-gray-500 text-center py-4">No tiene equipos asignados actualmente</p>
                 @endif
             </div>
         </div>
