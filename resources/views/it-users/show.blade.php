@@ -68,71 +68,56 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <div class="flex justify-between items-center" style="width: 100% !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Equipos Asignados Actualmente</h2>
-                    
-                    <!-- BOTONES CONSOLIDADOS - SIEMPRE VISIBLES PARA DEBUG -->
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Equipos Asignados Actualmente</h2>
+                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <div style="display: flex !important; gap: 12px !important; align-items: center !important;">
-                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="display: inline-block !important; margin: 0 !important;">
+                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="display: inline-block !important;">
                             @csrf
                             <button type="submit" style="
                                 background: linear-gradient(135deg, #f97316, #ea580c) !important;
                                 color: #ffffff !important;
-                                padding: 10px 20px !important;
-                                border: 2px solid #ea580c !important;
-                                border-radius: 8px !important;
-                                font-weight: bold !important;
-                                font-size: 13px !important;
+                                padding: 10px 18px !important;
+                                border: none !important;
+                                border-radius: 6px !important;
+                                font-weight: 600 !important;
+                                font-size: 12px !important;
                                 cursor: pointer !important;
                                 display: inline-flex !important;
                                 align-items: center !important;
-                                gap: 8px !important;
+                                gap: 6px !important;
                                 box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
                                 transition: all 0.2s !important;
-                                text-transform: uppercase !important;
-                                letter-spacing: 0.5px !important;
-                                z-index: 1000 !important;
-                                position: relative !important;
                             " 
-                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'"
+                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
-                                📄 GENERAR DOCUMENTO
+                                📄 Generar Documento Consolidado
                             </button>
                         </form>
                         
-                        <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
-                            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
-                            color: #ffffff !important;
-                            padding: 10px 20px !important;
-                            border: 2px solid #16a34a !important;
-                            border-radius: 8px !important;
-                            font-weight: bold !important;
-                            font-size: 13px !important;
-                            text-decoration: none !important;
-                            display: inline-flex !important;
-                            align-items: center !important;
-                            gap: 8px !important;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-                            transition: all 0.2s !important;
-                            text-transform: uppercase !important;
-                            letter-spacing: 0.5px !important;
-                            z-index: 1000 !important;
-                            position: relative !important;
-                        "
-                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
-                            ⬇️ DESCARGAR PDF
-                        </a>
+                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
+                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
+                                background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+                                color: #ffffff !important;
+                                padding: 10px 18px !important;
+                                border: none !important;
+                                border-radius: 6px !important;
+                                font-weight: 600 !important;
+                                font-size: 12px !important;
+                                text-decoration: none !important;
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                gap: 6px !important;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                                transition: all 0.2s !important;
+                            "
+                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                                ⬇️ Descargar PDF
+                            </a>
+                        @endif
                     </div>
-                </div>
-                
-                <!-- Debug Info Temporal -->
-                <div style="margin-top: 10px !important; padding: 10px !important; background-color: #fffbeb !important; border: 1px solid #fbbf24 !important; border-radius: 6px !important; font-size: 11px !important; color: #92400e !important;">
-                    <strong>DEBUG:</strong> Botones forzados para ser visibles | 
-                    Asignaciones: {{ $itUser->currentAssignments ? $itUser->currentAssignments->count() : '0' }} |
-                    Usuario ID: {{ $itUser->id }}
-                </div>
+                @endif
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
