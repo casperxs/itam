@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
-    <nav class="bg-blue-600 dark:bg-gray-800 text-white p-4 transition-colors duration-200">
+    <nav class="bg-blue-500 dark:bg-gray-900 text-white p-4 transition-colors duration-200">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold">
                 <a href="{{ route('dashboard') }}">ITAM System</a>
@@ -28,7 +28,7 @@
                 <!-- Dark Mode Toggle - Version con formulario de respaldo -->
                 <form method="POST" action="{{ route('dark-mode.toggle') }}" class="inline" id="darkModeForm">
                     @csrf
-                    <button type="submit" id="darkModeToggle" class="p-2 rounded-lg hover:bg-blue-700 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <button type="submit" id="darkModeToggle" class="p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-gray-800 transition-colors duration-200">
                         <svg id="darkModeIcon" class="w-5 h-5 {{ $isDarkMode ? 'hidden' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
