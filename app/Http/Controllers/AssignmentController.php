@@ -130,4 +130,35 @@ class AssignmentController extends Controller
         
         return redirect()->back()->with('success', 'Documento marcado como firmado.');
     }
+
+    public function generateConsolidatedDocument(ItUser $itUser)
+    {
+        $assignments = $itUser->currentAssignments()
+            ->with(['equipment.equipmentType', 'equipment.supplier', 'assignedBy'])
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return redirect()->back()->with('error', 'El usuario no tiene equipos asignados actualmente.');
+        }
+
+        $pdfPath = $this->pdfService->generateConsolidatedAssignmentDocument($itUser, $assignments);
+        
+        // Actualizar todos los assignments con el documento consolidado
+        foreach ($assignments as $assignment) {
+            $assignment->update(['assignment_document' => $pdfPath]);
+        }
+
+        return redirect()->back()->with('success', 'Documento consolidado generado exitosamente.');
+    }
+
+    public function downloadConsolidatedDocument(ItUser $itUser)
+    {
+        $assignment = $itUser->currentAssignments()->first();
+        
+        if (!$assignment || !$assignment->assignment_document) {
+            return redirect()->back()->with('error', 'Documento consolidado no encontrado.');
+        }
+
+        return response()->download(storage_path('app/private/assignments/' . $assignment->assignment_document));
+    }
 }

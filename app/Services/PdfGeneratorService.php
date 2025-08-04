@@ -21,6 +21,24 @@ class PdfGeneratorService
         return $fileName;
     }
 
+    public function generateConsolidatedAssignmentDocument($itUser, $assignments)
+    {
+        $itUser->load(['currentAssignments.equipment.equipmentType', 'currentAssignments.equipment.supplier']);
+        
+        $pdf = PDF::loadView('assignments.pdf.consolidated-assignment-document', [
+            'itUser' => $itUser,
+            'assignments' => $assignments,
+            'assignedBy' => auth()->user()
+        ]);
+        
+        $fileName = 'consolidated_assignment_' . $itUser->id . '_' . time() . '.pdf';
+        $path = 'assignments/' . $fileName;
+        
+        Storage::disk('private')->put($path, $pdf->output());
+        
+        return $fileName;
+    }
+
     public function generateEquipmentReport($equipment, $filters = [])
     {
         $pdf = PDF::loadView('reports.pdf.equipment', compact('equipment', 'filters'));

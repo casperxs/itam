@@ -68,8 +68,23 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
+                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
+                    <div class="flex space-x-2">
+                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm">
+                                Generar Documento Consolidado
+                            </button>
+                        </form>
+                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
+                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+                                Descargar Documento
+                            </a>
+                        @endif
+                    </div>
+                @endif
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
