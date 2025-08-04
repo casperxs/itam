@@ -68,29 +68,71 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
-                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
-                    <div class="flex space-x-3">
-                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" class="inline-block">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center" style="width: 100% !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Equipos Asignados Actualmente</h2>
+                    
+                    <!-- BOTONES CONSOLIDADOS - SIEMPRE VISIBLES PARA DEBUG -->
+                    <div style="display: flex !important; gap: 12px !important; align-items: center !important;">
+                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="display: inline-block !important; margin: 0 !important;">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-orange-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:border-orange-900 focus:ring ring-orange-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Generar Documento
+                            <button type="submit" style="
+                                background: linear-gradient(135deg, #f97316, #ea580c) !important;
+                                color: #ffffff !important;
+                                padding: 10px 20px !important;
+                                border: 2px solid #ea580c !important;
+                                border-radius: 8px !important;
+                                font-weight: bold !important;
+                                font-size: 13px !important;
+                                cursor: pointer !important;
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                gap: 8px !important;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                                transition: all 0.2s !important;
+                                text-transform: uppercase !important;
+                                letter-spacing: 0.5px !important;
+                                z-index: 1000 !important;
+                                position: relative !important;
+                            " 
+                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                                📄 GENERAR DOCUMENTO
                             </button>
                         </form>
-                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
-                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M7 20h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                                Descargar PDF
-                            </a>
-                        @endif
+                        
+                        <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
+                            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+                            color: #ffffff !important;
+                            padding: 10px 20px !important;
+                            border: 2px solid #16a34a !important;
+                            border-radius: 8px !important;
+                            font-weight: bold !important;
+                            font-size: 13px !important;
+                            text-decoration: none !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            gap: 8px !important;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                            transition: all 0.2s !important;
+                            text-transform: uppercase !important;
+                            letter-spacing: 0.5px !important;
+                            z-index: 1000 !important;
+                            position: relative !important;
+                        "
+                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                            ⬇️ DESCARGAR PDF
+                        </a>
                     </div>
-                @endif
+                </div>
+                
+                <!-- Debug Info Temporal -->
+                <div style="margin-top: 10px !important; padding: 10px !important; background-color: #fffbeb !important; border: 1px solid #fbbf24 !important; border-radius: 6px !important; font-size: 11px !important; color: #92400e !important;">
+                    <strong>DEBUG:</strong> Botones forzados para ser visibles | 
+                    Asignaciones: {{ $itUser->currentAssignments ? $itUser->currentAssignments->count() : '0' }} |
+                    Usuario ID: {{ $itUser->id }}
+                </div>
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
