@@ -71,11 +71,11 @@ class ItUserController extends Controller
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('department')) {
+        if ($request->has('department') && !empty($request->department)) {
             $query->where('department', $request->department);
         }
 

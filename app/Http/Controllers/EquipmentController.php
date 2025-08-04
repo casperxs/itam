@@ -56,11 +56,11 @@ class EquipmentController extends Controller
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('type')) {
+        if ($request->has('type') && !empty($request->type)) {
             $query->where('equipment_type_id', $request->type);
         }
 
