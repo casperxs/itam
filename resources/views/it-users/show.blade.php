@@ -68,36 +68,29 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
-                    
-                    {{-- Test buttons --}}
-                    <div class="flex space-x-2">
-                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" class="inline">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
+                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
+                    <div class="flex space-x-3">
+                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" class="inline-block">
                             @csrf
-                            <button type="submit" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm">
-                                Generar Documento Consolidado
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-orange-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-700 active:bg-orange-900 focus:outline-none focus:border-orange-900 focus:ring ring-orange-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Generar Documento
                             </button>
                         </form>
-                        <a href="{{ route('test.consolidated', $itUser) }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm">
-                            TEST: Generar y Descargar PDF
-                        </a>
-                        <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
-                            Descargar Documento
-                        </a>
+                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
+                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M7 20h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Descargar PDF
+                            </a>
+                        @endif
                     </div>
-                </div>
-                
-                {{-- Debug info --}}
-                <div class="text-xs text-gray-500 mt-2 p-2 bg-yellow-100 rounded">
-                    <strong>DEBUG INFO:</strong><br>
-                    - currentAssignments existe: {{ $itUser->currentAssignments ? 'SÍ' : 'NO' }}<br>
-                    - currentAssignments count: {{ $itUser->currentAssignments ? $itUser->currentAssignments->count() : 'NULL' }}<br>
-                    - assignments count: {{ $itUser->assignments ? $itUser->assignments->count() : 'NULL' }}<br>
-                    - Usuario ID: {{ $itUser->id }}<br>
-                    - Relaciones cargadas: {{ implode(', ', array_keys($itUser->getRelations())) }}
-                </div>
+                @endif
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
