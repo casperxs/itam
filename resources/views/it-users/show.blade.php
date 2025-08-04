@@ -124,7 +124,7 @@
     <!-- Panel Lateral -->
     <div class="space-y-6">
         <!-- Estadísticas -->
-        <div class="bg-white rounded-lg shadow">
+        <!--<div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-medium text-gray-900">Estadísticas</h3>
             </div>
@@ -142,7 +142,7 @@
                     <span class="font-semibold">{{ $itUser->documents_count ?? 0 }}</span>
                 </div>
             </div>
-        </div>
+        </div>-->
 
         <!-- Acciones Rápidas -->
         <div class="bg-white rounded-lg shadow">
@@ -153,7 +153,7 @@
                 <a href="{{ route('assignments.create', ['user_id' => $itUser->id]) }}" class="block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700">
                     Asignar Equipo
                 </a>
-                
+
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="width: 100%; margin-bottom: 12px;">
                         @csrf
@@ -183,7 +183,7 @@
 
                     @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
                         <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
-                            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+                            background: linear-gradient(135deg, #f97316, #f97316) !important;
                             color: #ffffff !important;
                             padding: 10px 18px !important;
                             border: none !important;
@@ -207,9 +207,9 @@
                         </a>
                     @endif
                 @endif
-                
+
                 <a href="{{ route('it-users.documents', $itUser) }}" style="
-                    background: linear-gradient(135deg, #059669, #047857) !important;
+                    background: linear-gradient(135deg, #f97316, #f97316) !important;
                     color: #ffffff !important;
                     padding: 10px 18px !important;
                     border: none !important;
@@ -231,10 +231,10 @@
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
                     📁 Ver Documentos
                 </a>
-                
+
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <a href="{{ route('assignments.generate-exit-document', $itUser) }}" style="
-                        background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+                        background: linear-gradient(135deg, #f97316, #f97316) !important;
                         color: #ffffff !important;
                         padding: 10px 18px !important;
                         border: none !important;
@@ -257,7 +257,7 @@
                     </a>
                 @else
                     <span style="
-                        background: linear-gradient(135deg, #9ca3af, #6b7280) !important;
+                        background: linear-gradient(135deg, #f97316, #f97316) !important;
                         color: #ffffff !important;
                         padding: 10px 18px !important;
                         border: none !important;
@@ -283,7 +283,7 @@
         <!-- Información de Sistema -->
         <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Información del Sistema</h3>
+                <h3 class="text-lg font-medium text-gray-900">Información del Usuario</h3>
             </div>
             <div class="px-6 py-4 space-y-2 text-sm">
                 <div class="flex justify-between">
