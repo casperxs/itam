@@ -5,8 +5,8 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <div>
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Mantenimiento de Equipos</h1>
-        <p class="text-gray-600 dark:text-gray-300">Gestión de mantenimientos programados y ejecutados</p>
+        <h1 class="text-3xl font-bold text-gray-800">Mantenimiento de Equipos</h1>
+        <p class="text-gray-600">Gestión de mantenimientos programados y ejecutados</p>
     </div>
     <div class="flex gap-3">
         <a href="{{ route('maintenance.completed') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold">
@@ -21,17 +21,17 @@
     </div>
 </div>
 
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+<div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200">
         <form method="GET" class="flex gap-4 items-end">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
                 <input
                     type="text"
                     name="search"
                     value="{{ request('search') }}"
                     placeholder="Equipo, técnico, descripción..."
-                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
             <div>
@@ -59,21 +59,21 @@
                     type="date"
                     name="date"
                     value="{{ request('date') }}"
-                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
-            <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md">
+            <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
                 Filtrar
             </button>
-            <a href="{{ route('maintenance.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">
+            <a href="{{ route('maintenance.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
                 Limpiar
             </a>
         </form>
     </div>
 
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-50 dark:bg-gray-700">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipo</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
@@ -189,7 +189,7 @@
 
 <!-- Próximos mantenimientos -->
 <div class="mt-8 bg-white rounded-lg shadow">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200">
         <h3 class="text-lg font-medium text-gray-900">Próximos Mantenimientos (7 días)</h3>
     </div>
     <div class="px-6 py-4">

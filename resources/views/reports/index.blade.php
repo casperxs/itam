@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Centro de Reportes</h1>
-    <p class="text-gray-600 dark:text-gray-300">Genera reportes y análisis del sistema de gestión de activos</p>
+    <h1 class="text-3xl font-bold text-gray-800">Centro de Reportes</h1>
+    <p class="text-gray-600">Genera reportes y análisis del sistema de gestión de activos</p>
 </div>
 
 <!-- Reportes Rápidos -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-center mb-4">
             <div class="p-3 bg-blue-100 rounded-full">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,8 +18,8 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Inventario de Equipos</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">Reporte completo de todos los equipos</p>
+                <h3 class="text-lg font-semibold text-gray-900">Inventario de Equipos</h3>
+                <p class="text-sm text-gray-600">Reporte completo de todos los equipos</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-center mb-4">
             <div class="p-3 bg-green-100 rounded-full">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,8 +43,8 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Asignaciones Activas</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">Equipos asignados actualmente</p>
+                <h3 class="text-lg font-semibold text-gray-900">Asignaciones Activas</h3>
+                <p class="text-sm text-gray-600">Equipos asignados actualmente</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-center mb-4">
             <div class="p-3 bg-yellow-100 rounded-full">
                 <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,8 +68,8 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Mantenimientos</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">Historial y programación</p>
+                <h3 class="text-lg font-semibold text-gray-900">Mantenimientos</h3>
+                <p class="text-sm text-gray-600">Historial y programación</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-center mb-4">
             <div class="p-3 bg-purple-100 rounded-full">
                 <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,8 +93,8 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Contratos</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">Estados y vencimientos</p>
+                <h3 class="text-lg font-semibold text-gray-900">Contratos</h3>
+                <p class="text-sm text-gray-600">Estados y vencimientos</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -110,7 +110,7 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-center mb-4">
             <div class="p-3 bg-indigo-100 rounded-full">
                 <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,8 +118,8 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Dashboard Ejecutivo</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">Métricas generales del sistema</p>
+                <h3 class="text-lg font-semibold text-gray-900">Dashboard Ejecutivo</h3>
+                <p class="text-sm text-gray-600">Métricas generales del sistema</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -134,17 +134,17 @@
 </div>
 
 <!-- Reportes Personalizados -->
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Reportes Personalizados</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-300">Genera reportes con filtros específicos</p>
+<div class="bg-white rounded-lg shadow mb-8">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900">Reportes Personalizados</h2>
+        <p class="text-sm text-gray-600">Genera reportes con filtros específicos</p>
     </div>
     <div class="px-6 py-4">
         <form method="GET" action="{{ route('reports.equipment') }}" class="space-y-4" id="customReportForm">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo de Reporte</label>
-                    <select name="report_type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Reporte</label>
+                    <select name="report_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="equipment">Inventario de Equipos</option>
                         <option value="assignments">Asignaciones</option>
                         <option value="maintenance">Mantenimientos</option>
@@ -152,19 +152,19 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha Desde</label>
-                    <input type="date" name="date_from" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Desde</label>
+                    <input type="date" name="date_from" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha Hasta</label>
-                    <input type="date" name="date_to" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Hasta</label>
+                    <input type="date" name="date_to" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
-                    <select name="status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Todos</option>
                         <option value="active">Activo</option>
                         <option value="inactive">Inactivo</option>
@@ -172,8 +172,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Departamento</label>
-                    <select name="department" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+                    <select name="department" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Todos</option>
                         <option value="TI">TI</option>
                         <option value="Contabilidad">Contabilidad</option>
@@ -182,8 +182,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Formato</label>
-                    <select name="format" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Formato</label>
+                    <select name="format" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="html">HTML</option>
                         <option value="pdf">PDF</option>
                         <option value="excel">Excel</option>
@@ -202,7 +202,7 @@
 
 <!-- Estadísticas Rápidas -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-3 bg-blue-100 rounded-full">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,13 +210,13 @@
                 </svg>
             </div>
             <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Total Equipos</p>
-                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $totalEquipment ?? 0 }}</p>
+                <p class="text-sm font-medium text-gray-600">Total Equipos</p>
+                <p class="text-2xl font-semibold text-gray-900">{{ $totalEquipment ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-3 bg-green-100 rounded-full">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,13 +224,13 @@
                 </svg>
             </div>
             <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Asignaciones Activas</p>
-                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $activeAssignments ?? 0 }}</p>
+                <p class="text-sm font-medium text-gray-600">Asignaciones Activas</p>
+                <p class="text-2xl font-semibold text-gray-900">{{ $activeAssignments ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-3 bg-yellow-100 rounded-full">
                 <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,13 +238,13 @@
                 </svg>
             </div>
             <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Mantenimientos Pendientes</p>
-                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $pendingMaintenance ?? 0 }}</p>
+                <p class="text-sm font-medium text-gray-600">Mantenimientos Pendientes</p>
+                <p class="text-2xl font-semibold text-gray-900">{{ $pendingMaintenance ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-3 bg-red-100 rounded-full">
                 <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,8 +252,8 @@
                 </svg>
             </div>
             <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Contratos Vencidos</p>
-                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $expiredContracts ?? 0 }}</p>
+                <p class="text-sm font-medium text-gray-600">Contratos Vencidos</p>
+                <p class="text-2xl font-semibold text-gray-900">{{ $expiredContracts ?? 0 }}</p>
             </div>
         </div>
     </div>
