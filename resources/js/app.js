@@ -1,55 +1,37 @@
 import './bootstrap';
 
-// Dark Mode Toggle - Version híbrida con respaldo
+// Dark Mode Toggle - Version final optimizada
 function initDarkModeToggle() {
     const toggleForm = document.getElementById('darkModeForm');
     const toggleButton = document.getElementById('darkModeToggle');
     const darkModeIcon = document.getElementById('darkModeIcon');
     const lightModeIcon = document.getElementById('lightModeIcon');
     
-    console.log('Dark mode toggle init:', {
-        toggleForm: !!toggleForm,
-        toggleButton: !!toggleButton,
-        darkModeIcon: !!darkModeIcon,
-        lightModeIcon: !!lightModeIcon
-    });
-    
     if (toggleForm && toggleButton && darkModeIcon && lightModeIcon) {
         toggleForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('Dark mode form submitted');
             
-            // Obtener token CSRF del formulario
+            // Usar FormData para enviar exactamente como un formulario normal
             const formData = new FormData(toggleForm);
-            const csrfToken = formData.get('_token');
             
-            if (!csrfToken) {
-                console.error('CSRF token not found in form');
-                // Permitir que el formulario se envíe normalmente
-                toggleForm.submit();
-                return;
-            }
-            
-            fetch('/dark-mode/toggle', {
+            fetch(toggleForm.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 credentials: 'same-origin'
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
                 if (data.success) {
-                    // Toggle html class
+                    // Toggle html class inmediatamente
                     const html = document.documentElement;
                     if (data.dark_mode) {
                         html.classList.add('dark');
@@ -63,13 +45,11 @@ function initDarkModeToggle() {
                 }
             })
             .catch(error => {
-                console.error('AJAX failed, falling back to form submission:', error);
-                // Si AJAX falla, enviar el formulario normalmente
+                // Si AJAX falla, usar el formulario normal (con recarga)
+                console.log('Using form fallback');
                 toggleForm.submit();
             });
         });
-    } else {
-        console.warn('Dark mode toggle elements not found');
     }
 }
 

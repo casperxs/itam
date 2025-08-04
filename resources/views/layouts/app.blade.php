@@ -38,9 +38,6 @@
                     </button>
                 </form>
 
-                <!-- Debug info (temporal) -->
-                <span class="text-xs">{{ $isDarkMode ? 'Dark' : 'Light' }}</span>
-
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit" class="hover:text-blue-200 dark:hover:text-gray-300">Cerrar Sesión</button>
