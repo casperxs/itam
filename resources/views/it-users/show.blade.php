@@ -68,56 +68,8 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Equipos Asignados Actualmente</h2>
-                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
-                    <div style="display: flex !important; gap: 12px !important; align-items: center !important;">
-                        <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="display: inline-block !important;">
-                            @csrf
-                            <button type="submit" style="
-                                background: linear-gradient(135deg, #f97316, #ea580c) !important;
-                                color: #ffffff !important;
-                                padding: 10px 18px !important;
-                                border: none !important;
-                                border-radius: 6px !important;
-                                font-weight: 600 !important;
-                                font-size: 12px !important;
-                                cursor: pointer !important;
-                                display: inline-flex !important;
-                                align-items: center !important;
-                                gap: 6px !important;
-                                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-                                transition: all 0.2s !important;
-                            "
-                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
-                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
-                                📄 Generar Documento Consolidado
-                            </button>
-                        </form>
-
-                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
-                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
-                                background: linear-gradient(135deg, #22c55e, #16a34a) !important;
-                                color: #ffffff !important;
-                                padding: 10px 18px !important;
-                                border: none !important;
-                                border-radius: 6px !important;
-                                font-weight: 600 !important;
-                                font-size: 12px !important;
-                                text-decoration: none !important;
-                                display: inline-flex !important;
-                                align-items: center !important;
-                                gap: 6px !important;
-                                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-                                transition: all 0.2s !important;
-                            "
-                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
-                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
-                                ⬇️ Descargar PDF
-                            </a>
-                        @endif
-                    </div>
-                @endif
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
@@ -201,6 +153,61 @@
                 <a href="{{ route('assignments.create', ['user_id' => $itUser->id]) }}" class="block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700">
                     Asignar Equipo
                 </a>
+                
+                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
+                    <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="width: 100%; margin-bottom: 12px;">
+                        @csrf
+                        <button type="submit" style="
+                            background: linear-gradient(135deg, #f97316, #ea580c) !important;
+                            color: #ffffff !important;
+                            padding: 10px 18px !important;
+                            border: none !important;
+                            border-radius: 6px !important;
+                            font-weight: 600 !important;
+                            font-size: 12px !important;
+                            cursor: pointer !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 6px !important;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                            transition: all 0.2s !important;
+                            width: 100% !important;
+                            box-sizing: border-box !important;
+                        "
+                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                            📄 Generar Documento Consolidado
+                        </button>
+                    </form>
+
+                    @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
+                        <a href="{{ route('assignments.download-consolidated', $itUser) }}" style="
+                            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+                            color: #ffffff !important;
+                            padding: 10px 18px !important;
+                            border: none !important;
+                            border-radius: 6px !important;
+                            font-weight: 600 !important;
+                            font-size: 12px !important;
+                            text-decoration: none !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 6px !important;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                            transition: all 0.2s !important;
+                            width: 100% !important;
+                            box-sizing: border-box !important;
+                            margin-bottom: 12px !important;
+                        "
+                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                            ⬇️ Descargar PDF Consolidado
+                        </a>
+                    @endif
+                @endif
+                
                 <a href="{{ route('it-users.documents', $itUser) }}" style="
                     background: linear-gradient(135deg, #059669, #047857) !important;
                     color: #ffffff !important;
@@ -224,6 +231,7 @@
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
                     📁 Ver Documentos
                 </a>
+                
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <a href="{{ route('assignments.generate-exit-document', $itUser) }}" style="
                         background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
