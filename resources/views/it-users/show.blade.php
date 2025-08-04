@@ -204,9 +204,15 @@
                 <a href="{{ route('it-users.documents', $itUser) }}" class="block w-full bg-green-600 text-white text-center px-4 py-2 rounded-md hover:bg-green-700">
                     Ver Documentos
                 </a>
-                <a href="mailto:{{ $itUser->email }}" class="block w-full bg-purple-600 text-white text-center px-4 py-2 rounded-md hover:bg-purple-700">
-                    Enviar Email
-                </a>
+                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
+                    <a href="{{ route('assignments.generate-exit-document', $itUser) }}" class="block w-full bg-purple-600 text-white text-center px-4 py-2 rounded-md hover:bg-purple-700">
+                        📄 Documento de Salida
+                    </a>
+                @else
+                    <span class="block w-full bg-gray-400 text-white text-center px-4 py-2 rounded-md cursor-not-allowed opacity-50">
+                        📄 Documento de Salida
+                    </span>
+                @endif
             </div>
         </div>
 

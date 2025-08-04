@@ -39,6 +39,24 @@ class PdfGeneratorService
         return $fileName;
     }
 
+    public function generateEquipmentExitDocument($itUser, $assignments)
+    {
+        $itUser->load(['currentAssignments.equipment.equipmentType', 'currentAssignments.equipment.supplier']);
+        
+        $pdf = PDF::loadView('assignments.pdf.equipment-exit-document', [
+            'itUser' => $itUser,
+            'assignments' => $assignments,
+            'assignedBy' => auth()->user()
+        ]);
+        
+        $fileName = 'equipment_exit_' . $itUser->id . '_' . time() . '.pdf';
+        $path = 'assignments/' . $fileName;
+        
+        Storage::disk('private')->put($path, $pdf->output());
+        
+        return $fileName;
+    }
+
     public function generateEquipmentReport($equipment, $filters = [])
     {
         $pdf = PDF::loadView('reports.pdf.equipment', compact('equipment', 'filters'));

@@ -161,4 +161,20 @@ class AssignmentController extends Controller
 
         return response()->download(storage_path('app/private/assignments/' . $assignment->assignment_document));
     }
+
+    public function generateExitDocument(ItUser $itUser)
+    {
+        $assignments = $itUser->currentAssignments()
+            ->with(['equipment.equipmentType', 'equipment.supplier', 'assignedBy'])
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return redirect()->back()->with('error', 'El usuario no tiene equipos asignados actualmente.');
+        }
+
+        $pdfPath = $this->pdfService->generateEquipmentExitDocument($itUser, $assignments);
+        
+        return response()->download(storage_path('app/private/assignments/' . $pdfPath))
+            ->deleteFileAfterSend(false);
+    }
 }

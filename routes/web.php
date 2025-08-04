@@ -63,6 +63,8 @@ Route::middleware(['admin'])->group(function () {
         ->name('assignments.generate-consolidated');
     Route::get('it-users/{itUser}/download-consolidated-document', [AssignmentController::class, 'downloadConsolidatedDocument'])
         ->name('assignments.download-consolidated');
+    Route::get('it-users/{itUser}/generate-exit-document', [AssignmentController::class, 'generateExitDocument'])
+        ->name('assignments.generate-exit-document');
 
     // Maintenance
     Route::resource('maintenance', MaintenanceController::class);
