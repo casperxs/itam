@@ -7,11 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 10px;
-            line-height: 1.3;
+            font-size: 9px;
+            line-height: 1.2;
             color: #333;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             height: 100vh;
             box-sizing: border-box;
         }
@@ -19,8 +19,8 @@
         /* ENCABEZADO ESTILO FACTURA */
         .invoice-header {
             border: 2px solid #333;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
         }
         .company-info {
             text-align: center;
@@ -42,29 +42,25 @@
         /* RECUADRO TIPO DE DOCUMENTO */
         .document-type-section {
             border: 1px solid #333;
-            padding: 10px;
+            padding: 8px 10px;
             margin-bottom: 15px;
             text-align: center;
         }
-        .document-type-title {
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-        .checkbox-container {
+        .document-type-inline {
             display: inline-flex;
-            gap: 30px;
-            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 11px;
+            font-weight: bold;
         }
         .checkbox-item {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
-            font-size: 11px;
         }
         .checkbox {
-            width: 15px;
-            height: 15px;
+            width: 12px;
+            height: 12px;
             border: 2px solid #333;
             display: inline-block;
         }
@@ -166,25 +162,25 @@
         .val-70 { background-color: #FF9800; }
         .val-60 { background-color: #F44336; }
         
-        /* PAGARÉ MOVIDO ARRIBA */
+        /* PAGARÉ OPTIMIZADO */
         .promissory-note {
             background-color: #fafafa;
             border: 2px solid #333;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 9px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 8px;
         }
         .promissory-title {
             font-weight: bold;
             text-align: center;
-            font-size: 12px;
-            margin-bottom: 10px;
+            font-size: 10px;
+            margin-bottom: 8px;
             text-decoration: underline;
         }
         .promissory-content {
             text-align: justify;
-            line-height: 1.4;
-            margin-bottom: 15px;
+            line-height: 1.3;
+            margin-bottom: 10px;
         }
         .promissory-blanks {
             display: inline-block;
@@ -205,11 +201,11 @@
             height: 16px;
         }
         
-        /* SECCIÓN DE FIRMAS REORGANIZADA */
+        /* SECCIÓN DE FIRMAS EN 4 COLUMNAS */
         .signatures-section {
-            margin-top: 20px;
+            margin-top: 15px;
             border: 1px solid #333;
-            padding: 15px;
+            padding: 10px;
         }
         .signatures-grid {
             display: table;
@@ -221,34 +217,34 @@
         }
         .signature-column {
             display: table-cell;
-            width: 48%;
+            width: 23%;
             border: 1px solid #333;
-            padding: 15px;
+            padding: 10px;
             vertical-align: top;
-            margin-bottom: 10px;
         }
         .signature-spacer {
             display: table-cell;
-            width: 4%;
+            width: 2%;
         }
         .signature-title {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 8px;
             text-align: center;
             background-color: #f0f0f0;
-            padding: 5px;
-            margin: -15px -15px 10px -15px;
+            padding: 3px;
+            margin: -10px -10px 8px -10px;
         }
         .signature-content {
             text-align: center;
-            font-size: 9px;
+            font-size: 7px;
+            line-height: 1.2;
         }
         .signature-line {
             border-top: 1px solid #333;
-            margin-top: 25px;
-            padding-top: 3px;
+            margin-top: 15px;
+            padding-top: 2px;
             text-align: center;
-            font-size: 8px;
+            font-size: 7px;
         }
         
         .footer {
@@ -279,8 +275,8 @@
         
         <!-- RECUADRO TIPO DE DOCUMENTO -->
         <div class="document-type-section">
-            <div class="document-type-title">TIPO DE SALIDA</div>
-            <div class="checkbox-container">
+            <div class="document-type-inline">
+                <span>TIPO DE SALIDA:</span>
                 <div class="checkbox-item">
                     <span class="checkbox"></span>
                     <span>SEMESTRAL</span>
@@ -396,9 +392,8 @@
         </div>
     </div>
 
-    <!-- SECCIÓN DE FIRMAS REORGANIZADA -->
+    <!-- SECCIÓN DE FIRMAS EN 4 COLUMNAS -->
     <div class="signatures-section">
-        <!-- Primera fila de firmas -->
         <div class="signatures-grid">
             <div class="signatures-row">
                 <div class="signature-column">
@@ -408,7 +403,7 @@
                         {{ $itUser->employee_id ?? 'N/A' }}<br>
                         {{ $itUser->department ?? 'N/A' }}
                         <div class="signature-line">
-                            Firma: ________________________
+                            Firma: ______________
                         </div>
                     </div>
                 </div>
@@ -418,38 +413,31 @@
                     <div class="signature-content">
                         <strong>Nombre y Firma del Jefe Inmediato</strong><br>
                         <br>
-                        <br>
                         <div class="signature-line">
-                            Firma: ________________________
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Segunda fila de firmas -->
-        <div class="signatures-grid" style="margin-top: 15px;">
-            <div class="signatures-row">
-                <div class="signature-column">
-                    <div class="signature-title">ADMINISTRADOR DEL SISTEMA</div>
-                    <div class="signature-content">
-                        <strong>{{ $assignedBy->name ?? 'N/A' }}</strong><br>
-                        Administrador/Técnico<br>
-                        EXL Automotive S.C.
-                        <div class="signature-line">
-                            Firma: ________________________
+                            Firma: ______________
                         </div>
                     </div>
                 </div>
                 <div class="signature-spacer"></div>
                 <div class="signature-column">
-                    <div class="signature-title">INGENIERO QUE RECIBE</div>
+                    <div class="signature-title">ADMINISTRADOR</div>
                     <div class="signature-content">
-                        <strong>Ingeniero que Recibe el Equipo</strong><br>
-                        <br>
+                        <strong>{{ $assignedBy->name ?? 'N/A' }}</strong><br>
+                        Administrador/Técnico<br>
+                        EXL Automotive S.C.
+                        <div class="signature-line">
+                            Firma: ______________
+                        </div>
+                    </div>
+                </div>
+                <div class="signature-spacer"></div>
+                <div class="signature-column">
+                    <div class="signature-title">INGENIERO RECEPTOR</div>
+                    <div class="signature-content">
+                        <strong>Ingeniero que Recibe</strong><br>
                         <br>
                         <div class="signature-line">
-                            Firma: ________________________
+                            Firma: ______________
                         </div>
                     </div>
                 </div>

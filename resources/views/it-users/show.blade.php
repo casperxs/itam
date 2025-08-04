@@ -201,15 +201,71 @@
                 <a href="{{ route('assignments.create', ['user_id' => $itUser->id]) }}" class="block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700">
                     Asignar Equipo
                 </a>
-                <a href="{{ route('it-users.documents', $itUser) }}" class="block w-full bg-green-600 text-white text-center px-4 py-2 rounded-md hover:bg-green-700">
-                    Ver Documentos
+                <a href="{{ route('it-users.documents', $itUser) }}" style="
+                    background: linear-gradient(135deg, #059669, #047857) !important;
+                    color: #ffffff !important;
+                    padding: 10px 18px !important;
+                    border: none !important;
+                    border-radius: 6px !important;
+                    font-weight: 600 !important;
+                    font-size: 12px !important;
+                    text-decoration: none !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 6px !important;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                    transition: all 0.2s !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                    margin-bottom: 12px !important;
+                "
+                onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                    📁 Ver Documentos
                 </a>
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
-                    <a href="{{ route('assignments.generate-exit-document', $itUser) }}" class="block w-full bg-purple-600 text-white text-center px-4 py-2 rounded-md hover:bg-purple-700">
+                    <a href="{{ route('assignments.generate-exit-document', $itUser) }}" style="
+                        background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+                        color: #ffffff !important;
+                        padding: 10px 18px !important;
+                        border: none !important;
+                        border-radius: 6px !important;
+                        font-weight: 600 !important;
+                        font-size: 12px !important;
+                        text-decoration: none !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 6px !important;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                        transition: all 0.2s !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                    "
+                    onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
                         📄 Documento de Salida
                     </a>
                 @else
-                    <span class="block w-full bg-gray-400 text-white text-center px-4 py-2 rounded-md cursor-not-allowed opacity-50">
+                    <span style="
+                        background: linear-gradient(135deg, #9ca3af, #6b7280) !important;
+                        color: #ffffff !important;
+                        padding: 10px 18px !important;
+                        border: none !important;
+                        border-radius: 6px !important;
+                        font-weight: 600 !important;
+                        font-size: 12px !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 6px !important;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                        cursor: not-allowed !important;
+                        opacity: 0.6 !important;
+                    ">
                         📄 Documento de Salida
                     </span>
                 @endif
