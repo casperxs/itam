@@ -68,9 +68,11 @@
 
         <!-- Equipos Asignados Actualmente -->
         <div class="mt-6 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
-                @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-gray-900">Equipos Asignados Actualmente</h2>
+                    
+                    {{-- Test buttons --}}
                     <div class="flex space-x-2">
                         <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" class="inline">
                             @csrf
@@ -78,13 +80,24 @@
                                 Generar Documento Consolidado
                             </button>
                         </form>
-                        @if($itUser->currentAssignments->first() && $itUser->currentAssignments->first()->assignment_document)
-                            <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
-                                Descargar Documento
-                            </a>
-                        @endif
+                        <a href="{{ route('test.consolidated', $itUser) }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm">
+                            TEST: Generar y Descargar PDF
+                        </a>
+                        <a href="{{ route('assignments.download-consolidated', $itUser) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+                            Descargar Documento
+                        </a>
                     </div>
-                @endif
+                </div>
+                
+                {{-- Debug info --}}
+                <div class="text-xs text-gray-500 mt-2 p-2 bg-yellow-100 rounded">
+                    <strong>DEBUG INFO:</strong><br>
+                    - currentAssignments existe: {{ $itUser->currentAssignments ? 'SÍ' : 'NO' }}<br>
+                    - currentAssignments count: {{ $itUser->currentAssignments ? $itUser->currentAssignments->count() : 'NULL' }}<br>
+                    - assignments count: {{ $itUser->assignments ? $itUser->assignments->count() : 'NULL' }}<br>
+                    - Usuario ID: {{ $itUser->id }}<br>
+                    - Relaciones cargadas: {{ implode(', ', array_keys($itUser->getRelations())) }}
+                </div>
             </div>
             <div class="px-6 py-4">
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)

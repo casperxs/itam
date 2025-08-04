@@ -63,6 +63,22 @@ Route::middleware(['admin'])->group(function () {
         ->name('assignments.generate-consolidated');
     Route::get('it-users/{itUser}/download-consolidated-document', [AssignmentController::class, 'downloadConsolidatedDocument'])
         ->name('assignments.download-consolidated');
+    
+    // Ruta de prueba temporal para debug
+    Route::get('test-consolidated/{itUser}', function(App\Models\ItUser $itUser) {
+        $assignments = $itUser->currentAssignments()
+            ->with(['equipment.equipmentType', 'equipment.supplier', 'assignedBy'])
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return response('No hay asignaciones para este usuario', 404);
+        }
+
+        $pdfService = new App\Services\PdfGeneratorService();
+        $pdfPath = $pdfService->generateConsolidatedAssignmentDocument($itUser, $assignments);
+        
+        return response()->download(storage_path('app/private/assignments/' . $pdfPath));
+    })->name('test.consolidated');
 
     // Maintenance
     Route::resource('maintenance', MaintenanceController::class);
