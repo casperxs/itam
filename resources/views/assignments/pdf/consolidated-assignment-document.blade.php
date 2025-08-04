@@ -7,221 +7,235 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 9px;
-            line-height: 1.2;
+            font-size: 10px;
+            line-height: 1.3;
             color: #333;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
             height: 100vh;
             box-sizing: border-box;
         }
-        .header {
+        
+        /* ENCABEZADO ESTILO FACTURA */
+        .invoice-header {
+            border: 2px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .company-info {
             text-align: center;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
         .company-name {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
         }
         .document-title {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
-            margin-top: 5px;
+            color: #333;
         }
-        .header-info {
+        
+        .user-details {
             display: table;
             width: 100%;
-            margin-top: 8px;
-            font-size: 8px;
         }
-        .header-left, .header-right {
+        .user-details-left, .user-details-right {
             display: table-cell;
-            width: 33.33%;
+            width: 50%;
             vertical-align: top;
         }
-        .header-center {
-            display: table-cell;
-            width: 33.33%;
-            text-align: center;
-            vertical-align: top;
-        }
-        .header-right {
+        .user-details-right {
             text-align: right;
         }
-        .main-content {
-            display: table;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .left-column {
-            display: table-cell;
-            width: 48%;
-            vertical-align: top;
-            padding-right: 10px;
-        }
-        .right-column {
-            display: table-cell;
-            width: 48%;
-            vertical-align: top;
-            padding-left: 10px;
-        }
-        .divider {
-            display: table-cell;
-            width: 4%;
-            border-left: 1px solid #ddd;
-        }
-        .section-title {
-            font-size: 10px;
-            font-weight: bold;
-            background-color: #f5f5f5;
-            padding: 4px;
-            border-left: 3px solid #333;
-            margin-bottom: 6px;
-        }
-        .user-info {
-            display: table;
-            width: 100%;
+        .detail-row {
             margin-bottom: 8px;
+            font-size: 11px;
         }
-        .user-row {
-            display: table-row;
-        }
-        .user-label {
-            display: table-cell;
+        .detail-label {
             font-weight: bold;
-            width: 35%;
-            padding: 1px 4px 1px 0;
-            vertical-align: top;
-            font-size: 8px;
+            display: inline-block;
+            min-width: 120px;
         }
-        .user-value {
-            display: table-cell;
-            padding: 1px 0;
-            border-bottom: 1px dotted #ccc;
-            vertical-align: top;
-            font-size: 8px;
+        .detail-value {
+            border-bottom: 1px solid #333;
+            padding: 2px 5px;
+            min-width: 150px;
+            display: inline-block;
         }
-        .equipment-compact {
-            margin-bottom: 6px;
-            padding: 4px;
-            border: 1px solid #ddd;
-            font-size: 8px;
+        
+        /* SECCIÓN DE EQUIPOS COMO PARTIDAS */
+        .equipment-section {
+            margin-bottom: 20px;
         }
-        .equipment-line {
-            margin-bottom: 2px;
-        }
-        .equipment-header {
+        .section-header {
+            background-color: #f0f0f0;
+            border: 1px solid #333;
+            padding: 8px;
             font-weight: bold;
-            font-size: 9px;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #333;
+        }
+        .equipment-row {
+            border-bottom: 1px solid #333;
+        }
+        .equipment-item {
+            padding: 10px;
+            border-right: 1px solid #333;
+            vertical-align: top;
+            width: 70%;
+        }
+        .equipment-signature-cell {
+            padding: 10px;
+            vertical-align: top;
+            width: 30%;
+            text-align: center;
+        }
+        .item-header {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .item-detail {
             margin-bottom: 3px;
+            font-size: 9px;
         }
+        .item-specs {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+            font-size: 8px;
+        }
+        .signature-box-inline {
+            border: 1px solid #999;
+            padding: 8px;
+            margin: 5px 0;
+            min-height: 40px;
+        }
+        .signature-label {
+            font-size: 8px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .signature-line-inline {
+            border-top: 1px solid #333;
+            margin-top: 20px;
+            padding-top: 2px;
+            font-size: 7px;
+            text-align: center;
+        }
+        
+        /* BARRA DE VALORACIÓN */
         .valuation-bar {
-            height: 12px;
+            height: 15px;
             background-color: #e0e0e0;
-            border-radius: 6px;
+            border-radius: 8px;
             position: relative;
             overflow: hidden;
-            margin: 2px 0;
+            margin: 5px 0;
+            border: 1px solid #ccc;
         }
         .valuation-fill {
             height: 100%;
-            border-radius: 6px;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 7px;
+            font-size: 8px;
         }
         .val-100 { background-color: #4CAF50; }
         .val-90 { background-color: #8BC34A; }
-        .val-80 { background-color: #CDDC39; }
+        .val-80 { background-color: #CDDC39; color: #333; }
         .val-70 { background-color: #FF9800; }
         .val-60 { background-color: #F44336; }
-        .signature-section {
-            margin-top: 10px;
+        
+        /* SECCIÓN FINAL DE FIRMAS */
+        .final-signatures {
+            margin-top: 20px;
+            border: 1px solid #333;
+            padding: 15px;
         }
-        .signature-boxes {
+        .signatures-row {
             display: table;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 20px;
         }
-        .signature-box {
+        .signature-column {
             display: table-cell;
             width: 48%;
             border: 1px solid #333;
-            padding: 6px;
+            padding: 15px;
             vertical-align: top;
         }
         .signature-spacer {
             display: table-cell;
             width: 4%;
         }
-        .signature-header {
+        .signature-title {
             font-weight: bold;
-            font-size: 9px;
-            margin-bottom: 4px;
+            font-size: 11px;
             text-align: center;
             background-color: #f0f0f0;
-            padding: 3px;
-            margin: -6px -6px 4px -6px;
+            padding: 5px;
+            margin: -15px -15px 10px -15px;
         }
-        .signature-line {
-            border-top: 1px solid #333;
-            margin-top: 15px;
-            padding-top: 3px;
+        .signature-content {
             text-align: center;
-            font-size: 8px;
+            font-size: 10px;
         }
+        .signature-line-final {
+            border-top: 1px solid #333;
+            margin-top: 30px;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 9px;
+        }
+        
+        /* PAGARÉ */
         .promissory-note {
-            background-color: white;
-            border: 1px solid #333;
-            padding: 8px;
-            margin: 8px 0;
-            font-size: 8px;
+            background-color: #fafafa;
+            border: 2px solid #333;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 9px;
         }
         .promissory-title {
             font-weight: bold;
             text-align: center;
-            font-size: 9px;
-            margin-bottom: 6px;
+            font-size: 12px;
+            margin-bottom: 10px;
             text-decoration: underline;
         }
         .promissory-content {
             text-align: justify;
-            line-height: 1.3;
+            line-height: 1.4;
+            margin-bottom: 15px;
         }
-        .equipment-signatures {
-            display: table;
-            width: 100%;
-            margin-top: 8px;
-        }
-        .equipment-signature {
-            display: table-cell;
-            width: 48%;
-            border: 1px solid #333;
-            padding: 4px;
-            margin-bottom: 4px;
-            text-align: center;
-            font-size: 7px;
-        }
-        .equipment-signature:nth-child(odd) {
-            margin-right: 2%;
-        }
+        
         .footer {
             position: fixed;
-            bottom: 8px;
-            left: 10px;
-            right: 10px;
+            bottom: 10px;
+            left: 15px;
+            right: 15px;
             text-align: center;
-            font-size: 7px;
+            font-size: 8px;
             color: #666;
             border-top: 1px solid #ccc;
-            padding-top: 4px;
+            padding-top: 5px;
         }
+        
         @media print {
             body { margin: 0; height: 100vh; }
             .footer { position: fixed; }
@@ -229,114 +243,159 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="company-name">EXL AUTOMOTIVE S.C.</div>
-        <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+    <!-- ENCABEZADO ESTILO FACTURA -->
+    <div class="invoice-header">
+        <div class="company-info">
+            <div class="company-name">EXL AUTOMOTIVE S.C.</div>
+            <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+        </div>
         
-        <div class="header-info">
-            <div class="header-left">
-                <strong>No. Empleado:</strong> {{ $itUser->employee_id ?? 'N/A' }}<br>
-                <strong>Departamento:</strong> {{ $itUser->department ?? 'N/A' }}
+        <div class="user-details">
+            <div class="user-details-left">
+                <div class="detail-row">
+                    <span class="detail-label">Usuario Receptor:</span>
+                    <span class="detail-value">{{ $itUser->name ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">No. Empleado:</span>
+                    <span class="detail-value">{{ $itUser->employee_id ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Departamento:</span>
+                    <span class="detail-value">{{ $itUser->department ?? 'N/A' }}</span>
+                </div>
             </div>
-            <div class="header-center">
-                <strong>Fecha de Asignación:</strong> {{ now()->format('d/m/Y') }}
-            </div>
-            <div class="header-right">
-                <strong>Usuario Receptor:</strong> {{ $itUser->name ?? 'N/A' }}
+            <div class="user-details-right">
+                <div class="detail-row">
+                    <span class="detail-label">Fecha de Asignación:</span>
+                    <span class="detail-value">{{ now()->format('d/m/Y') }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Asignado por:</span>
+                    <span class="detail-value">{{ $assignedBy->name ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total de Equipos:</span>
+                    <span class="detail-value">{{ $assignments->count() }}</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="left-column">
-            <div class="section-title">EQUIPOS ASIGNADOS</div>
+    <!-- SECCIÓN DE EQUIPOS COMO PARTIDAS DE FACTURA -->
+    <div class="equipment-section">
+        <div class="section-header">EQUIPOS ASIGNADOS</div>
+        
+        <table class="equipment-table">
             @forelse($assignments as $assignment)
-            <div class="equipment-compact">
-                <div class="equipment-header">{{ $assignment->equipment->equipmentType->name ?? 'N/A' }} #{{ $loop->iteration }}</div>
-                <div class="equipment-line"><strong>Marca/Modelo:</strong> {{ $assignment->equipment->brand ?? 'N/A' }} {{ $assignment->equipment->model ?? 'N/A' }}</div>
-                <div class="equipment-line"><strong>Serie:</strong> {{ $assignment->equipment->serial_number ?? 'N/A' }}
-                @if($assignment->equipment->asset_tag) | <strong>Tag:</strong> {{ $assignment->equipment->asset_tag }}@endif
-                @if($assignment->equipment->invoice_number) | <strong>Factura:</strong> {{ $assignment->equipment->invoice_number }}@endif</div>
-                @if($assignment->equipment->specifications)
-                <div class="equipment-line"><strong>Especificaciones:</strong> {{ $assignment->equipment->specifications }}</div>
-                @endif
-                @if($assignment->equipment->valoracion)
-                <div class="equipment-line">
-                    <strong>Valoración:</strong>
-                    @php
-                        $valoracion = $assignment->equipment->valoracion;
-                        $percentage = (int) str_replace('%', '', $valoracion);
-                        $class = '';
-                        if ($percentage >= 90) $class = 'val-100';
-                        elseif ($percentage >= 80) $class = 'val-90';
-                        elseif ($percentage >= 70) $class = 'val-80';
-                        elseif ($percentage >= 60) $class = 'val-70';
-                        else $class = 'val-60';
-                    @endphp
-                    <div class="valuation-bar">
-                        <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
-                            {{ $valoracion }}
-                        </div>
-                    </div>
-                </div>
-                @endif
-            </div>
-            @empty
-            <p>No hay equipos asignados.</p>
-            @endforelse
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="right-column">
-            <div class="signature-section">
-                <div class="signature-boxes">
-                    <div class="signature-box">
-                        <div class="signature-header">USUARIO RECEPTOR</div>
-                        <div class="signature-line">
-                            <strong>{{ $itUser->name ?? 'N/A' }}</strong><br>
-                            Firma: ________________________<br>
-                            Fecha: ________________________
-                        </div>
-                    </div>
-                    <div class="signature-spacer"></div>
-                    <div class="signature-box">
-                        <div class="signature-header">DEPARTAMENTO DE TI</div>
-                        <div class="signature-line">
-                            <strong>{{ $assignedBy->name ?? 'N/A' }}</strong><br>
-                            Firma: ________________________<br>
-                            Fecha: ________________________
-                        </div>
-                    </div>
-                </div>
-
-                <div class="promissory-note">
-                    <div class="promissory-title">PAGARÉ POR EQUIPOS ASIGNADOS</div>
-                    <div class="promissory-content">
-                        A través de este pagaré, yo: <strong>{{ $itUser->name ?? 'N/A' }}</strong> quedo consciente que el(los) equipo(s) arriba descritos son propiedad de EXL Automotive S.C. y me es conferido en calidad de préstamo para el desarrollo de mis actividades laborales de EXL Automotive S.C. a partir de la fecha de este documento, así mismo, acepto que el(los) equipo(s) antes mencionado(s) es(son) completamente mi responsabilidad y deberé regresarlo(s) para revocación de este documento o antes si mi relación laboral con la empresa se redime o se me es solicitado por cualquier motivo. Yo responderé por daños de cualquier índole que le ocurra(n) a este(os) equipo(s) mientras este(n) a mi resguardo. En caso de pérdida o extravío del(os) equipo(s) responderé por el(los) mismo(s) de acuerdo con la valoración descrita en este documento.
+            <tr class="equipment-row">
+                <td class="equipment-item">
+                    <div class="item-header">
+                        {{ $assignment->equipment->equipmentType->name ?? 'N/A' }} #{{ $loop->iteration }}
                     </div>
                     
-                    <div class="signature-line" style="margin-top: 12px;">
-                        <strong>{{ $itUser->name ?? 'N/A' }}</strong><br>
-                        Firma: ________________________<br>
-                        Fecha: ________________________
+                    <div class="item-detail">
+                        <strong>Marca/Modelo:</strong> {{ $assignment->equipment->brand ?? 'N/A' }} {{ $assignment->equipment->model ?? 'N/A' }}
                     </div>
-                </div>
-
-                <!-- Firmas por cada equipo -->
-                @if($assignments && $assignments->count() > 0)
-                <div style="margin-top: 8px; font-size: 8px;">
-                    <strong>FIRMAS POR EQUIPO:</strong>
-                    @foreach($assignments as $assignment)
-                    <div style="border: 1px solid #333; padding: 3px; margin: 2px 0; text-align: center;">
-                        <div style="font-weight: bold; font-size: 7px;">{{ $assignment->equipment->equipmentType->name ?? 'N/A' }} - {{ $assignment->equipment->serial_number ?? 'N/A' }}</div>
-                        <div style="margin-top: 8px; border-top: 1px solid #333; padding-top: 2px; font-size: 6px;">
-                            Firma: _________________ Fecha: _________
+                    
+                    <div class="item-detail">
+                        <strong>Serie:</strong> {{ $assignment->equipment->serial_number ?? 'N/A' }}
+                        @if($assignment->equipment->asset_tag)
+                            | <strong>Tag:</strong> {{ $assignment->equipment->asset_tag }}
+                        @endif
+                        @if($assignment->equipment->invoice_number)
+                            | <strong>Factura:</strong> {{ $assignment->equipment->invoice_number }}
+                        @endif
+                    </div>
+                    
+                    @if($assignment->equipment->specifications)
+                    <div class="item-specs">
+                        <strong>Especificaciones:</strong> {{ $assignment->equipment->specifications }}
+                    </div>
+                    @endif
+                    
+                    @if($assignment->equipment->valoracion)
+                    <div class="item-detail">
+                        <strong>Valoración:</strong>
+                        @php
+                            $valoracion = $assignment->equipment->valoracion;
+                            $percentage = (int) str_replace('%', '', $valoracion);
+                            $class = '';
+                            if ($percentage >= 90) $class = 'val-100';
+                            elseif ($percentage >= 80) $class = 'val-90';
+                            elseif ($percentage >= 70) $class = 'val-80';
+                            elseif ($percentage >= 60) $class = 'val-70';
+                            else $class = 'val-60';
+                        @endphp
+                        <div class="valuation-bar">
+                            <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
+                                {{ $valoracion }}
+                            </div>
                         </div>
                     </div>
-                    @endforeach
+                    @endif
+                </td>
+                
+                <td class="equipment-signature-cell">
+                    <div class="signature-box-inline">
+                        <div class="signature-label">FIRMA DEL EMPLEADO</div>
+                        <div class="signature-line-inline">
+                            Recibí conforme
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="2" style="text-align: center; padding: 20px;">
+                    No hay equipos asignados.
+                </td>
+            </tr>
+            @endforelse
+        </table>
+    </div>
+
+    <!-- SECCIÓN FINAL DE FIRMAS -->
+    <div class="final-signatures">
+        <div class="signatures-row">
+            <div class="signature-column">
+                <div class="signature-title">USUARIO RECEPTOR</div>
+                <div class="signature-content">
+                    <strong>{{ $itUser->name ?? 'N/A' }}</strong><br>
+                    {{ $itUser->employee_id ?? 'N/A' }}<br>
+                    {{ $itUser->department ?? 'N/A' }}
+                    <div class="signature-line-final">
+                        Firma: ________________________
+                    </div>
                 </div>
-                @endif
+            </div>
+            <div class="signature-spacer"></div>
+            <div class="signature-column">
+                <div class="signature-title">DEPARTAMENTO DE TI</div>
+                <div class="signature-content">
+                    <strong>{{ $assignedBy->name ?? 'N/A' }}</strong><br>
+                    Administrador/Técnico<br>
+                    EXL Automotive S.C.
+                    <div class="signature-line-final">
+                        Firma: ________________________
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGARÉ -->
+        <div class="promissory-note">
+            <div class="promissory-title">PAGARÉ POR EQUIPOS ASIGNADOS</div>
+            <div class="promissory-content">
+                A través de este pagaré, yo: <strong>{{ $itUser->name ?? 'N/A' }}</strong> quedo consciente que el(los) equipo(s) arriba descritos son propiedad de EXL Automotive S.C. y me es conferido en calidad de préstamo para el desarrollo de mis actividades laborales de EXL Automotive S.C. a partir de la fecha de este documento, así mismo, acepto que el(los) equipo(s) antes mencionado(s) es(son) completamente mi responsabilidad y deberé regresarlo(s) para revocación de este documento o antes si mi relación laboral con la empresa se redime o se me es solicitado por cualquier motivo. Yo responderé por daños de cualquier índole que le ocurra(n) a este(os) equipo(s) mientras este(n) a mi resguardo. En caso de pérdida o extravío del(os) equipo(s) responderé por el(los) mismo(s) de acuerdo con la valoración descrita en este documento.
+            </div>
+            
+            <div class="signature-content">
+                <strong>{{ $itUser->name ?? 'N/A' }}</strong>
+                <div class="signature-line-final">
+                    Firma: ________________________<br>
+                    Fecha: ________________________
+                </div>
             </div>
         </div>
     </div>
