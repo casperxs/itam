@@ -90,15 +90,8 @@
         }
         .equipment-item {
             padding: 10px;
-            border-right: 1px solid #333;
             vertical-align: top;
-            width: 70%;
-        }
-        .equipment-signature-cell {
-            padding: 10px;
-            vertical-align: top;
-            width: 30%;
-            text-align: center;
+            width: 100%;
         }
         .item-header {
             font-weight: bold;
@@ -115,24 +108,6 @@
             color: #666;
             margin-top: 5px;
             font-size: 8px;
-        }
-        .signature-box-inline {
-            border: 1px solid #999;
-            padding: 8px;
-            margin: 5px 0;
-            min-height: 40px;
-        }
-        .signature-label {
-            font-size: 8px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .signature-line-inline {
-            border-top: 1px solid #333;
-            margin-top: 20px;
-            padding-top: 2px;
-            font-size: 7px;
-            text-align: center;
         }
         
         /* BARRA DE VALORACIÓN */
@@ -335,19 +310,10 @@
                     </div>
                     @endif
                 </td>
-                
-                <td class="equipment-signature-cell">
-                    <div class="signature-box-inline">
-                        <div class="signature-label">FIRMA DEL EMPLEADO</div>
-                        <div class="signature-line-inline">
-                            Recibí conforme
-                        </div>
-                    </div>
-                </td>
             </tr>
             @empty
             <tr>
-                <td colspan="2" style="text-align: center; padding: 20px;">
+                <td style="text-align: center; padding: 20px;">
                     No hay equipos asignados.
                 </td>
             </tr>
