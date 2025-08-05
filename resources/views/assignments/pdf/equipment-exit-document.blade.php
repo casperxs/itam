@@ -15,7 +15,7 @@
             height: 100vh;
             box-sizing: border-box;
         }
-
+        
         /* ENCABEZADO ESTILO FACTURA */
         .invoice-header {
             border: 2px solid #333;
@@ -38,7 +38,7 @@
             font-weight: bold;
             color: #333;
         }
-
+        
         /* RECUADRO TIPO DE DOCUMENTO */
         .document-type-section {
             border: 1px solid #333;
@@ -64,7 +64,7 @@
             border: 2px solid #333;
             display: inline-block;
         }
-
+        
         .user-details {
             display: table;
             width: 100%;
@@ -92,7 +92,7 @@
             min-width: 150px;
             display: inline-block;
         }
-
+        
         /* SECCIÓN DE EQUIPOS COMO PARTIDAS */
         .equipment-section {
             margin-bottom: 20px;
@@ -135,7 +135,7 @@
             margin-top: 5px;
             font-size: 8px;
         }
-
+        
         /* BARRA DE VALORACIÓN */
         .valuation-bar {
             height: 15px;
@@ -161,7 +161,7 @@
         .val-80 { background-color: #CDDC39; color: #333; }
         .val-70 { background-color: #FF9800; }
         .val-60 { background-color: #F44336; }
-
+        
         /* PAGARÉ OPTIMIZADO */
         .promissory-note {
             background-color: #fafafa;
@@ -200,7 +200,7 @@
             min-width: 120px;
             height: 16px;
         }
-
+        
         /* SECCIÓN DE FIRMAS EN 4 COLUMNAS */
         .signatures-section {
             margin-top: 15px;
@@ -246,7 +246,7 @@
             text-align: center;
             font-size: 7px;
         }
-
+        
         .footer {
             position: fixed;
             bottom: 10px;
@@ -258,7 +258,7 @@
             border-top: 1px solid #ccc;
             padding-top: 5px;
         }
-
+        
         @media print {
             body { margin: 0; height: 100vh; }
             .footer { position: fixed; }
@@ -272,7 +272,7 @@
             <div class="company-name">EXL AUTOMOTIVE S.C.</div>
             <div class="document-title">DOCUMENTO DE SALIDA DE EQUIPO DE CÓMPUTO</div>
         </div>
-
+        
         <!-- RECUADRO TIPO DE DOCUMENTO -->
         <div class="document-type-section">
             <div class="document-type-inline">
@@ -287,7 +287,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="user-details">
             <div class="user-details-left">
                 <div class="detail-row">
@@ -323,7 +323,7 @@
     <!-- SECCIÓN DE EQUIPOS COMO PARTIDAS DE FACTURA -->
     <div class="equipment-section">
         <div class="section-header">EQUIPO(S) QUE SALE(N) DE LAS INSTALACIONES</div>
-
+        
         <table class="equipment-table">
             @forelse($assignments as $assignment)
             <tr class="equipment-row">
@@ -331,11 +331,11 @@
                     <div class="item-header">
                         {{ $assignment->equipment->equipmentType->name ?? 'N/A' }} #{{ $loop->iteration }}
                     </div>
-
+                    
                     <div class="item-detail">
                         <strong>Marca/Modelo:</strong> {{ $assignment->equipment->brand ?? 'N/A' }} {{ $assignment->equipment->model ?? 'N/A' }}
                     </div>
-
+                    
                     <div class="item-detail">
                         <strong>Serie:</strong> {{ $assignment->equipment->serial_number ?? 'N/A' }}
                         @if($assignment->equipment->asset_tag)
@@ -345,13 +345,13 @@
                             | <strong>Factura:</strong> {{ $assignment->equipment->invoice_number }}
                         @endif
                     </div>
-
+                    
                     @if($assignment->equipment->specifications)
                     <div class="item-specs">
                         <strong>Especificaciones:</strong> {{ $assignment->equipment->specifications }}
                     </div>
                     @endif
-
+                    
                     @if($assignment->equipment->valoracion)
                     <div class="item-detail">
                         <strong>Valoración:</strong>
@@ -388,7 +388,7 @@
     <div class="promissory-note">
         <div class="promissory-title">PAGARÉ POR SALIDA DE EQUIPO DE CÓMPUTO</div>
         <div class="promissory-content">
-            A través de este pagaré, yo <span class="promissory-blanks"></span> quedo consciente que los equipos arriba mencionados son propiedad de EXL Automotive S.C. y me es conferido en calidad de préstamo para el desarrollo de mis actividades laborales fuera de las instalaciones de EXL Automotive S.C. a partir del día <span class="promissory-blanks-short"></span> del mes <span class="promissory-blanks-medium"></span> del año <span class="promissory-blanks-short"></span>, así mismo, acepto que el(los) equipo(s) son completamente mi responsabilidad y deberé regresarlo el día <span class="promissory-blanks-short"></span> del mes <span class="promissory-blanks-medium"></span> del año <span class="promissory-blanks-short"></span>. Yo responderé por cualquier daño de cualquier índole que le ocurra al(os) equipo(s) de cómputo mientras este(n) fuera de las instalaciones de EXL Automotive S.C. En caso de que el(los) equipo(s) no regrese a las instalaciones de EXL Automotive S.C. por cualquier motivo, cubriré el valor del(os) equipo(s) incondicionalmente.
+            A través de este pagaré, yo <span class="promissory-blanks"></span> quedo consciente que el equipo de cómputo de Marca: <span class="promissory-blanks-medium"></span> Modelo: <span class="promissory-blanks-medium"></span> con número de serie: <span class="promissory-blanks"></span> es propiedad de EXL Automotive S.C. y me es conferido en calidad de préstamo para el desarrollo de mis actividades laborales fuera de las instalaciones de EXL Automotive S.C. a partir del día <span class="promissory-blanks-short"></span> del mes <span class="promissory-blanks-medium"></span> del año <span class="promissory-blanks-short"></span>, así mismo, acepto que el equipo de cómputo es completamente mi responsabilidad y deberé regresarlo el día <span class="promissory-blanks-short"></span> del mes <span class="promissory-blanks-medium"></span> del año <span class="promissory-blanks-short"></span>. Yo responderé por cualquier daño de cualquier índole que le ocurra al equipo de cómputo mientras este fuera de las instalaciones de EXL Automotive S.C. En caso de que el equipo no regrese a las instalaciones de EXL Automotive S.C. por cualquier motivo, cubriré el valor del equipo incondicionalmente.
         </div>
     </div>
 
