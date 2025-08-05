@@ -153,7 +153,6 @@
                 <a href="{{ route('assignments.create', ['user_id' => $itUser->id]) }}" class="block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700">
                     Asignar Equipo
                 </a>
-
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <form action="{{ route('assignments.generate-consolidated', $itUser) }}" method="POST" style="width: 100%; margin-bottom: 12px;">
                         @csrf
@@ -207,7 +206,6 @@
                         </a>
                     @endif
                 @endif
-
                 <a href="{{ route('it-users.documents', $itUser) }}" style="
                     background: linear-gradient(135deg, #f97316, #f97316) !important;
                     color: #ffffff !important;
@@ -231,7 +229,6 @@
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
                     📁 Ver Documentos
                 </a>
-
                 @if($itUser->currentAssignments && $itUser->currentAssignments->count() > 0)
                     <a href="{{ route('assignments.generate-exit-document', $itUser) }}" style="
                         background: linear-gradient(135deg, #f97316, #f97316) !important;
