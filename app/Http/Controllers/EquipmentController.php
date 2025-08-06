@@ -14,21 +14,53 @@ class EquipmentController extends Controller
     {
         $query = Equipment::with(['equipmentType', 'supplier', 'currentAssignment.itUser']);
 
-        if ($request->has('search')) {
+        if ($request->has('search') && !empty(trim($request->search))) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $searchTerms = explode(' ', trim($search));
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda del término completo en cada campo
                 $q->where('serial_number', 'like', "%{$search}%")
                   ->orWhere('asset_tag', 'like', "%{$search}%")
                   ->orWhere('brand', 'like', "%{$search}%")
                   ->orWhere('model', 'like', "%{$search}%");
+                
+                // Si hay múltiples términos, buscar combinaciones entre campos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        if (!empty(trim($term))) {
+                            $q->orWhere('serial_number', 'like', "%{$term}%")
+                              ->orWhere('asset_tag', 'like', "%{$term}%")
+                              ->orWhere('brand', 'like', "%{$term}%")
+                              ->orWhere('model', 'like', "%{$term}%");
+                        }
+                    }
+                    
+                    // Búsqueda cruzada: marca + modelo
+                    $q->orWhere(function($subQ) use ($searchTerms) {
+                        foreach ($searchTerms as $i => $term1) {
+                            foreach ($searchTerms as $j => $term2) {
+                                if ($i !== $j && !empty(trim($term1)) && !empty(trim($term2))) {
+                                    $subQ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('brand', 'like', "%{$term1}%")
+                                               ->where('model', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('brand', 'like', "%{$term2}%")
+                                               ->where('model', 'like', "%{$term1}%");
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('type')) {
+        if ($request->has('type') && !empty($request->type)) {
             $query->where('equipment_type_id', $request->type);
         }
 
@@ -57,6 +89,7 @@ class EquipmentController extends Controller
             'model' => 'required|string',
             'specifications' => 'nullable|string',
             'status' => 'required|in:available,assigned,maintenance,retired,lost',
+            'valoracion' => 'nullable|in:100%,90%,80%,70%,60%',
             'purchase_price' => 'nullable|numeric',
             'purchase_date' => 'nullable|date',
             'warranty_end_date' => 'nullable|date',
@@ -98,6 +131,7 @@ class EquipmentController extends Controller
             'model' => 'required|string',
             'specifications' => 'nullable|string',
             'status' => 'required|in:available,assigned,maintenance,retired,lost',
+            'valoracion' => 'nullable|in:100%,90%,80%,70%,60%',
             'purchase_price' => 'nullable|numeric',
             'purchase_date' => 'nullable|date',
             'warranty_end_date' => 'nullable|date',

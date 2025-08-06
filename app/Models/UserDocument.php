@@ -10,16 +10,17 @@ class UserDocument extends Model
 
     protected $fillable = [
         'it_user_id',
-        'document_type',
-        'document_name',
+        'original_name',
+        'filename',
         'file_path',
-        'has_signature',
-        'signature_type',
+        'file_size',
+        'mime_type',
+        'document_type',
         'description',
     ];
 
     protected $casts = [
-        'has_signature' => 'boolean',
+        'file_size' => 'integer',
     ];
 
     public function itUser()

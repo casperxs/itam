@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\MaintenanceRecord;
 use App\Models\Equipment;
 use App\Models\User;
+use App\Services\PdfGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MaintenanceController extends Controller
 {
+    protected $pdfService;
+
+    public function __construct(PdfGeneratorService $pdfService)
+    {
+        $this->pdfService = $pdfService;
+    }
     public function index(Request $request)
     {
         $query = MaintenanceRecord::with(['equipment.equipmentType', 'performedBy']);
@@ -132,6 +139,35 @@ class MaintenanceController extends Controller
 
         return redirect()->route('maintenance.show', $maintenance)
             ->with('success', 'Mantenimiento completado exitosamente.');
+    }
+
+    public function downloadChecklist(MaintenanceRecord $maintenance)
+    {
+        if ($maintenance->status !== 'completed') {
+            return redirect()->back()->with('error', 'Solo se puede generar checklist para mantenimientos completados.');
+        }
+
+        $maintenance->load(['equipment.equipmentType', 'equipment.supplier', 'equipment.currentAssignment.itUser', 'performedBy']);
+        
+        return $this->pdfService->generateMaintenanceChecklist($maintenance);
+    }
+
+    public function completedMaintenance(Request $request)
+    {
+        $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy'])
+            ->where('status', 'completed');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->whereHas('equipment', function($q) use ($search) {
+                $q->where('serial_number', 'like', "%{$search}%")
+                  ->orWhere('asset_tag', 'like', "%{$search}%");
+            });
+        }
+
+        $completedMaintenances = $query->orderBy('completed_date', 'desc')->paginate(15);
+        
+        return view('maintenance.completed', compact('completedMaintenances'));
     }
 
     public function calendar()

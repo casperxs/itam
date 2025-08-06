@@ -12,28 +12,77 @@ class ItUserController extends Controller
     {
         $query = ItUser::withCount(['currentAssignments', 'documents']);
 
-        if ($request->has('search')) {
+        if ($request->has('search') && !empty(trim($request->search))) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $searchTerms = explode(' ', trim($search));
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda del término completo en cada campo
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('employee_id', 'like', "%{$search}%")
                   ->orWhere('department', 'like', "%{$search}%");
+                
+                // Si hay múltiples términos, buscar combinaciones entre campos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        if (!empty(trim($term))) {
+                            $q->orWhere('name', 'like', "%{$term}%")
+                              ->orWhere('email', 'like', "%{$term}%")
+                              ->orWhere('employee_id', 'like', "%{$term}%")
+                              ->orWhere('department', 'like', "%{$term}%");
+                        }
+                    }
+                    
+                    // Búsqueda cruzada: nombre + departamento, nombre + email, etc.
+                    $q->orWhere(function($subQ) use ($searchTerms) {
+                        foreach ($searchTerms as $i => $term1) {
+                            foreach ($searchTerms as $j => $term2) {
+                                if ($i !== $j && !empty(trim($term1)) && !empty(trim($term2))) {
+                                    // Nombre + Departamento
+                                    $subQ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term1}%")
+                                               ->where('department', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term2}%")
+                                               ->where('department', 'like', "%{$term1}%");
+                                    })
+                                    // Nombre + Email
+                                    ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term1}%")
+                                               ->where('email', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term2}%")
+                                               ->where('email', 'like', "%{$term1}%");
+                                    })
+                                    // Departamento + Email
+                                    ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('department', 'like', "%{$term1}%")
+                                               ->where('email', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('department', 'like', "%{$term2}%")
+                                               ->where('email', 'like', "%{$term1}%");
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('department')) {
+        if ($request->has('department') && !empty($request->department)) {
             $query->where('department', $request->department);
         }
 
-        $users = $query->paginate(15);
         $departments = ItUser::distinct()->pluck('department');
+        $itUsers = $query->with('assignments')->paginate(15);
 
-        return view('it-users.index', compact('users', 'departments'));
+        return view('it-users.index', compact('itUsers', 'departments'));
     }
 
     public function create()
@@ -67,7 +116,7 @@ class ItUserController extends Controller
             'documents',
             'emailTickets'
         ]);
-        
+
         return view('it-users.show', compact('itUser'));
     }
 
@@ -116,26 +165,63 @@ class ItUserController extends Controller
     public function uploadDocument(Request $request, ItUser $itUser)
     {
         $validated = $request->validate([
-            'document_type' => 'required|string',
-            'document_name' => 'required|string',
-            'file' => 'required|file|mimes:pdf|max:10240',
-            'has_signature' => 'boolean',
-            'signature_type' => 'nullable|in:physical,digital',
+            'document' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'document_type' => 'required|string|in:manual,contrato,identificacion,capacitacion,politica,otro',
             'description' => 'nullable|string',
         ]);
 
-        $filePath = $request->file('file')->store('user-documents', 'private');
+        $file = $request->file('document');
+        $originalName = $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = now()->format('YmdHis');
+        $documentType = $validated['document_type'];
+        
+        // Formato: EMP001_manual_20250731235959.pdf
+        $filename = $itUser->employee_id . '_' . $documentType . '_' . $timestamp . '.' . $extension;
+        
+        $filePath = $file->storeAs('user-documents', $filename, 'private');
 
         UserDocument::create([
             'it_user_id' => $itUser->id,
-            'document_type' => $validated['document_type'],
-            'document_name' => $validated['document_name'],
+            'original_name' => $originalName,
+            'filename' => $filename,
             'file_path' => $filePath,
-            'has_signature' => $request->boolean('has_signature'),
-            'signature_type' => $validated['signature_type'],
+            'file_size' => $file->getSize(),
+            'mime_type' => $file->getMimeType(),
+            'document_type' => $documentType,
             'description' => $validated['description'],
         ]);
 
         return redirect()->back()->with('success', 'Documento subido exitosamente.');
+    }
+
+    public function downloadDocument(ItUser $itUser, UserDocument $userDocument)
+    {
+        if ($userDocument->it_user_id !== $itUser->id) {
+            abort(404);
+        }
+
+        $filePath = storage_path('app/private/' . $userDocument->file_path);
+        
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'Archivo no encontrado.');
+        }
+
+        return response()->download($filePath, $userDocument->original_name);
+    }
+
+    public function deleteDocument(ItUser $itUser, UserDocument $userDocument)
+    {
+        if ($userDocument->it_user_id !== $itUser->id) {
+            abort(404);
+        }
+
+        // Eliminar archivo físico
+        Storage::disk('private')->delete($userDocument->file_path);
+        
+        // Eliminar registro de la base de datos
+        $userDocument->delete();
+
+        return redirect()->back()->with('success', 'Documento eliminado exitosamente.');
     }
 }

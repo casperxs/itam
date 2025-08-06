@@ -12,12 +12,20 @@ use App\Http\Controllers\EmailTicketController;
 use App\Http\Controllers\BulkImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserDocumentController;
+use App\Http\Controllers\DarkModeController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'admin'])->group(function () {
+// Redirect root to login if not authenticated, otherwise to dashboard
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
+})->name('home');
+
+Route::middleware(['admin'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     // Equipment Management
     Route::resource('equipment', EquipmentController::class);
@@ -36,6 +44,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('it-users.documents');
     Route::post('it-users/{itUser}/documents', [ItUserController::class, 'uploadDocument'])
         ->name('it-users.upload-document');
+    Route::get('it-users/{itUser}/documents/{userDocument}/download', [ItUserController::class, 'downloadDocument'])
+        ->name('it-users.download-document');
+    Route::delete('it-users/{itUser}/documents/{userDocument}', [ItUserController::class, 'deleteDocument'])
+        ->name('it-users.delete-document');
 
     // Assignments
     Route::resource('assignments', AssignmentController::class)->except(['edit', 'update']);
@@ -47,6 +59,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('assignments.download');
     Route::post('assignments/{assignment}/mark-signed', [AssignmentController::class, 'markSigned'])
         ->name('assignments.mark-signed');
+    Route::post('it-users/{itUser}/generate-consolidated-document', [AssignmentController::class, 'generateConsolidatedDocument'])
+        ->name('assignments.generate-consolidated');
+    Route::get('it-users/{itUser}/download-consolidated-document', [AssignmentController::class, 'downloadConsolidatedDocument'])
+        ->name('assignments.download-consolidated');
+    Route::get('it-users/{itUser}/generate-exit-document', [AssignmentController::class, 'generateExitDocument'])
+        ->name('assignments.generate-exit-document');
 
     // Maintenance
     Route::resource('maintenance', MaintenanceController::class);
@@ -56,6 +74,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('maintenance.start');
     Route::post('maintenance/{maintenance}/complete', [MaintenanceController::class, 'completeMaintenance'])
         ->name('maintenance.complete');
+    Route::get('maintenance/{maintenance}/checklist', [MaintenanceController::class, 'downloadChecklist'])
+        ->name('maintenance.checklist');
+    Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
+        ->name('maintenance.completed');
 
     // Contracts
     Route::resource('contracts', ContractController::class);
@@ -93,6 +115,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('documents.destroy');
     Route::post('documents/{document}/mark-signed', [UserDocumentController::class, 'markSigned'])
         ->name('documents.mark-signed');
+
+    // Dark Mode Toggle
+    Route::post('dark-mode/toggle', [DarkModeController::class, 'toggle'])
+        ->name('dark-mode.toggle');
 });
 
-//require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';

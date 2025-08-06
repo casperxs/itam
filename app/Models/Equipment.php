@@ -17,6 +17,7 @@ class Equipment extends Model
         'model',
         'specifications',
         'status',
+        'valoracion',
         'purchase_price',
         'purchase_date',
         'warranty_end_date',

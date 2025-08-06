@@ -10,7 +10,7 @@ class ItUserFactory extends Factory
 
     public function definition(): array
     {
-        $departments = ['TI', 'Contabilidad', 'Recursos Humanos', 'Ventas', 'Marketing', 'Operaciones', 'Gerencia'];
+        $departments = ['Liderazgo', 'TI', 'Administración', 'Recursos Humanos', 'Training', 'Directos (FullTruck)', 'Bodegas', 'Milk Run', 'Virtuales', 'Áereos', 'Material Vehículos', 'Compliance', 'Calidad', 'Tramitadores', 'Servicio al Cliente'];
         $positions = ['Analista', 'Coordinador', 'Supervisor', 'Gerente', 'Director', 'Ejecutivo', 'Especialista'];
 
         return [

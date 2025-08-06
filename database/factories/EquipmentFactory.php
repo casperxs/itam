@@ -15,6 +15,7 @@ class EquipmentFactory extends Factory
     {
         $brands = ['Dell', 'HP', 'Lenovo', 'Apple', 'Samsung', 'Canon', 'Epson'];
         $statuses = ['available', 'assigned', 'maintenance', 'retired'];
+        $valoraciones = ['100%', '90%', '80%', '70%', '60%'];
 
         return [
             'equipment_type_id' => EquipmentType::factory(),
@@ -25,6 +26,7 @@ class EquipmentFactory extends Factory
             'model' => $this->faker->bothify('Model-??##'),
             'specifications' => $this->faker->text(200),
             'status' => $this->faker->randomElement($statuses),
+            'valoracion' => $this->faker->optional(0.8)->randomElement($valoraciones),
             'purchase_price' => $this->faker->randomFloat(2, 5000, 50000),
             'purchase_date' => $this->faker->dateTimeBetween('-2 years', 'now'),
             'warranty_end_date' => $this->faker->dateTimeBetween('now', '+3 years'),

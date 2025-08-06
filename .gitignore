@@ -7,6 +7,7 @@ yarn-error.log
 bootstrap/compiled.php
 app/storage/
 
+
 # Laravel 5 & Lumen specific
 public/storage
 public/hot
@@ -28,3 +29,19 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+.DS_Store
+*.config
+web.config
+.DS_Store
+public/.DS_Store
+
+/.DS_Store*
+.DS_Store
+.user.ini
+web.config
+public/.DS_Store
+web.config
+.DS_Store
+web.config
+public/.DS_Store
+.DS_Store
