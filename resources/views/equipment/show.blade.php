@@ -160,7 +160,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <strong class="text-gray-600">Usuario Asignado:</strong>
-                    <p class="text-gray-800">{{ $equipment->currentAssignment->itUser->name }}</p>
+                    <p class="text-gray-800">{{ $equipment->currentAssignment->getUserName() }}</p>
                 </div>
                 <div>
                     <strong class="text-gray-600">Fecha de Asignación:</strong>
@@ -196,7 +196,7 @@
                         @foreach($equipment->assignments->sortByDesc('assignment_date') as $assignment)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $assignment->itUser->name }}
+                                {{ $assignment->getUserName() }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $assignment->assignment_date ? $assignment->assignment_date->format('d/m/Y') : 'N/A' }}

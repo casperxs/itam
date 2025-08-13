@@ -66,6 +66,7 @@ class AssignmentController extends Controller
         ]);
 
         $equipment = Equipment::findOrFail($validated['equipment_id']);
+        $user = ItUser::findOrFail($validated['it_user_id']);
         
         if ($equipment->status !== 'available') {
             return redirect()->back()->with('error', 'El equipo no está disponible para asignación.');
@@ -74,6 +75,11 @@ class AssignmentController extends Controller
         $assignment = Assignment::create([
             ...$validated,
             'assigned_by' => Auth::id(),
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'user_employee_id' => $user->employee_id,
+            'user_department' => $user->department,
+            'user_position' => $user->position,
         ]);
 
         $equipment->update(['status' => 'assigned']);

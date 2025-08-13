@@ -96,13 +96,13 @@
                                 <div class="h-8 w-8 flex-shrink-0">
                                     <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                                         <span class="text-blue-600 font-medium text-xs">
-                                            {{ substr($assignment->itUser->name ?? 'N/A', 0, 2) }}
+                                            {{ substr($assignment->getUserName(), 0, 2) }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="ml-3">
-                                    <div class="text-sm font-medium text-gray-900">{{ $assignment->itUser->name ?? 'N/A' }}</div>
-                                    <div class="text-sm text-gray-500">{{ $assignment->itUser->department ?? 'N/A' }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $assignment->getUserName() }}</div>
+                                    <div class="text-sm text-gray-500">{{ $assignment->getUserDepartment() ?: 'N/A' }}</div>
                                 </div>
                             </div>
                         </td>

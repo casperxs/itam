@@ -18,6 +18,11 @@ class Assignment extends Model
         'return_notes',
         'assignment_document',
         'document_signed',
+        'user_name',
+        'user_email',
+        'user_employee_id',
+        'user_department',
+        'user_position',
     ];
 
     protected $casts = [
@@ -44,5 +49,30 @@ class Assignment extends Model
     public function isActive()
     {
         return is_null($this->returned_at);
+    }
+
+    public function getUserName()
+    {
+        return $this->user_name ?: ($this->itUser ? $this->itUser->name : 'Usuario eliminado');
+    }
+
+    public function getUserEmail()
+    {
+        return $this->user_email ?: ($this->itUser ? $this->itUser->email : null);
+    }
+
+    public function getUserEmployeeId()
+    {
+        return $this->user_employee_id ?: ($this->itUser ? $this->itUser->employee_id : null);
+    }
+
+    public function getUserDepartment()
+    {
+        return $this->user_department ?: ($this->itUser ? $this->itUser->department : null);
+    }
+
+    public function getUserPosition()
+    {
+        return $this->user_position ?: ($this->itUser ? $this->itUser->position : null);
     }
 }
