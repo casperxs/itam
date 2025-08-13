@@ -17,7 +17,7 @@
 
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                    Correo Electrónico
+                    Usuario
                 </label>
                 <input
                     type="email"
@@ -57,8 +57,8 @@
         </form>
 
         <div class="mt-6 text-center text-sm text-gray-600">
-            <p>Aplicación para SOPORTE IT BKB</p>
-            <p>VER 1.0</p>
+            <p>BKB - Soporte IT</p>
+            <p>VER 1.1</p>
         </div>
     </div>
 </body>
