@@ -75,4 +75,16 @@ class Assignment extends Model
     {
         return $this->user_position ?: ($this->itUser ? $this->itUser->position : null);
     }
+
+    // Accesor para compatibilidad con la vista
+    public function getAssignmentDateAttribute()
+    {
+        return $this->assigned_at;
+    }
+
+    // Accesor para compatibilidad con la vista
+    public function getReturnDateAttribute()
+    {
+        return $this->returned_at;
+    }
 }
