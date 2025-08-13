@@ -10,7 +10,7 @@ class ItUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ItUser::withCount(['currentAssignments', 'documents']);
+        $query = ItUser::active()->withCount(['currentAssignments', 'documents']);
 
         if ($request->has('search') && !empty(trim($request->search))) {
             $search = $request->search;
@@ -143,17 +143,19 @@ class ItUserController extends Controller
             ->with('success', 'Usuario actualizado exitosamente.');
     }
 
-    public function destroy(ItUser $itUser)
+    public function destroy(Request $request, ItUser $itUser)
     {
         if ($itUser->currentAssignments()->exists()) {
             return redirect()->back()
-                ->with('error', 'No se puede eliminar el usuario porque tiene equipos asignados.');
+                ->with('error', 'No se puede eliminar el usuario porque tiene equipos asignados activos. Primero debe devolver todos los equipos.');
         }
 
-        $itUser->delete();
+        // Usar soft delete con razón opcional
+        $reason = $request->input('delete_reason', 'Eliminado por el administrador');
+        $itUser->softDelete($reason);
 
         return redirect()->route('it-users.index')
-            ->with('success', 'Usuario eliminado exitosamente.');
+            ->with('success', 'Usuario eliminado exitosamente. Se ha guardado en el histórico.');
     }
 
     public function documents(ItUser $itUser)

@@ -13,6 +13,7 @@ use App\Http\Controllers\BulkImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserDocumentController;
 use App\Http\Controllers\DarkModeController;
+use App\Http\Controllers\DeletedUsersController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to login if not authenticated, otherwise to dashboard
@@ -48,6 +49,12 @@ Route::middleware(['admin'])->group(function () {
         ->name('it-users.download-document');
     Route::delete('it-users/{itUser}/documents/{userDocument}', [ItUserController::class, 'deleteDocument'])
         ->name('it-users.delete-document');
+
+    // Deleted Users
+    Route::get('deleted-users', [DeletedUsersController::class, 'index'])->name('deleted-users.index');
+    Route::get('deleted-users/{deletedUser}', [DeletedUsersController::class, 'show'])->name('deleted-users.show');
+    Route::patch('deleted-users/{deletedUser}/restore', [DeletedUsersController::class, 'restore'])->name('deleted-users.restore');
+    Route::get('deleted-users-export', [DeletedUsersController::class, 'export'])->name('deleted-users.export');
 
     // Assignments
     Route::resource('assignments', AssignmentController::class)->except(['edit', 'update']);
