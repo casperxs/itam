@@ -117,11 +117,11 @@
     </style>
 </head>
 <body>
-    <div class="header" background-image: url("{{ asset('storage/images/background/bg_bkb_registros_nDerecho.png') }}); >
+    <div class="header" background-image: url({{ asset('storage/images/background/bg_bkb_registros_nDerecho.png') }}); >
         <div class="company-name">SISTEMA DE GESTIÓN DE ACTIVOS TI</div>
-        <div class="document-title">DOCUMENTO DE ASIGNACIÓN DE EQUIPO</div>
+        <div class="document-title">DOCUMENTO DE ASIGNACIÓN DE EQUIPO PRO</div>
         <div style="margin-top: 10px; font-size: 12px;">
-            <bold>Folio: {{ $assignment->id ?? 'N/A' }} | Fecha: {{ now()->format('d/m/Y H:i') }}</bold>
+            <strong>Folio: {{ $assignment->id ?? 'N/A' }} | Fecha: {{ now()->format('d/m/Y H:i') }}</strong>
         </div>
     </div>
 <div class="container">
