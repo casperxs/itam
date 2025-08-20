@@ -221,7 +221,7 @@
     <!-- ENCABEZADO ESTILO FACTURA -->
     <div class="invoice-header">
         <div class="company-info">
-            <div class="company-name">EXL AUTOMOTIVE S.C.</div>
+            <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
             <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
         </div>
         
