@@ -117,15 +117,18 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="header" background-image: url("{{ asset('storage/images/background/bg_bkb_registros_nDerecho.png') }}); >
         <div class="company-name">SISTEMA DE GESTIÓN DE ACTIVOS TI</div>
         <div class="document-title">DOCUMENTO DE ASIGNACIÓN DE EQUIPO</div>
         <div style="margin-top: 10px; font-size: 12px;">
-            Folio: {{ $assignment->id ?? 'N/A' }} | Fecha: {{ now()->format('d/m/Y H:i') }}
+            <bold>Folio: {{ $assignment->id ?? 'N/A' }} | Fecha: {{ now()->format('d/m/Y H:i') }}</bold>
         </div>
     </div>
-
-    <div class="section">
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <!-- Contenido de la columna 1 -->
+		    <div class="section">
         <div class="section-title">INFORMACIÓN DEL EQUIPO</div>
         <div class="info-grid">
             <div class="info-row">
@@ -155,7 +158,10 @@
         </div>
     </div>
 
-    <div class="section">
+    </div>
+    <div class="col-6">
+      <!-- Contenido de la columna 2 -->
+		    <div class="section">
         <div class="section-title">INFORMACIÓN DEL USUARIO</div>
         <div class="info-grid">
             <div class="info-row">
@@ -180,6 +186,11 @@
             </div>
         </div>
     </div>
+
+    </div>
+  </div>
+</div>
+
 
     <div class="section">
         <div class="section-title">DETALLES DE LA ASIGNACIÓN</div>

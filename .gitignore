@@ -46,3 +46,6 @@ web.config
 public/.DS_Store
 .DS_Store
 public/web.config
+resources/views/assignments/pdf/assignment-document.blade - Copia.php
+.DS_Store
+.DS_Store
