@@ -74,8 +74,18 @@ class MaintenanceController extends Controller
 
     public function show(MaintenanceRecord $maintenance)
     {
-        $maintenance->load(['equipment.equipmentType', 'performedBy']);
-        return view('maintenance.show', compact('maintenance'));
+        $maintenance->load(['equipment.equipmentType', 'equipment.latestRating', 'performedBy']);
+        
+        // Load rating criteria for the evaluation form
+        $ratingCriteria = RatingCriterion::getAllActive();
+        
+        // Get the last rating for this equipment
+        $lastRating = EquipmentRating::where('equipment_id', $maintenance->equipment_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $previousScore = $lastRating ? $lastRating->total_score : null;
+        
+        return view('maintenance.show', compact('maintenance', 'ratingCriteria', 'previousScore'));
     }
 
     public function edit(MaintenanceRecord $maintenance)

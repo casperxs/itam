@@ -12,7 +12,7 @@ class EquipmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Equipment::with(['equipmentType', 'supplier', 'currentAssignment.itUser']);
+        $query = Equipment::with(['equipmentType', 'supplier', 'currentAssignment.itUser', 'latestRating']);
 
         if ($request->has('search') && !empty(trim($request->search))) {
             $search = $request->search;
@@ -109,12 +109,13 @@ class EquipmentController extends Controller
 
     public function show(Equipment $equipment)
     {
-        $equipment->load(['equipmentType', 'supplier', 'assignments.itUser', 'maintenanceRecords.performedBy']);
+        $equipment->load(['equipmentType', 'supplier', 'assignments.itUser', 'maintenanceRecords.performedBy', 'latestRating']);
         return view('equipment.show', compact('equipment'));
     }
 
     public function edit(Equipment $equipment)
     {
+        $equipment->load(['latestRating']);
         $equipmentTypes = EquipmentType::all();
         $suppliers = Supplier::all();
         return view('equipment.edit', compact('equipment', 'equipmentTypes', 'suppliers'));

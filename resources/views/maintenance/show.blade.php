@@ -407,6 +407,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (previousScore > 0 && totalScore < previousScore) {
             isValid = false;
             validationMessage = `La nueva evaluación (${totalScore.toFixed(2)}%) no puede ser mejor que la anterior (${previousScore}%)`;
+        } else if (allSelected) {
+            isValid = true;
+            validationMessage = 'Evaluación válida';
         }
         
         // Show validation message
