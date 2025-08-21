@@ -71,20 +71,33 @@
                         </span>
                     </div>
 
-                    @if($equipment->valoracion)
                     <div>
                         <strong class="text-gray-600">Valoración:</strong>
-                        <span class="px-2 py-1 rounded-full text-sm font-medium
-                            @if($equipment->valoracion === '100%') bg-green-100 text-green-800
-                            @elseif($equipment->valoracion === '90%') bg-blue-100 text-blue-800
-                            @elseif($equipment->valoracion === '80%') bg-yellow-100 text-yellow-800
-                            @elseif($equipment->valoracion === '70%') bg-orange-100 text-orange-800
-                            @else bg-red-100 text-red-800
-                            @endif">
-                            {{ $equipment->valoracion }}
-                        </span>
+                        @if($equipment->valoracion)
+                            <span class="px-2 py-1 rounded-full text-sm font-medium
+                                @if($equipment->valoracion === 'Excelente') bg-green-100 text-green-800
+                                @elseif($equipment->valoracion === 'Optimo') bg-blue-100 text-blue-800
+                                @elseif($equipment->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
+                                @elseif($equipment->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
+                                @elseif($equipment->valoracion === 'Remplazo') bg-red-100 text-red-800
+                                @else bg-gray-100 text-gray-800
+                                @endif">
+                                {{ $equipment->valoracion }}
+                            </span>
+                        @else
+                            @if($equipment->isNewEquipment())
+                                <span class="px-2 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Nuevo (Sin Evaluar)</span>
+                            @else
+                                <span class="text-gray-500">Sin Evaluar</span>
+                            @endif
+                        @endif
+                        @if($equipment->latestRating)
+                            <div class="text-xs text-gray-500 mt-1">
+                                Última evaluación: {{ $equipment->latestRating->total_score }}% 
+                                ({{ $equipment->latestRating->created_at->format('d/m/Y') }})
+                            </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
 

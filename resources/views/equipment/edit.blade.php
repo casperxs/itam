@@ -134,22 +134,33 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="valoracion" class="block text-sm font-medium text-gray-700 mb-2">
-                        Valoración
-                    </label>
-                    <select name="valoracion" id="valoracion" 
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Seleccionar valoración</option>
-                        <option value="100%" {{ old('valoracion', $equipment->valoracion) == '100%' ? 'selected' : '' }}>100%</option>
-                        <option value="90%" {{ old('valoracion', $equipment->valoracion) == '90%' ? 'selected' : '' }}>90%</option>
-                        <option value="80%" {{ old('valoracion', $equipment->valoracion) == '80%' ? 'selected' : '' }}>80%</option>
-                        <option value="70%" {{ old('valoracion', $equipment->valoracion) == '70%' ? 'selected' : '' }}>70%</option>
-                        <option value="60%" {{ old('valoracion', $equipment->valoracion) == '60%' ? 'selected' : '' }}>60%</option>
-                    </select>
-                    @error('valoracion')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-md">
+                    <h4 class="text-sm font-medium text-blue-800 mb-2">Valoración del Equipo</h4>
+                    @if($equipment->valoracion)
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-700">Valoración actual: </span>
+                            <span class="px-2 py-1 rounded-full text-sm font-medium
+                                @if($equipment->valoracion === 'Excelente') bg-green-100 text-green-800
+                                @elseif($equipment->valoracion === 'Optimo') bg-blue-100 text-blue-800
+                                @elseif($equipment->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
+                                @elseif($equipment->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
+                                @elseif($equipment->valoracion === 'Remplazo') bg-red-100 text-red-800
+                                @else bg-gray-100 text-gray-800
+                                @endif">
+                                {{ $equipment->valoracion }}
+                            </span>
+                        </div>
+                    @endif
+                    <p class="text-sm text-blue-700">
+                        La valoración del equipo se actualiza automáticamente durante los mantenimientos completados 
+                        basándose en criterios cuantificados. No puede modificarse manualmente.
+                    </p>
+                    @if($equipment->latestRating)
+                        <p class="text-xs text-blue-600 mt-2">
+                            Última evaluación: {{ $equipment->latestRating->total_score }}% 
+                            el {{ $equipment->latestRating->created_at->format('d/m/Y') }}
+                        </p>
+                    @endif
                 </div>
 
                 <div>

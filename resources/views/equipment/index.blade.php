@@ -100,16 +100,21 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             @if($item->valoracion)
                                 <span class="px-2 py-1 rounded-full text-xs font-medium
-                                    @if($item->valoracion === '100%') bg-green-100 text-green-800
-                                    @elseif($item->valoracion === '90%') bg-blue-100 text-blue-800
-                                    @elseif($item->valoracion === '80%') bg-yellow-100 text-yellow-800
-                                    @elseif($item->valoracion === '70%') bg-orange-100 text-orange-800
-                                    @else bg-red-100 text-red-800
+                                    @if($item->valoracion === 'Excelente') bg-green-100 text-green-800
+                                    @elseif($item->valoracion === 'Optimo') bg-blue-100 text-blue-800
+                                    @elseif($item->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
+                                    @elseif($item->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
+                                    @elseif($item->valoracion === 'Remplazo') bg-red-100 text-red-800
+                                    @else bg-gray-100 text-gray-800
                                     @endif">
                                     {{ $item->valoracion }}
                                 </span>
                             @else
-                                <span class="text-gray-500">N/A</span>
+                                @if($item->isNewEquipment())
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Nuevo</span>
+                                @else
+                                    <span class="text-gray-500">Sin Evaluar</span>
+                                @endif
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

@@ -125,22 +125,15 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="valoracion" class="block text-sm font-medium text-gray-700 mb-2">
-                        Valoración
-                    </label>
-                    <select name="valoracion" id="valoracion" 
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Seleccionar valoración</option>
-                        <option value="100%" {{ old('valoracion') == '100%' ? 'selected' : '' }}>100%</option>
-                        <option value="90%" {{ old('valoracion') == '90%' ? 'selected' : '' }}>90%</option>
-                        <option value="80%" {{ old('valoracion') == '80%' ? 'selected' : '' }}>80%</option>
-                        <option value="70%" {{ old('valoracion') == '70%' ? 'selected' : '' }}>70%</option>
-                        <option value="60%" {{ old('valoracion') == '60%' ? 'selected' : '' }}>60%</option>
-                    </select>
-                    @error('valoracion')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-md">
+                    <h4 class="text-sm font-medium text-blue-800 mb-2">Valoración del Equipo</h4>
+                    <p class="text-sm text-blue-700">
+                        La valoración del equipo se asignará automáticamente durante los mantenimientos completados 
+                        basándose en criterios cuantificados como edad, estado físico, rendimiento técnico e impacto financiero.
+                    </p>
+                    <p class="text-xs text-blue-600 mt-2">
+                        Los equipos nuevos (menos de 6 meses) aparecerán como "Nuevo" hasta su primera evaluación.
+                    </p>
                 </div>
 
                 <div>

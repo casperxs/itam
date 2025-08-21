@@ -37,6 +37,11 @@ class MaintenanceRecord extends Model
         return $this->belongsTo(User::class, 'performed_by');
     }
 
+    public function equipmentRating()
+    {
+        return $this->hasOne(EquipmentRating::class);
+    }
+
     public function isOverdue()
     {
         return $this->status === 'scheduled' && $this->scheduled_date->isPast();

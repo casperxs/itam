@@ -62,6 +62,16 @@ class Equipment extends Model
         return $this->hasMany(EmailTicket::class);
     }
 
+    public function equipmentRatings()
+    {
+        return $this->hasMany(EquipmentRating::class);
+    }
+
+    public function latestRating()
+    {
+        return $this->hasOne(EquipmentRating::class)->latestOfMany();
+    }
+
     public function isWarrantyExpired()
     {
         return $this->warranty_end_date && $this->warranty_end_date->isPast();
@@ -72,5 +82,16 @@ class Equipment extends Model
         return $this->warranty_end_date && 
                $this->warranty_end_date->isFuture() && 
                $this->warranty_end_date->diffInDays(now()) <= $days;
+    }
+
+    public function getAgeInMonths()
+    {
+        return $this->purchase_date ? $this->purchase_date->diffInMonths(now()) : null;
+    }
+
+    public function isNewEquipment()
+    {
+        $age = $this->getAgeInMonths();
+        return $age && $age <= 6;
     }
 }

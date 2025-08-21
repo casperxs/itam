@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\MaintenanceRecord;
 use App\Models\Equipment;
 use App\Models\User;
+use App\Models\RatingCriterion;
+use App\Models\EquipmentRating;
 use App\Services\PdfGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -128,17 +130,75 @@ class MaintenanceController extends Controller
             'performed_actions' => 'required|string',
             'cost' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'rating' => 'required|array',
+            'rating.*' => 'required|integer|min:0|max:10',
+            'rating_notes' => 'nullable|string',
         ]);
 
+        // Calculate equipment rating
+        $ratingCriteria = RatingCriterion::getAllActive();
+        $totalScore = 0;
+        $criteriaEvaluations = [];
+        
+        foreach ($ratingCriteria as $criterion) {
+            $value = $validated['rating'][$criterion->id];
+            $weightedScore = ($criterion->weight_percentage * $value) / 100;
+            $totalScore += $weightedScore;
+            
+            $criteriaEvaluations[$criterion->id] = [
+                'criterion_name' => $criterion->name,
+                'value' => $value,
+                'weight_percentage' => $criterion->weight_percentage,
+                'weighted_score' => $weightedScore,
+            ];
+        }
+        
+        $ratingCategory = EquipmentRating::calculateCategory($totalScore);
+        
+        // Validate against previous rating (degradation only)
+        $lastRating = EquipmentRating::where('equipment_id', $maintenance->equipment_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+            
+        if ($lastRating && $totalScore < $lastRating->total_score) {
+            return back()->withErrors([
+                'rating' => "La nueva evaluación ({$totalScore}%) no puede ser mejor que la anterior ({$lastRating->total_score}%)."
+            ])->withInput();
+        }
+        
+        // For new equipment (less than 6 months), allow any score
+        $equipmentAge = $maintenance->equipment->purchase_date 
+            ? $maintenance->equipment->purchase_date->diffInMonths(now()) 
+            : null;
+            
+        // Update maintenance record
         $maintenance->update([
-            ...$validated,
+            'completed_date' => $validated['completed_date'],
+            'performed_actions' => $validated['performed_actions'],
+            'cost' => $validated['cost'],
+            'notes' => $validated['notes'],
             'status' => 'completed',
         ]);
-
-        $maintenance->equipment->update(['status' => 'available']);
+        
+        // Create equipment rating record
+        EquipmentRating::create([
+            'equipment_id' => $maintenance->equipment_id,
+            'maintenance_record_id' => $maintenance->id,
+            'evaluated_by' => Auth::id(),
+            'criteria_evaluations' => $criteriaEvaluations,
+            'total_score' => $totalScore,
+            'rating_category' => $ratingCategory,
+            'notes' => $validated['rating_notes'],
+        ]);
+        
+        // Update equipment valoracion
+        $maintenance->equipment->update([
+            'status' => 'available',
+            'valoracion' => $ratingCategory,
+        ]);
 
         return redirect()->route('maintenance.show', $maintenance)
-            ->with('success', 'Mantenimiento completado exitosamente.');
+            ->with('success', 'Mantenimiento completado exitosamente con evaluación de equipo.');
     }
 
     public function downloadChecklist(MaintenanceRecord $maintenance)
