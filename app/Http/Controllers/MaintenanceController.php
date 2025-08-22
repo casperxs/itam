@@ -223,6 +223,30 @@ class MaintenanceController extends Controller
         return $this->pdfService->generateMaintenanceChecklist($maintenance);
     }
 
+    public function destroy(MaintenanceRecord $maintenance)
+    {
+        // Verificar que el mantenimiento no esté completado (opcional, según reglas de negocio)
+        if ($maintenance->status === 'completed') {
+            return redirect()->back()->with('error', 'No se puede eliminar un mantenimiento completado.');
+        }
+
+        // Si el mantenimiento está en progreso, cambiar el estado del equipo a disponible
+        if ($maintenance->status === 'in_progress' && $maintenance->equipment) {
+            $maintenance->equipment->update(['status' => 'available']);
+        }
+
+        // Eliminar registro de evaluación relacionado si existe
+        if ($maintenance->equipmentRating) {
+            $maintenance->equipmentRating->delete();
+        }
+
+        // Eliminar el mantenimiento
+        $maintenance->delete();
+
+        return redirect()->route('maintenance.index')
+            ->with('success', 'Mantenimiento eliminado exitosamente.');
+    }
+
     public function completedMaintenance(Request $request)
     {
         $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy'])
