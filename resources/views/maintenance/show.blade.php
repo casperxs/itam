@@ -429,11 +429,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update category
         let category = '';
-        if (totalScore <= 10) category = 'Excelente';
+        if (totalScore <= 10) category = 'Reemplazo';
         else if (totalScore <= 20) category = 'Optimo';
-        else if (totalScore <= 30) category = 'Regulares';
-        else if (totalScore <= 40) category = 'Para Cambio';
-        else category = 'Reemplazo';
+        else if (totalScore <= 30) category = 'Para Cambio';
+        else if (totalScore <= 40) category = 'Regulares';
+        else category = 'Excelente'; // >=50%
         
         document.getElementById('ratingCategory').textContent = `Categoría: ${category}`;
         

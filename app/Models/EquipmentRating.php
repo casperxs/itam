@@ -38,11 +38,11 @@ class EquipmentRating extends Model
 
     public static function calculateCategory($score)
     {
-        if ($score <= 10) return 'Excelente';
+        if ($score <= 10) return 'Reemplazo';
         if ($score <= 20) return 'Optimo';
-        if ($score <= 30) return 'Regulares';
-        if ($score <= 40) return 'Para Cambio';
-        return 'Reemplazo';
+        if ($score <= 30) return 'Para Cambio';
+        if ($score <= 40) return 'Regulares';
+        return 'Excelente'; // >=50%
     }
 
     public function getLastEquipmentRating($equipmentId)
