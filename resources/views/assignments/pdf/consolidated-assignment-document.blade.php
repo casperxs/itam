@@ -16,41 +16,66 @@
             box-sizing: border-box;
         }
         
-        /* ENCABEZADO ESTILO FACTURA CON IMAGEN DE FONDO */
+        /* ENCABEZADO ESTILO FACTURA CON DOS COLUMNAS */
         .invoice-header {
             border: 2px solid #333;
             padding: 15px;
             margin-bottom: 20px;
             position: relative;
+            min-height: 150px;
+        }
+        
+        .header-row {
+            display: table;
+            width: 100%;
+            height: 120px;
+        }
+        
+        .header-left {
+            display: table-cell;
+            width: 250px;
+            vertical-align: middle;
+            position: relative;
             background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/images/background/bg_bkb_registros_nIzquierdo.png'))) }}');
             background-repeat: no-repeat;
-            background-position: left center;
-            background-size: 120px auto;
-            min-height: 80px;
+            background-position: center;
+            background-size: contain;
         }
+        
+        .header-codes {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .header-right {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20px;
+        }
+        
         .company-info {
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 5px;
-            margin: 0 auto 15px;
-            max-width: 70%;
+            text-align: left;
         }
+        
         .company-name {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #333;
         }
+        
         .document-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
         }
         
         .user-details {
@@ -144,11 +169,11 @@
             font-weight: bold;
             font-size: 8px;
         }
-        .val-100 { background-color: #4CAF50; }
-        .val-90 { background-color: #8BC34A; }
-        .val-80 { background-color: #CDDC39; color: #333; }
-        .val-70 { background-color: #FF9800; }
-        .val-60 { background-color: #F44336; }
+        .val-excelente { background-color: #4CAF50; }
+        .val-optimo { background-color: #8BC34A; }
+        .val-bueno { background-color: #CDDC39; color: #333; }
+        .val-regular { background-color: #FF9800; }
+        .val-malo { background-color: #F44336; }
         
         /* SECCIÓN FINAL DE FIRMAS */
         .final-signatures {
@@ -234,9 +259,19 @@
 <body>
     <!-- ENCABEZADO ESTILO FACTURA -->
     <div class="invoice-header">
-        <div class="company-info">
-            <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
-            <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+        <div class="header-row">
+            <div class="header-left">
+                <div class="header-codes">
+                    PRO-73-A<br>
+                    Rev. 02
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="company-info">
+                    <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
+                    <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+                </div>
+            </div>
         </div>
         
         <div class="user-details">
@@ -310,12 +345,28 @@
                             $valoracion = $assignment->equipment->valoracion;
                             $class = '';
                             $percentage = 0;
-                            if (str_contains($valoracion, 'Excelente')) { $class = 'val-100'; $percentage = 95; }
-                            elseif (str_contains($valoracion, 'Óptimo')) { $class = 'val-90'; $percentage = 85; }
-                            elseif (str_contains($valoracion, 'Regular')) { $class = 'val-80'; $percentage = 75; }
-                            elseif (str_contains($valoracion, 'Para Cambio')) { $class = 'val-70'; $percentage = 65; }
-                            elseif (str_contains($valoracion, 'Reemplazo')) { $class = 'val-60'; $percentage = 50; }
-                            else { $class = 'val-60'; $percentage = 50; }
+                            
+                            // Nueva lógica de valoración corregida
+                            if (stripos($valoracion, 'excelente') !== false || $valoracion == '100%') {
+                                $class = 'val-excelente';
+                                $percentage = 100;
+                            } elseif (stripos($valoracion, 'óptimo') !== false || stripos($valoracion, 'optimo') !== false || $valoracion == '90%') {
+                                $class = 'val-optimo';
+                                $percentage = 90;
+                            } elseif (stripos($valoracion, 'bueno') !== false || $valoracion == '80%') {
+                                $class = 'val-bueno';
+                                $percentage = 80;
+                            } elseif (stripos($valoracion, 'regular') !== false || $valoracion == '70%') {
+                                $class = 'val-regular';
+                                $percentage = 70;
+                            } elseif (stripos($valoracion, 'malo') !== false || stripos($valoracion, 'para cambio') !== false || stripos($valoracion, 'reemplazo') !== false || $valoracion == '60%') {
+                                $class = 'val-malo';
+                                $percentage = 60;
+                            } else {
+                                // Valor por defecto si no coincide con ninguno
+                                $class = 'val-regular';
+                                $percentage = 70;
+                            }
                         @endphp
                         <div class="valuation-bar">
                             <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
