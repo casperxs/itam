@@ -28,6 +28,21 @@ class RatingCriterion extends Model
 
     public static function getAllActive()
     {
-        return static::where('active', true)->orderBy('weight_percentage', 'desc')->get();
+        return static::where('active', true)
+                    ->orderBy('weight_percentage', 'desc')
+                    ->get();
+    }
+    
+    public static function getActiveWithOptions()
+    {
+        return static::where('active', true)
+                    ->orderBy('weight_percentage', 'desc')
+                    ->get()
+                    ->map(function($criterion) {
+                        $criterion->options = is_string($criterion->options) 
+                            ? json_decode($criterion->options, true) 
+                            : $criterion->options;
+                        return $criterion;
+                    });
     }
 }
