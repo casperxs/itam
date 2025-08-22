@@ -254,7 +254,8 @@
                         <h4 class="text-lg font-semibold text-gray-900">Evaluación Cuantificada del Equipo</h4>
                         
                         @php
-                            $ratingCriteria = \App\Models\RatingCriterion::getAllActive();
+                            // Use the passed rating criteria from controller, or get them here as fallback
+                            $modalRatingCriteria = isset($ratingCriteria) ? $ratingCriteria : \App\Models\RatingCriterion::getAllActive();
                             $lastRating = \App\Models\EquipmentRating::where('equipment_id', $maintenance->equipment_id)
                                                 ->orderBy('created_at', 'desc')
                                                 ->first();
@@ -289,7 +290,7 @@
                                 <div class="font-medium text-gray-700">Criterios a Evaluar</div>
                                 <div class="font-medium text-gray-700">Evaluación</div>
                                 
-                                @foreach($ratingCriteria as $criterion)
+                                @foreach($modalRatingCriteria as $criterion)
                                 <div class="py-2 border-b border-gray-200">
                                     <div class="text-sm text-gray-600">
                                         {{ $criterion->label }}
@@ -371,28 +372,41 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const criteriaData = @json($ratingCriteria ?? []);
+    const criteriaData = @json($modalRatingCriteria ?? []);
     const previousScore = {{ $previousScore ?? 0 }};
     const submitButton = document.getElementById('submitButton');
     
-    function calculateRating() {
+    function validateForm() {
+        // Check if maintenance fields are filled
+        const completedDate = document.getElementById('completed_date').value;
+        const performedActions = document.getElementById('performed_actions').value.trim();
+        
+        // Check if all rating criteria are selected
+        let allRatingsSelected = true;
+        criteriaData.forEach(function(criterion) {
+            const select = document.querySelector(`select[name="rating[${criterion.id}]"]`);
+            if (!select || !select.value) {
+                allRatingsSelected = false;
+            }
+        });
+        
+        // Check if form is complete
+        const isFormComplete = completedDate && performedActions && allRatingsSelected;
+        
+        // Calculate rating and validate
         let totalScore = 0;
-        let allSelected = true;
+        let isValidRating = true;
         
         criteriaData.forEach(function(criterion) {
             const select = document.querySelector(`select[name="rating[${criterion.id}]"]`);
             if (select && select.value) {
                 const value = parseInt(select.value);
-                // Formula corregida: (Peso × Puntuación) / 10 para obtener valores como en el ejemplo
                 const weighted = (criterion.weight_percentage * value) / 10;
-                console.log(`${criterion.label}: ${criterion.weight_percentage}% × ${value} ÷ 10 = ${weighted.toFixed(2)}`);
                 totalScore += weighted;
-            } else {
-                allSelected = false;
-                console.log(`${criterion.label}: No seleccionado`);
             }
         });
         
+        // Update score display
         document.getElementById('calculatedScore').textContent = totalScore.toFixed(2) + '%';
         
         // Update category
@@ -406,15 +420,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('ratingCategory').textContent = `Categoría: ${category}`;
         
         // Validate against previous score (degradation only)
-        let isValid = true;
-        let validationMessage = '';
-        
         if (previousScore > 0 && totalScore < previousScore) {
-            isValid = false;
-            validationMessage = `La nueva evaluación (${totalScore.toFixed(2)}%) no puede ser mejor que la anterior (${previousScore}%)`;
-        } else if (allSelected) {
-            isValid = true;
-            validationMessage = 'Evaluación válida';
+            isValidRating = false;
         }
         
         // Show validation message
@@ -426,25 +433,39 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('ratingCategory').parentNode.appendChild(validationDiv);
         }
         
-        if (!isValid) {
+        if (!isValidRating && previousScore > 0) {
             validationDiv.className = 'mt-2 text-sm text-red-600';
-            validationDiv.textContent = validationMessage;
-        } else {
+            validationDiv.textContent = `La nueva evaluación (${totalScore.toFixed(2)}%) no puede ser mejor que la anterior (${previousScore}%)`;
+        } else if (allRatingsSelected) {
             validationDiv.className = 'mt-2 text-sm text-green-600';
             validationDiv.textContent = 'Evaluación válida';
+        } else {
+            validationDiv.className = 'mt-2 text-sm text-gray-600';
+            validationDiv.textContent = 'Complete todos los criterios de evaluación';
         }
         
         // Enable/disable submit button
-        submitButton.disabled = !allSelected || !isValid;
+        const canSubmit = isFormComplete && isValidRating;
+        submitButton.disabled = !canSubmit;
+        
+        if (canSubmit) {
+            submitButton.className = 'bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700';
+        } else {
+            submitButton.className = 'bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed';
+        }
     }
+    
+    // Add event listeners to form fields
+    document.getElementById('completed_date').addEventListener('change', validateForm);
+    document.getElementById('performed_actions').addEventListener('input', validateForm);
     
     // Add event listeners to all rating selects
     document.querySelectorAll('select[name^="rating["]').forEach(function(select) {
-        select.addEventListener('change', calculateRating);
+        select.addEventListener('change', validateForm);
     });
     
-    // Initial calculation
-    calculateRating();
+    // Initial validation
+    validateForm();
 });
 </script>
 @endif
