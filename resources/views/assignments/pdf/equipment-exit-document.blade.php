@@ -357,13 +357,14 @@
                         <strong>Valoración:</strong>
                         @php
                             $valoracion = $assignment->equipment->valoracion;
-                            $percentage = (int) str_replace('%', '', $valoracion);
                             $class = '';
-                            if ($percentage >= 90) $class = 'val-100';
-                            elseif ($percentage >= 80) $class = 'val-90';
-                            elseif ($percentage >= 70) $class = 'val-80';
-                            elseif ($percentage >= 60) $class = 'val-70';
-                            else $class = 'val-60';
+                            $percentage = 0;
+                            if (str_contains($valoracion, 'Excelente')) { $class = 'val-100'; $percentage = 95; }
+                            elseif (str_contains($valoracion, 'Óptimo')) { $class = 'val-90'; $percentage = 85; }
+                            elseif (str_contains($valoracion, 'Regular')) { $class = 'val-80'; $percentage = 75; }
+                            elseif (str_contains($valoracion, 'Para Cambio')) { $class = 'val-70'; $percentage = 65; }
+                            elseif (str_contains($valoracion, 'Reemplazo')) { $class = 'val-60'; $percentage = 50; }
+                            else { $class = 'val-60'; $percentage = 50; }
                         @endphp
                         <div class="valuation-bar">
                             <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">

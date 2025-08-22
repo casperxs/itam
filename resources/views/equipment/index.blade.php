@@ -100,11 +100,11 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             @if($item->valoracion)
                                 <span class="px-2 py-1 rounded-full text-xs font-medium
-                                    @if($item->valoracion === 'Excelente') bg-green-100 text-green-800
-                                    @elseif($item->valoracion === 'Optimo') bg-blue-100 text-blue-800
-                                    @elseif($item->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
-                                    @elseif($item->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
-                                    @elseif($item->valoracion === 'Reemplazo') bg-red-100 text-red-800
+                                    @if(str_contains($item->valoracion, 'Excelente')) bg-green-100 text-green-800
+                                    @elseif(str_contains($item->valoracion, 'Óptimo')) bg-blue-100 text-blue-800
+                                    @elseif(str_contains($item->valoracion, 'Regular')) bg-yellow-100 text-yellow-800
+                                    @elseif(str_contains($item->valoracion, 'Para Cambio')) bg-orange-100 text-orange-800
+                                    @elseif(str_contains($item->valoracion, 'Reemplazo')) bg-red-100 text-red-800
                                     @else bg-gray-100 text-gray-800
                                     @endif">
                                     {{ $item->valoracion }}

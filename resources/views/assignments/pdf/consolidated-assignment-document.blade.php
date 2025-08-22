@@ -295,14 +295,13 @@
                         @php
                             $valoracion = $assignment->equipment->valoracion;
                             $class = '';
-                            switch($valoracion) {
-                                case 'Excelente': $class = 'val-100'; break;
-                                case 'Optimo': $class = 'val-90'; break; 
-                                case 'Regulares': $class = 'val-80'; break;
-                                case 'Para Cambio': $class = 'val-70'; break;
-                                case 'Reemplazo': $class = 'val-60'; break;
-                                default: $class = 'val-60'; break;
-                            }
+                            $percentage = 0;
+                            if (str_contains($valoracion, 'Excelente')) { $class = 'val-100'; $percentage = 95; }
+                            elseif (str_contains($valoracion, 'Óptimo')) { $class = 'val-90'; $percentage = 85; }
+                            elseif (str_contains($valoracion, 'Regular')) { $class = 'val-80'; $percentage = 75; }
+                            elseif (str_contains($valoracion, 'Para Cambio')) { $class = 'val-70'; $percentage = 65; }
+                            elseif (str_contains($valoracion, 'Reemplazo')) { $class = 'val-60'; $percentage = 50; }
+                            else { $class = 'val-60'; $percentage = 50; }
                         @endphp
                         <div class="valuation-bar">
                             <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">

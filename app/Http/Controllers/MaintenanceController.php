@@ -171,9 +171,9 @@ class MaintenanceController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
             
-        if ($lastRating && $totalScore < $lastRating->total_score) {
+        if ($lastRating && $totalScore > $lastRating->total_score) {
             return back()->withErrors([
-                'rating' => "La nueva evaluación ({$totalScore}%) no puede ser mejor que la anterior ({$lastRating->total_score}%)."
+                'rating' => "La nueva evaluación ({$totalScore}%) no puede ser mejor que la anterior ({$lastRating->total_score}%). El sistema permite solo degradación."
             ])->withInput();
         }
         

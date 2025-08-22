@@ -429,16 +429,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update category - Lógica: 100% = Excelente, hacia abajo = peor calidad
         let category = '';
-        if (totalScore > 90) category = 'Excelente';    // 100% - 90.1%
-        else if (totalScore > 80) category = 'Optimo'; // 90% - 80.1%
-        else if (totalScore > 70) category = 'Regulares'; // 80% - 70.1%
-        else if (totalScore > 60) category = 'Para Cambio'; // 70% - 60.1%
-        else category = 'Reemplazo'; // 60% - 0%
+        if (totalScore > 90) category = 'Excelente 🟢';    // 100% - 90.1%
+        else if (totalScore > 80) category = 'Óptimo 🔵'; // 90% - 80.1%
+        else if (totalScore > 70) category = 'Regular 🟡'; // 80% - 70.1%
+        else if (totalScore > 60) category = 'Para Cambio 🟠'; // 70% - 60.1%
+        else category = 'Reemplazo 🔴'; // 60% - 0%
         
         document.getElementById('ratingCategory').textContent = `Categoría: ${category}`;
         
         // Validate against previous score (degradation only)
-        if (previousScore > 0 && totalScore < previousScore) {
+        if (previousScore > 0 && totalScore > previousScore) {
             isValidRating = false;
         }
         
