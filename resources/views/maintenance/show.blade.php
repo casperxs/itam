@@ -268,13 +268,16 @@
                             $isNewEquipment = $equipmentAge && $equipmentAge <= 6;
                         @endphp
                         
-                        <!-- DEBUG INFO - Remove this later -->
-                        <div class="bg-red-50 border border-red-200 p-2 rounded text-xs">
-                            <strong>DEBUG:</strong> Criterios encontrados: {{ $modalRatingCriteria->count() }}
-                            @if($modalRatingCriteria->count() > 0)
-                                <br>Primer criterio: {{ $modalRatingCriteria->first()->name ?? 'N/A' }} - {{ $modalRatingCriteria->first()->label ?? 'N/A' }}
-                            @endif
+                        @if($modalRatingCriteria->count() == 0)
+                        <div class="bg-red-50 border border-red-200 p-3 rounded-md">
+                            <p class="text-sm text-red-800">
+                                <strong>⚠️ Error:</strong> No se encontraron criterios de evaluación.
+                            </p>
+                            <p class="text-xs text-red-600 mt-1">
+                                Ejecuta: <code>php artisan db:seed --class=RatingCriteriaSeeder</code>
+                            </p>
                         </div>
+                        @endif
                         
                         @if($previousScore)
                         <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-md">
@@ -288,7 +291,16 @@
                         @elseif($isNewEquipment)
                         <div class="bg-blue-50 border border-blue-200 p-3 rounded-md">
                             <p class="text-sm text-blue-800">
-                                <strong>Equipo nuevo:</strong> Menos de 6 meses desde la compra. Primera evaluación.
+                                <strong>🎆 Equipo nuevo:</strong> Menos de 6 meses desde la compra. Primera evaluación.
+                            </p>
+                        </div>
+                        @else
+                        <div class="bg-green-50 border border-green-200 p-3 rounded-md">
+                            <p class="text-sm text-green-800">
+                                <strong>🎯 Evaluación inicial:</strong> Este es el primer registro de calificación para este equipo.
+                            </p>
+                            <p class="text-xs text-green-600 mt-1">
+                                Puedes asignar la calificación que consideres adecuada según el estado actual del equipo.
                             </p>
                         </div>
                         @endif

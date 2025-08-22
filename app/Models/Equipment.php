@@ -67,6 +67,11 @@ class Equipment extends Model
         return $this->hasMany(EquipmentRating::class);
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(EquipmentRating::class);
+    }
+
     public function latestRating()
     {
         return $this->hasOne(EquipmentRating::class)->latestOfMany();
