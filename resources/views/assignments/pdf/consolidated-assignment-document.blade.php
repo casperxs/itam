@@ -41,12 +41,10 @@
         }
         
         .company-info {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.95);
+            text-align: right;
             padding: 15px;
             margin: 0 auto 20px auto;
-            max-width: 60%;
-            border-radius: 8px;
+            max-width: 50%;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: relative;
             z-index: 2;
