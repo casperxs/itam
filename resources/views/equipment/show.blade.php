@@ -79,7 +79,7 @@
                                 @elseif($equipment->valoracion === 'Optimo') bg-blue-100 text-blue-800
                                 @elseif($equipment->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
                                 @elseif($equipment->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
-                                @elseif($equipment->valoracion === 'Remplazo') bg-red-100 text-red-800
+                                @elseif($equipment->valoracion === 'Reemplazo') bg-red-100 text-red-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
                                 {{ $equipment->valoracion }}
@@ -257,7 +257,19 @@
                         @foreach($equipment->maintenanceRecords->sortByDesc('scheduled_date') as $maintenance)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ ucfirst($maintenance->maintenance_type) }}
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                    @if($maintenance->type === 'preventive') bg-blue-100 text-blue-800
+                                    @elseif($maintenance->type === 'corrective') bg-red-100 text-red-800
+                                    @elseif($maintenance->type === 'update') bg-purple-100 text-purple-800
+                                    @else bg-gray-100 text-gray-800
+                                    @endif">
+                                    @switch($maintenance->type)
+                                        @case('preventive') Preventivo @break
+                                        @case('corrective') Correctivo @break
+                                        @case('update') Actualización @break
+                                        @default {{ ucfirst($maintenance->type) }} @break
+                                    @endswitch
+                                </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $maintenance->description }}
