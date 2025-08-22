@@ -251,8 +251,8 @@
             Rev. 02
         </div>
         
-        <div class="user-details-right">
-          <div class="document-title">CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+        <div class="document-title" style="text-align: right; margin-top: 10px; margin-bottom: 20px;">
+            CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS
         </div>
         
         <div class="user-details">
