@@ -16,66 +16,56 @@
             box-sizing: border-box;
         }
         
-        /* ENCABEZADO ESTILO FACTURA CON DOS COLUMNAS */
+        /* ENCABEZADO CON IMAGEN DE FONDO DETRÁS DE TODO */
         .invoice-header {
             border: 2px solid #333;
-            padding: 15px;
+            padding: 20px;
             margin-bottom: 20px;
             position: relative;
-            min-height: 150px;
-        }
-        
-        .header-row {
-            display: table;
-            width: 100%;
-            height: 120px;
-        }
-        
-        .header-left {
-            display: table-cell;
-            width: 250px;
-            vertical-align: middle;
-            position: relative;
+            min-height: 160px;
             background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/images/background/bg_bkb_registros_nIzquierdo.png'))) }}');
             background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
+            background-position: left center;
+            background-size: 300px auto;
         }
         
         .header-codes {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 25px;
+            left: 25px;
             color: white;
             font-weight: bold;
-            font-size: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-        
-        .header-right {
-            display: table-cell;
-            vertical-align: middle;
-            padding-left: 20px;
+            font-size: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+            line-height: 1.3;
         }
         
         .company-info {
-            text-align: left;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            margin: 0 auto 20px auto;
+            max-width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
         }
         
         .company-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 8px;
             color: #333;
         }
         
         .document-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 0;
             border-bottom: 2px solid #333;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
         }
         
         .user-details {
@@ -259,19 +249,14 @@
 <body>
     <!-- ENCABEZADO ESTILO FACTURA -->
     <div class="invoice-header">
-        <div class="header-row">
-            <div class="header-left">
-                <div class="header-codes">
-                    PRO-73-A<br>
-                    Rev. 02
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="company-info">
-                    <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
-                    <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
-                </div>
-            </div>
+        <div class="header-codes">
+            PRO-73-A<br>
+            Rev. 02
+        </div>
+        
+        <div class="company-info">
+            <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
+            <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
         </div>
         
         <div class="user-details">
