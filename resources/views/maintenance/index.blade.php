@@ -150,12 +150,6 @@
                                     </form>
                                 @endif
 
-                                @if($maintenance->status === 'in_progress')
-                                    <form method="POST" action="{{ route('maintenance.complete', $maintenance) }}" class="inline">
-                                        @csrf
-                                        <button type="submit" class="text-purple-600 hover:text-purple-900">Completar</button>
-                                    </form>
-                                @endif
 
                                 <a href="{{ route('maintenance.edit', $maintenance) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
 
