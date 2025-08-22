@@ -38,11 +38,12 @@ class EquipmentRating extends Model
 
     public static function calculateCategory($score)
     {
-        if ($score <= 10) return 'Reemplazo';
-        if ($score <= 20) return 'Optimo';
-        if ($score <= 30) return 'Para Cambio';
-        if ($score <= 40) return 'Regulares';
-        return 'Excelente'; // >=50%
+        // Lógica: 100% = Excelente, hacia abajo = peor calidad
+        if ($score > 90) return 'Excelente';    // 100% - 90.1%
+        if ($score > 80) return 'Optimo';       // 90% - 80.1%  
+        if ($score > 70) return 'Regulares';    // 80% - 70.1%
+        if ($score > 60) return 'Para Cambio'; // 70% - 60.1%
+        return 'Reemplazo';                     // 60% - 0%
     }
 
     public function getLastEquipmentRating($equipmentId)

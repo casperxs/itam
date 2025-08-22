@@ -144,7 +144,7 @@
                                 @elseif($equipment->valoracion === 'Optimo') bg-blue-100 text-blue-800
                                 @elseif($equipment->valoracion === 'Regulares') bg-yellow-100 text-yellow-800
                                 @elseif($equipment->valoracion === 'Para Cambio') bg-orange-100 text-orange-800
-                                @elseif($equipment->valoracion === 'Remplazo') bg-red-100 text-red-800
+                                @elseif($equipment->valoracion === 'Reemplazo') bg-red-100 text-red-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
                                 {{ $equipment->valoracion }}

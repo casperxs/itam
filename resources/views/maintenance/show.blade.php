@@ -427,13 +427,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update score display
         document.getElementById('calculatedScore').textContent = totalScore.toFixed(2) + '%';
         
-        // Update category
+        // Update category - Lógica: 100% = Excelente, hacia abajo = peor calidad
         let category = '';
-        if (totalScore <= 10) category = 'Reemplazo';
-        else if (totalScore <= 20) category = 'Optimo';
-        else if (totalScore <= 30) category = 'Para Cambio';
-        else if (totalScore <= 40) category = 'Regulares';
-        else category = 'Excelente'; // >=50%
+        if (totalScore > 90) category = 'Excelente';    // 100% - 90.1%
+        else if (totalScore > 80) category = 'Optimo'; // 90% - 80.1%
+        else if (totalScore > 70) category = 'Regulares'; // 80% - 70.1%
+        else if (totalScore > 60) category = 'Para Cambio'; // 70% - 60.1%
+        else category = 'Reemplazo'; // 60% - 0%
         
         document.getElementById('ratingCategory').textContent = `Categoría: ${category}`;
         
