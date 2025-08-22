@@ -302,7 +302,9 @@
                                             $ageValue = 10; // Default
                                             if ($equipmentAge) {
                                                 foreach($criterion->options as $option) {
-                                                    $months = (int) filter_var($option['label'], FILTER_EXTRACT_NUMBERS);
+                                                    // Extraer el número de meses de la etiqueta (ej: "6 meses" -> 6)
+                                                    preg_match('/\d+/', $option['label'], $matches);
+                                                    $months = isset($matches[0]) ? (int)$matches[0] : 0;
                                                     if ($equipmentAge >= $months) {
                                                         $ageValue = $option['value'];
                                                         break;
@@ -381,10 +383,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const select = document.querySelector(`select[name="rating[${criterion.id}]"]`);
             if (select && select.value) {
                 const value = parseInt(select.value);
-                const weighted = (criterion.weight_percentage * value) / 100;
+                // Formula corregida: (Peso × Puntuación) / 10 para obtener valores como en el ejemplo
+                const weighted = (criterion.weight_percentage * value) / 10;
+                console.log(`${criterion.label}: ${criterion.weight_percentage}% × ${value} ÷ 10 = ${weighted.toFixed(2)}`);
                 totalScore += weighted;
             } else {
                 allSelected = false;
+                console.log(`${criterion.label}: No seleccionado`);
             }
         });
         

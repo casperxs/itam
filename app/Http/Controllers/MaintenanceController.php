@@ -152,7 +152,8 @@ class MaintenanceController extends Controller
         
         foreach ($ratingCriteria as $criterion) {
             $value = $validated['rating'][$criterion->id];
-            $weightedScore = ($criterion->weight_percentage * $value) / 100;
+            // Formula corregida: (Peso × Puntuación) / 10 para obtener valores como en el ejemplo
+            $weightedScore = ($criterion->weight_percentage * $value) / 10;
             $totalScore += $weightedScore;
             
             $criteriaEvaluations[$criterion->id] = [
