@@ -16,22 +16,36 @@
             box-sizing: border-box;
         }
         
-        /* ENCABEZADO ESTILO FACTURA */
+        /* ENCABEZADO ESTILO FACTURA CON IMAGEN DE FONDO */
         .invoice-header {
             border: 2px solid #333;
             padding: 15px;
             margin-bottom: 20px;
+            position: relative;
+            background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/images/background/bg_bkb_registros_nIzquierdo.png'))) }}');
+            background-repeat: no-repeat;
+            background-position: left center;
+            background-size: 120px auto;
+            min-height: 80px;
         }
         .company-info {
             text-align: center;
             border-bottom: 1px solid #333;
             padding-bottom: 10px;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 0 auto 15px;
+            max-width: 70%;
         }
         .company-name {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 5px;
+            color: #333;
         }
         .document-title {
             font-size: 14px;

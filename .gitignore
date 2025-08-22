@@ -52,3 +52,4 @@ resources/views/assignments/pdf/assignment-document.blade - Copia.php
 public/.DS_Store
 .DS_Store
 .DS_Store
+.DS_Store
