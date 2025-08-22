@@ -26,7 +26,7 @@
             background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/images/background/bg_bkb_registros_nIzquierdo.png'))) }}');
             background-repeat: no-repeat;
             background-position: left top;
-            background-size: 900px auto;
+            background-size: 600px auto;
         }
         
         .header-codes {
