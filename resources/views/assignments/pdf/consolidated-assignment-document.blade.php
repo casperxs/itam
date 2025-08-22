@@ -42,10 +42,9 @@
         
         .company-info {
             text-align: right;
-            padding: 15px;
+            padding: 5px;
             margin: 0 auto 20px auto;
-            max-width: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 60%;
             position: relative;
             z-index: 2;
         }
@@ -253,8 +252,7 @@
         </div>
         
         <div class="company-info">
-            <div class="company-name">BOKOBA by EXL AUTOMOTIVE S.C.</div>
-            <div class="document-title">DOCUMENTO CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
+          <div class="document-title">CONSOLIDADO DE ASIGNACIÓN DE EQUIPOS</div>
         </div>
         
         <div class="user-details">
