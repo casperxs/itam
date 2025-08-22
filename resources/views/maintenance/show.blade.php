@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (totalScore <= 20) category = 'Optimo';
         else if (totalScore <= 30) category = 'Regulares';
         else if (totalScore <= 40) category = 'Para Cambio';
-        else category = 'Remplazo';
+        else category = 'Reemplazo';
         
         document.getElementById('ratingCategory').textContent = `Categoría: ${category}`;
         

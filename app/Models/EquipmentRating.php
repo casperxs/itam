@@ -42,7 +42,7 @@ class EquipmentRating extends Model
         if ($score <= 20) return 'Optimo';
         if ($score <= 30) return 'Regulares';
         if ($score <= 40) return 'Para Cambio';
-        return 'Remplazo';
+        return 'Reemplazo';
     }
 
     public function getLastEquipmentRating($equipmentId)
