@@ -254,8 +254,8 @@
                         <h4 class="text-lg font-semibold text-gray-900">Evaluación Cuantificada del Equipo</h4>
                         
                         @php
-                            // Use the passed rating criteria from controller, or get them here as fallback
-                            $modalRatingCriteria = isset($ratingCriteria) ? $ratingCriteria : \App\Models\RatingCriterion::getAllActive();
+                            // Force get the rating criteria directly
+                            $modalRatingCriteria = \App\Models\RatingCriterion::getAllActive();
                             $lastRating = \App\Models\EquipmentRating::where('equipment_id', $maintenance->equipment_id)
                                                 ->orderBy('created_at', 'desc')
                                                 ->first();
@@ -267,6 +267,14 @@
                                 : null;
                             $isNewEquipment = $equipmentAge && $equipmentAge <= 6;
                         @endphp
+                        
+                        <!-- DEBUG INFO - Remove this later -->
+                        <div class="bg-red-50 border border-red-200 p-2 rounded text-xs">
+                            <strong>DEBUG:</strong> Criterios encontrados: {{ $modalRatingCriteria->count() }}
+                            @if($modalRatingCriteria->count() > 0)
+                                <br>Primer criterio: {{ $modalRatingCriteria->first()->name ?? 'N/A' }} - {{ $modalRatingCriteria->first()->label ?? 'N/A' }}
+                            @endif
+                        </div>
                         
                         @if($previousScore)
                         <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-md">
@@ -286,18 +294,16 @@
                         @endif
                         
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="font-medium text-gray-700">Criterios a Evaluar</div>
-                                <div class="font-medium text-gray-700">Evaluación</div>
-                                
+                            <div class="grid grid-cols-1 gap-4">
                                 @foreach($modalRatingCriteria as $criterion)
-                                <div class="py-2 border-b border-gray-200">
-                                    <div class="text-sm text-gray-600">
-                                        {{ $criterion->label }}
-                                        <span class="text-xs text-gray-500">({{ $criterion->weight_percentage }}%)</span>
+                                <div class="border-b border-gray-200 pb-3 mb-3">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="text-sm font-medium text-gray-700">
+                                            {{ $criterion->label }}
+                                            <span class="text-xs text-gray-500">({{ $criterion->weight_percentage }}%)</span>
+                                        </label>
                                     </div>
-                                </div>
-                                <div class="py-2 border-b border-gray-200">
+                                    
                                     @if($criterion->auto_calculated && $criterion->name === 'equipment_age')
                                         @php
                                             $ageValue = 10; // Default
@@ -314,7 +320,7 @@
                                             }
                                         @endphp
                                         <select name="rating[{{ $criterion->id }}]" 
-                                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                                 required>
                                             @foreach($criterion->options as $option)
                                                 <option value="{{ $option['value'] }}" 
@@ -323,10 +329,10 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <p class="text-xs text-gray-500 mt-1">Auto-calculado basado en fecha de compra</p>
+                                        <p class="text-xs text-gray-500 mt-1">Auto-calculado basado en fecha de compra ({{ $equipmentAge }} meses)</p>
                                     @else
                                         <select name="rating[{{ $criterion->id }}]" 
-                                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                                 required>
                                             <option value="">Seleccionar...</option>
                                             @foreach($criterion->options as $option)
