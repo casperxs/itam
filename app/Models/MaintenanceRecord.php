@@ -13,6 +13,7 @@ class MaintenanceRecord extends Model
         'performed_by',
         'type',
         'scheduled_date',
+        'end_date',
         'completed_date',
         'status',
         'description',
@@ -24,6 +25,7 @@ class MaintenanceRecord extends Model
 
     protected $casts = [
         'scheduled_date' => 'datetime',
+        'end_date' => 'datetime',
         'completed_date' => 'datetime',
         'cost' => 'decimal:2',
         'checklist_data' => 'array',

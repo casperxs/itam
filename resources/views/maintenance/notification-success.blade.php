@@ -109,8 +109,8 @@
         </div>
         
         <p class="text-blue-800 mb-4">
-            Se ha preparado un correo electrónico de notificación con un archivo de calendario (.ics) para el usuario. 
-            Este archivo puede ser importado directamente a su calendario personal (Outlook, Gmail, Apple Calendar, etc.).
+            Se ha preparado un correo electrónico de notificación y se ha generado un archivo de calendario (.ics). 
+            <strong>Nota importante:</strong> Deberá descargar y adjuntar manualmente el archivo ICS al correo.
         </p>
 
         @if(!empty($emailData['to']))
@@ -148,10 +148,21 @@
             </a>
         </div>
 
-        <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+        <!-- Instrucciones de Uso -->
+        <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h4 class="font-medium text-amber-800 mb-2">📝 Instrucciones:</h4>
+            <ol class="text-sm text-amber-700 space-y-1 list-decimal list-inside">
+                <li><strong>Paso 1:</strong> Haz clic en "Descargar Archivo de Calendario" para obtener el archivo .ics</li>
+                <li><strong>Paso 2:</strong> Haz clic en "Abrir Cliente de Correo" para crear el email con el contenido prellenado</li>
+                <li><strong>Paso 3:</strong> En tu cliente de correo, adjunta manualmente el archivo .ics descargado</li>
+                <li><strong>Paso 4:</strong> Envía el correo. El destinatario podrá agregar el evento directamente a su calendario</li>
+            </ol>
+        </div>
+        
+        <div class="mt-3 p-3 bg-blue-100 rounded-lg">
             <p class="text-sm text-blue-800">
-                <strong>💡 Tip:</strong> El archivo .ics incluye recordatorios automáticos (15 minutos y 1 día antes del mantenimiento) 
-                y puede ser compartido con otros usuarios si es necesario.
+                <strong>💡 Beneficios:</strong> El archivo .ics incluye recordatorios automáticos (15 minutos y 1 día antes del mantenimiento), 
+                duración de 1 hora, y toda la información del mantenimiento. Compatible con Outlook, Gmail, Apple Calendar, etc.
             </p>
         </div>
     </div>

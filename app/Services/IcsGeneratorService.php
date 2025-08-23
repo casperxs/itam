@@ -22,7 +22,10 @@ class IcsGeneratorService
         
         // Fecha y hora del mantenimiento
         $startDate = Carbon::parse($maintenance->scheduled_date);
-        $endDate = $startDate->copy()->addHours(2); // Duración estimada de 2 horas
+        // Usar end_date si está disponible, de lo contrario duración de 1 hora
+        $endDate = $maintenance->end_date 
+            ? Carbon::parse($maintenance->end_date) 
+            : $startDate->copy()->addHour();
         
         // Generar UID único para el evento
         $uid = 'maintenance-' . $maintenance->id . '-' . time() . '@bkb.mx';
@@ -270,9 +273,35 @@ class IcsGeneratorService
             $body[] = $maintenance->notes;
             $body[] = "";
         }
-        $body[] = "Se adjunta un archivo de calendario (.ics) que puede agregar a su calendario personal.";
+        $body[] = "📎 ARCHIVO ADJUNTO:";
+        $body[] = "Se incluye un archivo de calendario (.ics) que puede:";
+        $body[] = "• Abrir directamente para agregar el evento a su calendario";
+        $body[] = "• Importar a Outlook, Gmail, Apple Calendar, etc.";
+        $body[] = "• El archivo incluye recordatorios automáticos";
         $body[] = "";
+        $body[] = "⚠️ IMPORTANTE:";
         $body[] = "Por favor, asegúrese de tener su equipo disponible en la fecha y hora programada.";
+        
+        // Calcular duración
+        if ($maintenance->end_date) {
+            $startDate = Carbon::parse($maintenance->scheduled_date);
+            $endDate = Carbon::parse($maintenance->end_date);
+            $duration = $startDate->diffInMinutes($endDate);
+            
+            if ($duration < 60) {
+                $body[] = "Duración estimada: {$duration} minutos";
+            } else {
+                $hours = floor($duration / 60);
+                $minutes = $duration % 60;
+                $durationText = $hours . ($hours == 1 ? ' hora' : ' horas');
+                if ($minutes > 0) {
+                    $durationText .= " y {$minutes} minutos";
+                }
+                $body[] = "Duración estimada: {$durationText}";
+            }
+        } else {
+            $body[] = "Duración estimada: 1 hora";
+        }
         $body[] = "";
         $body[] = "Saludos cordiales,";
         $body[] = "Departamento de Soporte IT - BKB";

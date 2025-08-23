@@ -60,6 +60,7 @@ class MaintenanceController extends Controller
             'performed_by' => 'required|exists:users,id',
             'type' => 'required|in:preventive,corrective,update',
             'scheduled_date' => 'required|date',
+            'end_date' => 'nullable|date|after:scheduled_date',
             'description' => 'required|string',
             'cost' => 'nullable|numeric',
             'notes' => 'nullable|string',

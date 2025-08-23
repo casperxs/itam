@@ -96,7 +96,7 @@
             </div>
 
             <div>
-                <label for="scheduled_date" class="block text-sm font-medium text-gray-700 mb-2">Fecha Programada *</label>
+                <label for="scheduled_date" class="block text-sm font-medium text-gray-700 mb-2">Fecha y Hora de Inicio *</label>
                 <input
                     type="datetime-local"
                     id="scheduled_date"
@@ -106,6 +106,21 @@
                     required
                 >
                 @error('scheduled_date')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">Fecha y Hora de Finalización</label>
+                <input
+                    type="datetime-local"
+                    id="end_date"
+                    name="end_date"
+                    value="{{ old('end_date') }}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('end_date') border-red-500 @enderror"
+                >
+                <p class="mt-1 text-sm text-gray-500">Si se deja vacío, se asumirá una duración de 1 hora</p>
+                @error('end_date')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
