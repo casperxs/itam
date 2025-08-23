@@ -45,10 +45,10 @@ class MaintenanceController extends Controller
 
     public function create()
     {
-        $equipment = Equipment::with('equipmentType')->get();
+        // Ya no necesitamos cargar todos los equipos, solo los técnicos
         $technicians = User::all();
         
-        return view('maintenance.create', compact('equipment', 'technicians'));
+        return view('maintenance.create', compact('technicians'));
     }
 
     public function store(Request $request)
@@ -307,5 +307,78 @@ class MaintenanceController extends Controller
             'cancelled' => '#e74c3c',
             default => '#95a5a6',
         };
+    }
+
+    public function searchEquipment(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+        
+        $equipment = Equipment::with(['equipmentType', 'currentAssignment.itUser'])
+            ->where(function($q) use ($query) {
+                // Búsqueda por tipo de equipo
+                $q->whereHas('equipmentType', function($subQ) use ($query) {
+                    $subQ->where('name', 'like', "%{$query}%");
+                })
+                // Búsqueda por marca
+                ->orWhere('brand', 'like', "%{$query}%")
+                // Búsqueda por modelo
+                ->orWhere('model', 'like', "%{$query}%")
+                // Búsqueda por número de serie
+                ->orWhere('serial_number', 'like', "%{$query}%")
+                // Búsqueda por asset tag
+                ->orWhere('asset_tag', 'like', "%{$query}%")
+                // Búsqueda por nombre de usuario asignado
+                ->orWhereHas('currentAssignment.itUser', function($subQ) use ($query) {
+                    $subQ->where('name', 'like', "%{$query}%")
+                         ->orWhere('employee_id', 'like', "%{$query}%")
+                         ->orWhere('department', 'like', "%{$query}%");
+                });
+            })
+            ->limit(10)
+            ->get();
+        
+        $results = $equipment->map(function($item) {
+            $assignedUser = $item->currentAssignment ? $item->currentAssignment->itUser : null;
+            
+            return [
+                'id' => $item->id,
+                'text' => $this->formatEquipmentText($item),
+                'type' => $item->equipmentType->name ?? 'N/A',
+                'brand' => $item->brand ?? 'N/A',
+                'model' => $item->model ?? 'N/A',
+                'serial_number' => $item->serial_number ?? 'N/A',
+                'asset_tag' => $item->asset_tag,
+                'status' => $item->status,
+                'assigned_user' => $assignedUser ? $assignedUser->name : null,
+                'user_department' => $assignedUser ? $assignedUser->department : null,
+                'user_employee_id' => $assignedUser ? $assignedUser->employee_id : null,
+            ];
+        });
+        
+        return response()->json($results);
+    }
+    
+    private function formatEquipmentText($equipment)
+    {
+        $text = ($equipment->equipmentType->name ?? 'N/A') . ' - ' . 
+                ($equipment->brand ?? 'N/A') . ' ' . 
+                ($equipment->model ?? 'N/A') . 
+                ' (' . ($equipment->serial_number ?? 'N/A') . ')';
+        
+        if ($equipment->currentAssignment && $equipment->currentAssignment->itUser) {
+            $user = $equipment->currentAssignment->itUser;
+            $text .= ' | Usuario: ' . $user->name;
+            if ($user->department) {
+                $text .= ' (' . $user->department . ')';
+            }
+        } else {
+            $text .= ' | Sin asignar';
+        }
+        
+        return $text;
     }
 }

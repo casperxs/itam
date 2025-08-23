@@ -21,20 +21,37 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="equipment_id" class="block text-sm font-medium text-gray-700 mb-2">Equipo *</label>
-                <select
-                    id="equipment_id"
-                    name="equipment_id"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('equipment_id') border-red-500 @enderror"
-                    required
-                >
-                    <option value="">Seleccionar Equipo</option>
-                    @foreach($equipment ?? [] as $item)
-                        <option value="{{ $item->id }}" {{ old('equipment_id') == $item->id ? 'selected' : '' }}>
-                            {{ $item->equipmentType->name ?? 'N/A' }} - {{ $item->brand }} {{ $item->model }} ({{ $item->serial_number }})
-                        </option>
-                    @endforeach
-                </select>
+                <label for="equipment_search" class="block text-sm font-medium text-gray-700 mb-2">Buscar Equipo *</label>
+                <div class="relative">
+                    <input
+                        type="text"
+                        id="equipment_search"
+                        placeholder="Buscar por tipo, marca, modelo, serie, tag o usuario asignado..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('equipment_id') border-red-500 @enderror"
+                        autocomplete="off"
+                    >
+                    <input type="hidden" id="equipment_id" name="equipment_id" value="{{ old('equipment_id') }}" required>
+                    
+                    <!-- Dropdown de resultados -->
+                    <div id="equipment_results" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto hidden shadow-lg">
+                        <!-- Los resultados se cargarán aquí dinámicamente -->
+                    </div>
+                    
+                    <!-- Equipo seleccionado -->
+                    <div id="selected_equipment" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md hidden">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-medium text-blue-900" id="selected_equipment_text"></div>
+                                <div class="text-sm text-blue-700" id="selected_equipment_details"></div>
+                            </div>
+                            <button type="button" onclick="clearSelection()" class="text-blue-600 hover:text-blue-800">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 @error('equipment_id')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -208,4 +225,164 @@
         @endif
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('equipment_search');
+    const equipmentIdInput = document.getElementById('equipment_id');
+    const resultsDiv = document.getElementById('equipment_results');
+    const selectedDiv = document.getElementById('selected_equipment');
+    const selectedTextDiv = document.getElementById('selected_equipment_text');
+    const selectedDetailsDiv = document.getElementById('selected_equipment_details');
+    
+    let searchTimeout;
+    let selectedEquipment = null;
+    
+    // Si hay un equipment_id de old(), cargar la información del equipo
+    @if(old('equipment_id'))
+        // Hacer una llamada para obtener la información del equipo seleccionado previamente
+        fetch(`/api/equipment/search?q={{ old('equipment_id') }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    selectEquipment(data[0]);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    @endif
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Limpiar timeout anterior
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            hideResults();
+            return;
+        }
+        
+        // Debounce la búsqueda
+        searchTimeout = setTimeout(() => {
+            search(query);
+        }, 300);
+    });
+    
+    // Ocultar resultados al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+            hideResults();
+        }
+    });
+    
+    function search(query) {
+        fetch(`/api/equipment/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                showResults(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                hideResults();
+            });
+    }
+    
+    function showResults(equipment) {
+        if (equipment.length === 0) {
+            resultsDiv.innerHTML = '<div class="p-3 text-gray-500 text-center">No se encontraron equipos</div>';
+        } else {
+            resultsDiv.innerHTML = equipment.map(item => {
+                return `
+                    <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" onclick="selectEquipment(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                        <div class="font-medium text-gray-900">${item.text}</div>
+                        <div class="text-sm text-gray-600">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                item.status === 'available' ? 'bg-green-100 text-green-800' :
+                                item.status === 'assigned' ? 'bg-blue-100 text-blue-800' :
+                                item.status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                            }">
+                                ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                            </span>
+                            ${item.asset_tag ? ` | Tag: ${item.asset_tag}` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        resultsDiv.classList.remove('hidden');
+    }
+    
+    function hideResults() {
+        resultsDiv.classList.add('hidden');
+    }
+    
+    window.selectEquipment = function(equipment) {
+        selectedEquipment = equipment;
+        
+        // Actualizar campos
+        equipmentIdInput.value = equipment.id;
+        searchInput.value = '';
+        
+        // Mostrar equipo seleccionado
+        selectedTextDiv.textContent = `${equipment.type} - ${equipment.brand} ${equipment.model}`;
+        selectedDetailsDiv.innerHTML = `
+            <strong>Serie:</strong> ${equipment.serial_number}
+            ${equipment.asset_tag ? ` | <strong>Tag:</strong> ${equipment.asset_tag}` : ''}
+            ${equipment.assigned_user ? ` | <strong>Usuario:</strong> ${equipment.assigned_user}` : ' | Sin asignar'}
+            ${equipment.user_department ? ` (${equipment.user_department})` : ''}
+        `;
+        
+        selectedDiv.classList.remove('hidden');
+        hideResults();
+    }
+    
+    window.clearSelection = function() {
+        selectedEquipment = null;
+        equipmentIdInput.value = '';
+        searchInput.value = '';
+        selectedDiv.classList.add('hidden');
+        searchInput.focus();
+    }
+    
+    // Manejar teclas de navegación
+    searchInput.addEventListener('keydown', function(e) {
+        const results = resultsDiv.querySelectorAll('[onclick]');
+        const currentFocus = resultsDiv.querySelector('.bg-blue-100');
+        let currentIndex = Array.from(results).indexOf(currentFocus);
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                if (results.length > 0) {
+                    if (currentFocus) currentFocus.classList.remove('bg-blue-100');
+                    currentIndex = currentIndex < results.length - 1 ? currentIndex + 1 : 0;
+                    results[currentIndex].classList.add('bg-blue-100');
+                }
+                break;
+                
+            case 'ArrowUp':
+                e.preventDefault();
+                if (results.length > 0) {
+                    if (currentFocus) currentFocus.classList.remove('bg-blue-100');
+                    currentIndex = currentIndex > 0 ? currentIndex - 1 : results.length - 1;
+                    results[currentIndex].classList.add('bg-blue-100');
+                }
+                break;
+                
+            case 'Enter':
+                e.preventDefault();
+                if (currentFocus) {
+                    currentFocus.click();
+                }
+                break;
+                
+            case 'Escape':
+                hideResults();
+                break;
+        }
+    });
+});
+</script>
 @endsection

@@ -85,6 +85,9 @@ Route::middleware(['admin'])->group(function () {
         ->name('maintenance.checklist');
     Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
         ->name('maintenance.completed');
+    // API route for equipment search
+    Route::get('api/equipment/search', [MaintenanceController::class, 'searchEquipment'])
+        ->name('api.equipment.search');
 
     // Contracts
     Route::resource('contracts', ContractController::class);
