@@ -19,12 +19,14 @@ class MaintenanceRecord extends Model
         'performed_actions',
         'cost',
         'notes',
+        'checklist_data',
     ];
 
     protected $casts = [
         'scheduled_date' => 'datetime',
         'completed_date' => 'datetime',
         'cost' => 'decimal:2',
+        'checklist_data' => 'array',
     ];
 
     public function equipment()

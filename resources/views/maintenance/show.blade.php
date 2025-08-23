@@ -247,6 +247,73 @@
                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                       placeholder="Notas adicionales..."></textarea>
                         </div>
+                        
+                        <!-- Sección de Checklist -->
+                        <div class="mt-6">
+                            <h5 class="text-md font-semibold text-gray-900 mb-4">Checklist de Actividades</h5>
+                            <p class="text-sm text-gray-600 mb-4">Complete el checklist para poder finalizar el mantenimiento:</p>
+                            
+                            @php
+                                $checklistActivities = [
+                                    'Temporales',
+                                    'Historial y Cookies',
+                                    'Contraseñas',
+                                    'Actualizaciones',
+                                    'Formateo',
+                                    'Respaldo',
+                                    'Restauración de Información',
+                                    'Limpieza',
+                                    'Idioma del SO',
+                                    'Idioma de Navegador(es)'
+                                ];
+                            @endphp
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="space-y-4">
+                                    @foreach($checklistActivities as $index => $activity)
+                                    <div class="border-b border-gray-200 pb-3">
+                                        <div class="flex items-start space-x-4">
+                                            <div class="flex-1">
+                                                <label class="text-sm font-medium text-gray-700">{{ $index + 1 }}. {{ $activity }}</label>
+                                                
+                                                <div class="flex items-center space-x-4 mt-2">
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="checklist[{{ $index }}][status]" value="correcto" 
+                                                               class="mr-2 text-green-600 focus:ring-green-500" required>
+                                                        <span class="text-sm text-green-700">Correcto</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="checklist[{{ $index }}][status]" value="na" 
+                                                               class="mr-2 text-gray-600 focus:ring-gray-500" required>
+                                                        <span class="text-sm text-gray-700">N/A</span>
+                                                    </label>
+                                                    <label class="flex items-center">
+                                                        <input type="radio" name="checklist[{{ $index }}][status]" value="incorrecto" 
+                                                               class="mr-2 text-red-600 focus:ring-red-500" required>
+                                                        <span class="text-sm text-red-700">Incorrecto</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="mt-2 details-section" id="details-{{ $index }}" style="display: none;">
+                                                    <input type="text" name="checklist[{{ $index }}][details]" 
+                                                           placeholder="Especifique los detalles del problema..." 
+                                                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                                </div>
+                                                
+                                                <input type="hidden" name="checklist[{{ $index }}][activity]" value="{{ $activity }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <div id="checklist-validation" class="text-sm text-gray-600">
+                                    Complete todas las actividades del checklist para continuar.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Evaluación de Equipo -->
@@ -394,10 +461,89 @@ document.addEventListener('DOMContentLoaded', function() {
     const previousScore = {{ $previousScore ?? 0 }};
     const submitButton = document.getElementById('submitButton');
     
+    // Handle checklist radio button changes
+    document.querySelectorAll('input[name^="checklist["]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            const match = this.name.match(/checklist\[(\d+)\]\[status\]/);
+            if (match) {
+                const index = match[1];
+                const detailsDiv = document.getElementById(`details-${index}`);
+                const detailsInput = detailsDiv.querySelector('input[type="text"]');
+                
+                if (this.value === 'incorrecto') {
+                    detailsDiv.style.display = 'block';
+                    detailsInput.required = true;
+                } else {
+                    detailsDiv.style.display = 'none';
+                    detailsInput.required = false;
+                    detailsInput.value = '';
+                }
+            }
+            validateForm();
+        });
+    });
+    
+    // Handle details input changes
+    document.querySelectorAll('input[name^="checklist["][name$="[details]"]').forEach(function(input) {
+        input.addEventListener('input', validateForm);
+    });
+    
     function validateForm() {
         // Check if maintenance fields are filled
         const completedDate = document.getElementById('completed_date').value;
         const performedActions = document.getElementById('performed_actions').value.trim();
+        
+        // Check if all checklist items are completed
+        let allChecklistCompleted = true;
+        let checklistValidationMessage = '';
+        const checklistItems = document.querySelectorAll('input[name^="checklist["][name$="[status]"]');
+        const totalItems = checklistItems.length / 3; // 3 options per item
+        let completedItems = 0;
+        
+        for (let i = 0; i < totalItems; i++) {
+            const radios = document.querySelectorAll(`input[name="checklist[${i}][status]"]`);
+            let itemCompleted = false;
+            let selectedValue = null;
+            
+            radios.forEach(function(radio) {
+                if (radio.checked) {
+                    itemCompleted = true;
+                    selectedValue = radio.value;
+                }
+            });
+            
+            if (!itemCompleted) {
+                allChecklistCompleted = false;
+            } else {
+                completedItems++;
+                
+                // Check if details are required and provided
+                if (selectedValue === 'incorrecto') {
+                    const detailsInput = document.querySelector(`input[name="checklist[${i}][details]"]`);
+                    if (!detailsInput.value.trim()) {
+                        allChecklistCompleted = false;
+                        checklistValidationMessage = 'Complete los detalles para los elementos marcados como incorrectos.';
+                    }
+                }
+            }
+        }
+        
+        if (!checklistValidationMessage) {
+            if (completedItems === totalItems) {
+                checklistValidationMessage = `✅ Checklist completado (${completedItems}/${totalItems})`;
+            } else {
+                checklistValidationMessage = `📋 Checklist: ${completedItems}/${totalItems} completados`;
+            }
+        }
+        
+        // Update checklist validation message
+        const checklistValidationDiv = document.getElementById('checklist-validation');
+        if (allChecklistCompleted && completedItems === totalItems) {
+            checklistValidationDiv.className = 'text-sm text-green-600';
+        } else {
+            checklistValidationDiv.className = 'text-sm text-orange-600';
+        }
+        checklistValidationDiv.textContent = checklistValidationMessage;
         
         // Check if all rating criteria are selected
         let allRatingsSelected = true;
@@ -408,8 +554,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Check if form is complete
-        const isFormComplete = completedDate && performedActions && allRatingsSelected;
+        // Check if form is complete (now including checklist)
+        const isFormComplete = completedDate && performedActions && allRatingsSelected && allChecklistCompleted;
         
         // Calculate rating and validate
         let totalScore = 0;

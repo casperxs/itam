@@ -14,20 +14,30 @@
             padding: 15px;
         }
         .header {
-            text-align: center;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            border: 2px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            min-height: 80px;
         }
-        .company-name {
-            font-size: 16px;
+        .header-codes {
+            position: absolute;
+            top: 15px;
+            left: 15px;
             font-weight: bold;
-            margin-bottom: 3px;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+        .company-info {
+            text-align: center;
+            padding: 5px;
+            margin: 0 auto;
         }
         .document-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin-top: 5px;
+            margin-bottom: 10px;
+            color: #333;
         }
         .section {
             margin-bottom: 12px;
@@ -86,22 +96,31 @@
             border: 1px solid #333;
             display: inline-block;
         }
-        .conditions-section {
-            display: table;
-            width: 100%;
-            margin-bottom: 10px;
+        /* BARRA DE VALORACIÓN */
+        .valuation-bar {
+            height: 15px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin: 5px 0;
+            border: 1px solid #ccc;
         }
-        .conditions-left,
-        .conditions-right {
-            display: table-cell;
-            width: 48%;
-            vertical-align: top;
-            padding: 5px;
-            border: 1px solid #333;
+        .valuation-fill {
+            height: 100%;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 8px;
         }
-        .conditions-right {
-            margin-left: 4%;
-        }
+        .val-excelente { background-color: #4CAF50; }
+        .val-optimo { background-color: #8BC34A; }
+        .val-bueno { background-color: #CDDC39; color: #333; }
+        .val-regular { background-color: #FF9800; }
+        .val-malo { background-color: #F44336; }
         .observations {
             width: 100%;
             min-height: 40px;
@@ -147,10 +166,15 @@
 </head>
 <body>
     <div class="header">
-        <div class="company-name">SISTEMA DE GESTIÓN DE ACTIVOS TI</div>
-        <div class="document-title">CHECKLIST DE MANTENIMIENTO</div>
-        <div style="margin-top: 5px; font-size: 10px;">
-            ID Mantenimiento: {{ $maintenance->id }} | Fecha: {{ now()->format('d/m/Y H:i') }}
+        <div class="header-codes">
+            PRO-22-A<br>
+            Rev.00
+        </div>
+        <div class="company-info">
+            <div class="document-title">CHECKLIST DE MANTENIMIENTO</div>
+            <div style="margin-top: 5px; font-size: 10px;">
+                ID Mantenimiento: {{ $maintenance->id }} | Fecha: {{ now()->format('d/m/Y H:i') }}
+            </div>
         </div>
     </div>
 
@@ -201,34 +225,41 @@
     </div>
 
     <div class="section">
-        <div class="section-title">CONDICIONES DEL EQUIPO</div>
-        <div class="conditions-section">
-            <div class="conditions-left">
-                <strong>Condiciones Externas:</strong><br>
-                <span class="checkbox"></span> Excelente
-                <span class="checkbox"></span> Bueno
-                <span class="checkbox"></span> Regular
-                <span class="checkbox"></span> Malo<br><br>
-                Detalles: _________________________<br>
-                _________________________________
-            </div>
-            <div class="conditions-right">
-                <strong>Funcionamiento:</strong><br>
-                <span class="checkbox"></span> Excelente
-                <span class="checkbox"></span> Bueno
-                <span class="checkbox"></span> Regular
-                <span class="checkbox"></span> Malo<br><br>
-                Detalles: _________________________<br>
-                _________________________________
-            </div>
-        </div>
-    </div>
+        <div class="section-title">VALORACIÓN DEL EQUIPO</div>
+        @php
+            // Obtener la valoración del equipo
+            $valoracion = $maintenance->equipment->valoracion ?? 'Regular';
+            $class = '';
+            $percentage = 70; // Default para Regular
 
-    <div class="section">
-        <div class="section-title">OBSERVACIONES DEL INGENIERO</div>
-        <div class="observations">
-            {{ $maintenance->notes ?? '' }}
-            <br><br><br>
+            // Lógica de valoración como en otros PDFs
+            if (stripos($valoracion, 'excelente') !== false || $valoracion == '100%') {
+                $class = 'val-excelente';
+                $percentage = 100;
+            } elseif (stripos($valoracion, 'óptimo') !== false || stripos($valoracion, 'optimo') !== false || $valoracion == '90%') {
+                $class = 'val-optimo';
+                $percentage = 90;
+            } elseif (stripos($valoracion, 'bueno') !== false || $valoracion == '80%') {
+                $class = 'val-bueno';
+                $percentage = 80;
+            } elseif (stripos($valoracion, 'regular') !== false || $valoracion == '70%') {
+                $class = 'val-regular';
+                $percentage = 70;
+            } elseif (stripos($valoracion, 'malo') !== false || stripos($valoracion, 'para cambio') !== false || stripos($valoracion, 'reemplazo') !== false || $valoracion == '60%') {
+                $class = 'val-malo';
+                $percentage = 60;
+            } else {
+                $class = 'val-regular';
+                $percentage = 70;
+            }
+        @endphp
+        <div style="margin-bottom: 10px; font-size: 10px;">
+            <strong>Valoración:</strong>
+            <div class="valuation-bar">
+                <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
+                    {{ $valoracion }}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -237,127 +268,57 @@
         <table class="checklist-table">
             <thead>
                 <tr>
-                    <th style="width: 40%;">Actividad</th>
-                    <th style="width: 15%;">Correcto</th>
-                    <th style="width: 15%;">Incorrecto</th>
-                    <th style="width: 30%;">Detalles</th>
+                    <th style="width: 35%;">Actividad</th>
+                    <th style="width: 12%;">Correcto</th>
+                    <th style="width: 12%;">N/A</th>
+                    <th style="width: 12%;">Incorrecto</th>
+                    <th style="width: 29%;">Detalles</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="text-left">1. Temporales</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">2. Historial y Cookies</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">3. Contraseñas</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">4. Actualizaciones</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">5. Formateo</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">6. Respaldo</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">7. Restauración de Información</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">8. Limpieza</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">9. Idioma del SO</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="text-left">10. Idioma de Navegador(es)</td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
+                @php
+                    $checklistData = $maintenance->checklist_data ?? [];
+                    // Create a map for easy lookup
+                    $checklistMap = [];
+                    foreach ($checklistData as $item) {
+                        $checklistMap[$item['activity']] = $item;
+                    }
+                @endphp
+                
+                @foreach([
+                    'Temporales',
+                    'Historial y Cookies',
+                    'Contraseñas',
+                    'Actualizaciones',
+                    'Formateo',
+                    'Respaldo',
+                    'Restauración de Información',
+                    'Limpieza',
+                    'Idioma del SO',
+                    'Idioma de Navegador(es)'
+                ] as $index => $activity)
+                    @php
+                        $item = $checklistMap[$activity] ?? null;
+                        $status = $item['status'] ?? null;
+                        $details = $item['details'] ?? '';
+                    @endphp
+                    <tr>
+                        <td class="text-left">{{ $index + 1 }}. {{ $activity }}</td>
+                        <td><span class="checkbox">{{ $status === 'correcto' ? '✓' : '' }}</span></td>
+                        <td><span class="checkbox">{{ $status === 'na' ? '✓' : '' }}</span></td>
+                        <td><span class="checkbox">{{ $status === 'incorrecto' ? '✓' : '' }}</span></td>
+                        <td class="text-left" style="font-size: 8px;">{{ $details }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
 
     <div class="section">
-        <div class="section-title">SOFTWARE Y CARPETAS</div>
-        <table class="checklist-table">
-            <thead>
-                <tr>
-                    <th style="width: 10%;">No.</th>
-                    <th style="width: 50%;">Carpeta / Software</th>
-                    <th style="width: 15%;">Correcto</th>
-                    <th style="width: 15%;">Incorrecto</th>
-                    <th style="width: 10%;">Detalles</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td></td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td></td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td></td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td></td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td></td>
-                    <td><span class="checkbox"></span></td>
-                    <td><span class="checkbox"></span></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="section-title">OBSERVACIONES DEL INGENIERO</div>
+        <div class="observations">
+            {{ $maintenance->notes ?? '' }}
+        </div>
     </div>
 
     <div class="signature-section">

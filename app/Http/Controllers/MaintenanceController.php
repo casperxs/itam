@@ -143,6 +143,10 @@ class MaintenanceController extends Controller
             'rating' => 'required|array',
             'rating.*' => 'required|integer|min:0|max:10',
             'rating_notes' => 'nullable|string',
+            'checklist' => 'required|array',
+            'checklist.*.activity' => 'required|string',
+            'checklist.*.status' => 'required|in:correcto,na,incorrecto',
+            'checklist.*.details' => 'nullable|string',
         ]);
 
         // Calculate equipment rating
@@ -182,13 +186,24 @@ class MaintenanceController extends Controller
             ? $maintenance->equipment->purchase_date->diffInMonths(now()) 
             : null;
             
-        // Update maintenance record
+        // Process checklist data
+        $checklistData = [];
+        foreach ($validated['checklist'] as $item) {
+            $checklistData[] = [
+                'activity' => $item['activity'],
+                'status' => $item['status'],
+                'details' => $item['details'] ?? null,
+            ];
+        }
+        
+        // Update maintenance record with checklist data
         $maintenance->update([
             'completed_date' => $validated['completed_date'],
             'performed_actions' => $validated['performed_actions'],
             'cost' => $validated['cost'],
             'notes' => $validated['notes'],
             'status' => 'completed',
+            'checklist_data' => $checklistData,
         ]);
         
         // Create equipment rating record
