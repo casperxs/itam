@@ -7,8 +7,10 @@ use App\Models\User;
 use App\Models\RatingCriterion;
 use App\Models\EquipmentRating;
 use App\Services\PdfGeneratorService;
+use App\Services\IcsGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MaintenanceController extends Controller
 {
@@ -63,13 +65,13 @@ class MaintenanceController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        MaintenanceRecord::create([
+        $maintenance = MaintenanceRecord::create([
             ...$validated,
             'status' => 'scheduled',
         ]);
 
-        return redirect()->route('maintenance.index')
-            ->with('success', 'Mantenimiento programado exitosamente.');
+        // Redirigir a la página de notificación para generar ICS y correo
+        return redirect()->route('maintenance.send-notification', $maintenance);
     }
 
     public function show(MaintenanceRecord $maintenance)
@@ -380,5 +382,48 @@ class MaintenanceController extends Controller
         }
         
         return $text;
+    }
+
+    public function sendNotification(MaintenanceRecord $maintenance, IcsGeneratorService $icsService)
+    {
+        $maintenance->load(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
+        
+        // Generar archivo ICS
+        $icsFilename = $icsService->generateMaintenanceIcs($maintenance);
+        
+        // Preparar datos para el correo
+        $emailContent = $icsService->generateEmailContent($maintenance, $icsFilename);
+        
+        // Convertir formato del servicio existente al formato esperado por la vista
+        $emailData = [
+            'to' => !empty($emailContent['to']) ? [$emailContent['to']] : [],
+            'cc' => !empty($emailContent['cc']) ? [$emailContent['cc']] : [],
+            'subject' => $emailContent['subject'] ?? 'Mantenimiento Programado',
+            'body' => urldecode(str_replace('%0A', "\n", $emailContent['body'] ?? 'Mantenimiento programado sin detalles disponibles.'))
+        ];
+        
+        // Si no hay emails, agregar un mensaje por defecto
+        if (empty($emailData['to']) && empty($emailData['cc'])) {
+            $emailData['to'] = ['soporteit@bkb.mx'];
+        }
+        
+        return view('maintenance.notification-success', compact('maintenance', 'emailData', 'icsFilename'));
+    }
+
+    public function downloadIcs(MaintenanceRecord $maintenance, IcsGeneratorService $icsService)
+    {
+        $maintenance->load(['equipment.equipmentType']);
+        
+        $icsFilename = $icsService->generateMaintenanceIcs($maintenance);
+        $filePath = storage_path('app/public/ics/' . $icsFilename);
+        
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $icsFilename, [
+                'Content-Type' => 'text/calendar',
+                'Content-Disposition' => 'attachment; filename="' . $icsFilename . '"'
+            ])->deleteFileAfterSend(true);
+        }
+        
+        return redirect()->back()->with('error', 'No se pudo generar el archivo ICS.');
     }
 }

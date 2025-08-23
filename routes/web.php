@@ -88,6 +88,11 @@ Route::middleware(['admin'])->group(function () {
     // API route for equipment search
     Route::get('api/equipment/search', [MaintenanceController::class, 'searchEquipment'])
         ->name('api.equipment.search');
+    // ICS and email routes
+    Route::get('maintenance/{maintenance}/send-notification', [MaintenanceController::class, 'sendNotification'])
+        ->name('maintenance.send-notification');
+    Route::get('maintenance/{maintenance}/download-ics', [MaintenanceController::class, 'downloadIcs'])
+        ->name('maintenance.download-ics');
 
     // Contracts
     Route::resource('contracts', ContractController::class);
