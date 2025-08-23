@@ -8,68 +8,95 @@
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
-            line-height: 1.2;
+            line-height: 1.3;
             color: #333;
             margin: 0;
             padding: 15px;
+            height: 100vh;
+            box-sizing: border-box;
         }
-        .header {
+
+        /* ENCABEZADO CON IMAGEN DE FONDO IGUAL QUE OTROS DOCUMENTOS */
+        .invoice-header {
             border: 2px solid #333;
             padding: 20px;
             margin-bottom: 20px;
             position: relative;
-            min-height: 80px;
+            min-height: 160px;
+            background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/images/background/bg_bkb_registros_nIzquierdo.png'))) }}');
+            background-repeat: no-repeat;
+            background-position: left top;
+            background-size: 400px auto;
         }
+
         .header-codes {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 25px;
+            left: 25px;
+            color: white;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
             line-height: 1.3;
         }
+
         .company-info {
-            text-align: center;
+            text-align: right;
             padding: 5px;
-            margin: 0 auto;
+            margin: 0 auto 20px auto;
+            max-width: 60%;
+            position: relative;
+            z-index: 2;
         }
+
         .document-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            margin-bottom: 10px;
             color: #333;
+            margin-bottom: 0;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
         }
+        /* DETALLES GENERALES */
+        .user-details {
+            display: table;
+            width: 100%;
+        }
+        .user-details-left, .user-details-right {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+        }
+        .user-details-right {
+            text-align: right;
+        }
+        .detail-row {
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            min-width: 120px;
+        }
+        .detail-value {
+            border-bottom: 1px solid #333;
+            padding: 2px 5px;
+            min-width: 150px;
+            display: inline-block;
+        }
+
         .section {
             margin-bottom: 12px;
         }
         .section-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            background-color: #f5f5f5;
-            padding: 4px;
-            border-left: 3px solid #333;
-            margin-bottom: 6px;
-        }
-        .info-grid {
-            display: table;
-            width: 100%;
-            margin-bottom: 8px;
-        }
-        .info-row {
-            display: table-row;
-        }
-        .info-label {
-            display: table-cell;
-            font-weight: bold;
-            width: 25%;
-            padding: 2px 5px 2px 0;
-            vertical-align: top;
-        }
-        .info-value {
-            display: table-cell;
-            padding: 2px 0;
-            border-bottom: 1px dotted #ccc;
-            vertical-align: top;
+            background-color: #f0f0f0;
+            padding: 8px;
+            border: 1px solid #333;
+            text-align: center;
+            margin-bottom: 0;
         }
         .checklist-table {
             width: 100%;
@@ -93,22 +120,33 @@
         .checkbox {
             width: 12px;
             height: 12px;
-            border: 1px solid #333;
+            border: 2px solid #333;
             display: inline-block;
+            text-align: center;
+            line-height: 8px;
+            font-size: 10px;
+            font-weight: bold;
         }
-        /* BARRA DE VALORACIÓN */
+        /* BARRA DE VALORACIÓN - POSICIÓN MEJORADA Y MÁS PEQUEÑA */
+        .valuation-section {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #333;
+            background-color: #f9f9f9;
+        }
         .valuation-bar {
-            height: 15px;
+            height: 12px;
             background-color: #e0e0e0;
-            border-radius: 8px;
+            border-radius: 6px;
             position: relative;
             overflow: hidden;
-            margin: 5px 0;
+            margin: 3px 0;
             border: 1px solid #ccc;
+            max-width: 300px; /* Limitar ancho */
         }
         .valuation-fill {
             height: 100%;
-            border-radius: 7px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -121,6 +159,10 @@
         .val-bueno { background-color: #CDDC39; color: #333; }
         .val-regular { background-color: #FF9800; }
         .val-malo { background-color: #F44336; }
+        .valuation-percentage {
+            font-weight: bold;
+            color: #333;
+        }
         .observations {
             width: 100%;
             min-height: 40px;
@@ -165,103 +207,126 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <!-- ENCABEZADO ESTILO PROFESIONAL IGUAL QUE OTROS DOCUMENTOS -->
+    <div class="invoice-header">
         <div class="header-codes">
             PRO-22-A<br>
-            Rev.00
+            Rev. 01
         </div>
-        <div class="company-info">
-            <div class="document-title">CHECKLIST DE MANTENIMIENTO</div>
-            <div style="margin-top: 5px; font-size: 10px;">
-                ID Mantenimiento: {{ $maintenance->id }} | Fecha: {{ now()->format('d/m/Y H:i') }}
-            </div>
-        </div>
-    </div>
 
-    <div class="two-column">
-        <div class="left-column">
-            <div class="section">
-                <div class="section-title">DATOS DEL EQUIPO</div>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-label">Tipo:</div>
-                        <div class="info-value">{{ $maintenance->equipment->equipmentType->name ?? 'N/A' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Marca/Modelo:</div>
-                        <div class="info-value">{{ $maintenance->equipment->brand ?? 'N/A' }} {{ $maintenance->equipment->model ?? 'N/A' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Serie:</div>
-                        <div class="info-value">{{ $maintenance->equipment->serial_number ?? 'N/A' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Tag:</div>
-                        <div class="info-value">{{ $maintenance->equipment->asset_tag ?? 'N/A' }}</div>
-                    </div>
+        <div class="document-title" style="text-align: right; margin-top: 10px; margin-bottom: 20px;">
+            CHECKLIST DE MANTENIMIENTO
+        </div>
+
+        <div class="user-details">
+            <div class="user-details-left">
+                <div class="detail-row">
+                    <span class="detail-label">ID Mantenimiento:</span>
+                    <span class="detail-value">{{ $maintenance->id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tipo Mantenimiento:</span>
+                    <span class="detail-value">
+                        @switch($maintenance->type)
+                            @case('preventive') Preventivo @break
+                            @case('corrective') Correctivo @break
+                            @case('update') Actualización @break
+                        @endswitch
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Usuario:</span>
+                    <span class="detail-value">{{ $maintenance->equipment->currentAssignment->itUser->name ?? 'No asignado' }}</span>
                 </div>
             </div>
-        </div>
-
-        <div class="right-column">
-            <div class="section">
-                <div class="section-title">DATOS DEL USUARIO</div>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-label">Nombre:</div>
-                        <div class="info-value">{{ $maintenance->equipment->currentAssignment->itUser->name ?? 'No asignado' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Departamento:</div>
-                        <div class="info-value">{{ $maintenance->equipment->currentAssignment->itUser->department ?? 'N/A' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">ID Empleado:</div>
-                        <div class="info-value">{{ $maintenance->equipment->currentAssignment->itUser->employee_id ?? 'N/A' }}</div>
-                    </div>
+            <div class="user-details-right">
+                <div class="detail-row">
+                    <span class="detail-label">Fecha de Finalización:</span>
+                    <span class="detail-value">{{ $maintenance->completed_date ? $maintenance->completed_date->format('d/m/Y H:i') : 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Técnico:</span>
+                    <span class="detail-value">{{ $maintenance->performedBy->name ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Equipo:</span>
+                    <span class="detail-value">{{ $maintenance->equipment->serial_number ?? 'N/A' }}</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- SECCIÓN DE DATOS DEL EQUIPO Y VALORACIÓN -->
     <div class="section">
-        <div class="section-title">VALORACIÓN DEL EQUIPO</div>
-        @php
-            // Obtener la valoración del equipo
-            $valoracion = $maintenance->equipment->valoracion ?? 'Regular';
-            $class = '';
-            $percentage = 70; // Default para Regular
+        <div class="section-title">DATOS DEL EQUIPO Y VALORACIÓN</div>
+        <div style="padding: 10px; border: 1px solid #333; border-top: none;">
+            <div class="two-column">
+                <div class="left-column">
+                    <div style="margin-bottom: 8px; font-size: 9px;">
+                        <strong>Tipo:</strong> {{ $maintenance->equipment->equipmentType->name ?? 'N/A' }}<br>
+                        <strong>Marca/Modelo:</strong> {{ $maintenance->equipment->brand ?? 'N/A' }} {{ $maintenance->equipment->model ?? 'N/A' }}<br>
+                        <strong>Serie:</strong> {{ $maintenance->equipment->serial_number ?? 'N/A' }}<br>
+                        <strong>Tag:</strong> {{ $maintenance->equipment->asset_tag ?? 'N/A' }}
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="valuation-section">
+                        <strong style="font-size: 9px;">Valoración del Equipo:</strong>
+                        @php
+                            // Obtener la valoración del equipo
+                            $valoracion = $maintenance->equipment->valoracion ?? 'Regular';
+                            $class = '';
+                            $percentage = 70; // Default para Regular
+                            $percentageText = '';
 
-            // Lógica de valoración como en otros PDFs
-            if (stripos($valoracion, 'excelente') !== false || $valoracion == '100%') {
-                $class = 'val-excelente';
-                $percentage = 100;
-            } elseif (stripos($valoracion, 'óptimo') !== false || stripos($valoracion, 'optimo') !== false || $valoracion == '90%') {
-                $class = 'val-optimo';
-                $percentage = 90;
-            } elseif (stripos($valoracion, 'bueno') !== false || $valoracion == '80%') {
-                $class = 'val-bueno';
-                $percentage = 80;
-            } elseif (stripos($valoracion, 'regular') !== false || $valoracion == '70%') {
-                $class = 'val-regular';
-                $percentage = 70;
-            } elseif (stripos($valoracion, 'malo') !== false || stripos($valoracion, 'para cambio') !== false || stripos($valoracion, 'reemplazo') !== false || $valoracion == '60%') {
-                $class = 'val-malo';
-                $percentage = 60;
-            } else {
-                $class = 'val-regular';
-                $percentage = 70;
-            }
-        @endphp
-        <div style="margin-bottom: 10px; font-size: 10px;">
-            <strong>Valoración:</strong>
-            <div class="valuation-bar">
-                <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
-                    {{ $valoracion }}
+                            // Lógica de valoración como en otros PDFs
+                            if (stripos($valoracion, 'excelente') !== false) {
+                                $class = 'val-excelente';
+                                $percentage = 95;
+                                $percentageText = '95%';
+                            } elseif (stripos($valoracion, 'óptimo') !== false || stripos($valoracion, 'optimo') !== false) {
+                                $class = 'val-optimo';
+                                $percentage = 85;
+                                $percentageText = '85%';
+                            } elseif (stripos($valoracion, 'regular') !== false) {
+                                $class = 'val-regular';
+                                $percentage = 75;
+                                $percentageText = '75%';
+                            } elseif (stripos($valoracion, 'para cambio') !== false) {
+                                $class = 'val-malo';
+                                $percentage = 65;
+                                $percentageText = '65%';
+                            } elseif (stripos($valoracion, 'reemplazo') !== false) {
+                                $class = 'val-malo';
+                                $percentage = 50;
+                                $percentageText = '50%';
+                            } else {
+                                // Si contiene un porcentaje directo, extraerlo
+                                if (preg_match('/([0-9]+(?:\.[0-9]+)?)%/', $valoracion, $matches)) {
+                                    $percentage = (float)$matches[1];
+                                    $percentageText = $matches[0];
+                                    if ($percentage >= 90) $class = 'val-excelente';
+                                    elseif ($percentage >= 80) $class = 'val-optimo';
+                                    elseif ($percentage >= 70) $class = 'val-regular';
+                                    else $class = 'val-malo';
+                                } else {
+                                    $class = 'val-regular';
+                                    $percentage = 70;
+                                    $percentageText = '70%';
+                                }
+                            }
+                        @endphp
+                        <div class="valuation-bar">
+                            <div class="valuation-fill {{ $class }}" style="width: {{ $percentage }}%;">
+                                <span class="valuation-percentage">{{ $percentageText }} - {{ $valoracion }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="section">
         <div class="section-title">ACTIVIDADES REALIZADAS</div>
@@ -304,9 +369,9 @@
                     @endphp
                     <tr>
                         <td class="text-left">{{ $index + 1 }}. {{ $activity }}</td>
-                        <td><span class="checkbox">{{ $status === 'correcto' ? '✓' : '' }}</span></td>
-                        <td><span class="checkbox">{{ $status === 'na' ? '✓' : '' }}</span></td>
-                        <td><span class="checkbox">{{ $status === 'incorrecto' ? '✓' : '' }}</span></td>
+                        <td><span class="checkbox">{{ $status === 'correcto' ? 'X' : '' }}</span></td>
+                        <td><span class="checkbox">{{ $status === 'na' ? 'X' : '' }}</span></td>
+                        <td><span class="checkbox">{{ $status === 'incorrecto' ? 'X' : '' }}</span></td>
                         <td class="text-left" style="font-size: 8px;">{{ $details }}</td>
                     </tr>
                 @endforeach
@@ -319,6 +384,10 @@
         <div class="observations">
             {{ $maintenance->notes ?? '' }}
         </div>
+    </div>
+
+    <div class="footer" style="position: fixed; bottom: 10px; left: 15px; right: 15px; text-align: center; font-size: 8px; color: #666; border-top: 1px solid #ccc; padding-top: 5px;">
+        EXL Automotive S.C. - Documento generado automáticamente el {{ now()->format('d/m/Y H:i') }}
     </div>
 
     <div class="signature-section">

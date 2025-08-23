@@ -57,3 +57,4 @@ checklist_functionality_test.md
 run_migration.sh
 syntax_check.cjs
 test_checklist.sh
+debug_maintenance.js
