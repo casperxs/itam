@@ -10,7 +10,7 @@
     </div>
     <div class="flex gap-3">
         <a href="{{ route('maintenance.completed') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold">
-            📋 CHECKLISTS PDF
+            📋 MANTENIMIENTOS COMPLETADOS
         </a>
         <a href="{{ route('maintenance.calendar') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
             Ver Calendario
