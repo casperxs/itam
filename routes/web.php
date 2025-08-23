@@ -74,20 +74,27 @@ Route::middleware(['admin'])->group(function () {
         ->name('assignments.generate-exit-document');
 
     // Maintenance
-    Route::resource('maintenance', MaintenanceController::class);
+    // Rutas específicas antes del resource para evitar conflictos
+    Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
+        ->name('maintenance.completed');
     Route::get('maintenance-calendar', [MaintenanceController::class, 'calendar'])
         ->name('maintenance.calendar');
+    
+    // Resource route
+    Route::resource('maintenance', MaintenanceController::class);
+    
+    // Rutas adicionales
     Route::post('maintenance/{maintenance}/start', [MaintenanceController::class, 'startMaintenance'])
         ->name('maintenance.start');
     Route::post('maintenance/{maintenance}/complete', [MaintenanceController::class, 'completeMaintenance'])
         ->name('maintenance.complete');
     Route::get('maintenance/{maintenance}/checklist', [MaintenanceController::class, 'downloadChecklist'])
         ->name('maintenance.checklist');
-    Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
-        ->name('maintenance.completed');
+    
     // API route for equipment search
     Route::get('api/equipment/search', [MaintenanceController::class, 'searchEquipment'])
         ->name('api.equipment.search');
+    
     // ICS and email routes
     Route::get('maintenance/{maintenance}/send-notification', [MaintenanceController::class, 'sendNotification'])
         ->name('maintenance.send-notification');

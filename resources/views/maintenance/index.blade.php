@@ -9,7 +9,7 @@
         <p class="text-gray-600">Gestión de mantenimientos programados y ejecutados</p>
     </div>
     <div class="flex gap-3">
-        <a href="{{ route('maintenance.completed') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold">
+        <a href="{{ route('maintenance.completed') }}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 font-semibold">
             📋 MANTENIMIENTOS COMPLETADOS
         </a>
         <a href="{{ route('maintenance.calendar') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
@@ -50,7 +50,7 @@
                     <option value="">Todos</option>
                     <option value="preventive" {{ request('type') === 'preventive' ? 'selected' : '' }}>Preventivo</option>
                     <option value="corrective" {{ request('type') === 'corrective' ? 'selected' : '' }}>Correctivo</option>
-                    <option value="upgrade" {{ request('type') === 'upgrade' ? 'selected' : '' }}>Actualización</option>
+                    <option value="update" {{ request('type') === 'update' ? 'selected' : '' }}>Actualización</option>
                 </select>
             </div>
             <div>
@@ -99,12 +99,17 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if($maintenance->maintenance_type === 'preventive') bg-green-100 text-green-800
-                                @elseif($maintenance->maintenance_type === 'corrective') bg-red-100 text-red-800
+                                @if($maintenance->type === 'preventive') bg-green-100 text-green-800
+                                @elseif($maintenance->type === 'corrective') bg-red-100 text-red-800
                                 @else bg-blue-100 text-blue-800
                                 @endif
                             ">
-                                {{ ucfirst($maintenance->maintenance_type ?? 'N/A') }}
+                                @switch($maintenance->type ?? 'N/A')
+                                    @case('preventive') Preventivo @break
+                                    @case('corrective') Correctivo @break
+                                    @case('update') Actualización @break
+                                    @default {{ ucfirst($maintenance->type ?? 'N/A') }}
+                                @endswitch
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
