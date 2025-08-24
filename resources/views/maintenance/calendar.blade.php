@@ -112,68 +112,85 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
     const events = @json($maintenanceRecords);
     let currentEventUrl = '';
+    
+    // Debug: mostrar eventos en consola
+    console.log('Eventos del calendario:', events);
+    console.log('Total de eventos:', events.length);
 
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'es',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día'
-        },
-        events: events,
-        eventClick: function(info) {
-            info.jsEvent.preventDefault();
-            
-            const event = info.event;
-            currentEventUrl = event.url;
-            
-            // Obtener información del evento
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = `
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Equipo:</label>
-                        <p class="text-sm text-gray-900">${event.title}</p>
+    // Verificar si FullCalendar está cargado
+    if (typeof FullCalendar === 'undefined') {
+        console.error('FullCalendar no está cargado');
+        calendarEl.innerHTML = '<p class="text-red-600 text-center py-8">Error: No se pudo cargar el calendario. Por favor, recarga la página.</p>';
+        return;
+    }
+    
+    try {
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
+            events: events,
+            eventClick: function(info) {
+                info.jsEvent.preventDefault();
+                
+                const event = info.event;
+                currentEventUrl = event.url;
+                
+                // Obtener información del evento
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = `
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Equipo:</label>
+                            <p class="text-sm text-gray-900">${event.title}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Fecha:</label>
+                            <p class="text-sm text-gray-900">${event.start.toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Estado:</label>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" 
+                                  style="background-color: ${event.backgroundColor}20; color: ${event.backgroundColor};">
+                                ${getStatusText(event.backgroundColor)}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Fecha:</label>
-                        <p class="text-sm text-gray-900">${event.start.toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Estado:</label>
-                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" 
-                              style="background-color: ${event.backgroundColor}20; color: ${event.backgroundColor};">
-                            ${getStatusText(event.backgroundColor)}
-                        </span>
-                    </div>
-                </div>
-            `;
-            
-            // Mostrar modal
-            document.getElementById('eventModal').classList.remove('hidden');
-        },
-        eventMouseEnter: function(info) {
-            info.el.style.cursor = 'pointer';
-        },
-        height: 'auto',
-        dayMaxEvents: 3,
-        moreLinkClick: 'popover'
-    });
+                `;
+                
+                // Mostrar modal
+                document.getElementById('eventModal').classList.remove('hidden');
+            },
+            eventMouseEnter: function(info) {
+                info.el.style.cursor = 'pointer';
+            },
+            height: 'auto',
+            dayMaxEvents: 3,
+            moreLinkClick: 'popover'
+        });
 
-    calendar.render();
+        calendar.render();
+        console.log('Calendario renderizado exitosamente');
+    } catch (error) {
+        console.error('Error al inicializar el calendario:', error);
+        calendarEl.innerHTML = '<p class="text-red-600 text-center py-8">Error al inicializar el calendario. Por favor, verifica la consola para más detalles.</p>';
+    }
 
     // Funciones del modal
     window.closeModal = function() {

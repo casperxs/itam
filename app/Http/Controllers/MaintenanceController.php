@@ -289,14 +289,31 @@ class MaintenanceController extends Controller
             ->where('status', '!=', 'cancelled')
             ->get()
             ->map(function ($record) {
+                // Construir el título con verificaciones de null
+                $title = 'Mantenimiento';
+                if ($record->equipment) {
+                    $equipmentType = $record->equipment->equipmentType->name ?? 'Sin tipo';
+                    $serialNumber = $record->equipment->serial_number ?? 'Sin serie';
+                    $brand = $record->equipment->brand ?? '';
+                    $model = $record->equipment->model ?? '';
+                    
+                    $title = $equipmentType . ' - ';
+                    if ($brand || $model) {
+                        $title .= trim($brand . ' ' . $model) . ' - ';
+                    }
+                    $title .= $serialNumber;
+                }
+                
                 return [
                     'id' => $record->id,
-                    'title' => $record->equipment->equipmentType->name . ' - ' . $record->equipment->serial_number,
-                    'start' => $record->scheduled_date->format('Y-m-d H:i:s'),
+                    'title' => $title,
+                    'start' => $record->scheduled_date ? $record->scheduled_date->format('Y-m-d\TH:i:s') : now()->format('Y-m-d\TH:i:s'),
                     'color' => $this->getStatusColor($record->status),
+                    'backgroundColor' => $this->getStatusColor($record->status),
                     'url' => route('maintenance.show', $record),
                 ];
-            });
+            })
+            ->values(); // Asegurar que sea un array indexado
 
         return view('maintenance.calendar', compact('maintenanceRecords'));
     }
