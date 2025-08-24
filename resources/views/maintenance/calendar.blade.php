@@ -107,15 +107,11 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
-    const events = @json($maintenanceRecords);
     let currentEventUrl = '';
-    
-    // Debug: mostrar eventos en consola
-    console.log('Eventos del calendario:', events);
-    console.log('Total de eventos:', events.length);
 
     // Verificar si FullCalendar está cargado
     if (typeof FullCalendar === 'undefined') {
@@ -139,7 +135,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 week: 'Semana',
                 day: 'Día'
             },
-            events: events,
+            events: {
+                url: '{{ route("maintenance.calendar.events") }}',
+                method: 'GET',
+                failure: function() {
+                    alert('Error al cargar los eventos del calendario.');
+                }
+            },
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
                 
@@ -148,29 +150,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Obtener información del evento
                 const modalContent = document.getElementById('modalContent');
+                const extendedProps = event.extendedProps || {};
+                
                 modalContent.innerHTML = `
                     <div class="space-y-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Equipo:</label>
-                            <p class="text-sm text-gray-900">${event.title}</p>
+                            <p class="text-sm text-gray-900">${extendedProps.equipment || event.title}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tipo de Mantenimiento:</label>
+                            <p class="text-sm text-gray-900">${extendedProps.type || 'No especificado'}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Fecha:</label>
                             <p class="text-sm text-gray-900">${event.start.toLocaleDateString('es-ES', {
                                 year: 'numeric',
                                 month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
+                                day: 'numeric'
                             })}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Estado:</label>
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" 
                                   style="background-color: ${event.backgroundColor}20; color: ${event.backgroundColor};">
-                                ${getStatusText(event.backgroundColor)}
+                                ${extendedProps.status || getStatusText(event.backgroundColor)}
                             </span>
                         </div>
+                        ${extendedProps.technician ? `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Técnico:</label>
+                            <p class="text-sm text-gray-900">${extendedProps.technician}</p>
+                        </div>
+                        ` : ''}
                     </div>
                 `;
                 

@@ -77,8 +77,12 @@ Route::middleware(['admin'])->group(function () {
     // Rutas específicas antes del resource para evitar conflictos
     Route::get('maintenance/completed', [MaintenanceController::class, 'completedMaintenance'])
         ->name('maintenance.completed');
-    Route::get('maintenance-calendar', [MaintenanceController::class, 'calendar'])
+    
+    // Calendar routes
+    Route::get('maintenance-calendar', [\App\Http\Controllers\MaintenanceCalendarController::class, 'index'])
         ->name('maintenance.calendar');
+    Route::get('maintenance-calendar/events', [\App\Http\Controllers\MaintenanceCalendarController::class, 'events'])
+        ->name('maintenance.calendar.events');
     
     // Resource route
     Route::resource('maintenance', MaintenanceController::class);
