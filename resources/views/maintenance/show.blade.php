@@ -10,6 +10,21 @@
             <p class="text-gray-600">{{ $maintenance->equipment->equipmentType->name ?? 'N/A' }} - {{ $maintenance->equipment->serial_number ?? 'N/A' }}</p>
         </div>
         <div class="flex space-x-2">
+            <!-- Botones de Notificación -->
+            @if($maintenance->status === 'scheduled')
+                <form method="POST" action="{{ route('maintenance.send-email', $maintenance) }}" class="inline">
+                    @csrf
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-bold">
+                        📧 ENVIAR EMAIL
+                    </button>
+                </form>
+            @endif
+            <a href="{{ route('maintenance.send-notification', $maintenance) }}" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+                📮 ABRIR CLIENTE EMAIL
+            </a>
+            <a href="{{ route('maintenance.download-ics', $maintenance) }}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                📅 DESCARGAR ICS
+            </a>
             @if($maintenance->status === 'completed')
                 <a href="{{ route('maintenance.checklist', $maintenance) }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-bold">
                     📋 DESCARGAR CHECKLIST PDF

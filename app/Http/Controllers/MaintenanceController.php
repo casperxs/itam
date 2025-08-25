@@ -8,8 +8,10 @@ use App\Models\RatingCriterion;
 use App\Models\EquipmentRating;
 use App\Services\PdfGeneratorService;
 use App\Services\IcsGeneratorService;
+use App\Mail\MaintenanceScheduled;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class MaintenanceController extends Controller
@@ -443,5 +445,57 @@ class MaintenanceController extends Controller
         }
         
         return redirect()->back()->with('error', 'No se pudo generar el archivo ICS.');
+    }
+
+    /**
+     * Enviar notificación por email usando el template HTML
+     */
+    public function sendEmailNotification(MaintenanceRecord $maintenance)
+    {
+        $maintenance->load(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
+        
+        $user = $maintenance->equipment->currentAssignment?->itUser;
+        $technician = $maintenance->performedBy;
+        
+        $emailsSent = [];
+        $errors = [];
+        
+        try {
+            // Enviar email al usuario si tiene email
+            if ($user && $user->email) {
+                Mail::to($user->email)->send(new MaintenanceScheduled($maintenance));
+                $emailsSent[] = [
+                    'recipient' => $user->name,
+                    'email' => $user->email,
+                    'role' => 'Usuario del equipo'
+                ];
+            }
+            
+            // Enviar copia al técnico si tiene email y es diferente al usuario
+            if ($technician && $technician->email && $technician->email !== ($user?->email ?? '')) {
+                Mail::to($technician->email)->send(new MaintenanceScheduled($maintenance));
+                $emailsSent[] = [
+                    'recipient' => $technician->name,
+                    'email' => $technician->email,
+                    'role' => 'Técnico asignado'
+                ];
+            }
+            
+            // Si no hay emails válidos, enviar a soporte IT
+            if (empty($emailsSent)) {
+                Mail::to('soporteit@bkb.mx')->send(new MaintenanceScheduled($maintenance));
+                $emailsSent[] = [
+                    'recipient' => 'Soporte IT',
+                    'email' => 'soporteit@bkb.mx',
+                    'role' => 'Departamento de soporte'
+                ];
+            }
+            
+            $message = 'Notificación enviada exitosamente a ' . count($emailsSent) . ' destinatario(s).';
+            return redirect()->back()->with('success', $message)->with('emails_sent', $emailsSent);
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al enviar la notificación: ' . $e->getMessage());
+        }
     }
 }
