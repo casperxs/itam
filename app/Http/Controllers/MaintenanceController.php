@@ -73,8 +73,8 @@ class MaintenanceController extends Controller
             'status' => 'scheduled',
         ]);
 
-        // Redirigir a la página de notificación para generar ICS y correo
-        return redirect()->route('maintenance.send-notification', $maintenance);
+        return redirect()->route('maintenance.show', $maintenance)
+            ->with('success', 'Mantenimiento creado exitosamente. Puedes enviar notificaciones desde esta página.');
     }
 
     public function show(MaintenanceRecord $maintenance)

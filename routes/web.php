@@ -100,8 +100,6 @@ Route::middleware(['admin'])->group(function () {
         ->name('api.equipment.search');
     
     // ICS and email routes
-    Route::get('maintenance/{maintenance}/send-notification', [MaintenanceController::class, 'sendNotification'])
-        ->name('maintenance.send-notification');
     Route::post('maintenance/{maintenance}/send-email', [MaintenanceController::class, 'sendEmailNotification'])
         ->name('maintenance.send-email');
     Route::get('maintenance/{maintenance}/download-ics', [MaintenanceController::class, 'downloadIcs'])
