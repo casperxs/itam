@@ -61,3 +61,6 @@ debug_maintenance.js
 database/migrations/2025_08_24_143527_create_sessions_table.php
 package-lock.json
 package-lock.json
+.DS_Store
+.DS_Store
+.gitignore
