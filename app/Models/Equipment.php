@@ -21,6 +21,7 @@ class Equipment extends Model
         'purchase_price',
         'purchase_date',
         'warranty_end_date',
+        'next_maintenance_date',
         'invoice_number',
         'invoice_file',
         'observations',
@@ -29,6 +30,7 @@ class Equipment extends Model
     protected $casts = [
         'purchase_date' => 'date',
         'warranty_end_date' => 'date',
+        'next_maintenance_date' => 'date',
         'purchase_price' => 'decimal:2',
     ];
 
@@ -98,5 +100,13 @@ class Equipment extends Model
     {
         $age = $this->getAgeInMonths();
         return $age && $age <= 6;
+    }
+
+    /**
+     * Get a display name for the equipment
+     */
+    public function getNameAttribute()
+    {
+        return trim($this->brand . ' ' . $this->model);
     }
 }

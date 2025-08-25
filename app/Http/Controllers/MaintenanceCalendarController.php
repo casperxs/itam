@@ -26,9 +26,9 @@ class MaintenanceCalendarController extends Controller
         $end = Carbon::parse($request->get('end', now()->endOfMonth()));
 
         // Get all maintenance records within the date range
-        $maintenances = MaintenanceRecord::with(['equipment', 'equipment.equipmentType'])
+        $maintenances = MaintenanceRecord::with(['equipment', 'equipment.equipmentType', 'performedBy'])
             ->whereBetween('scheduled_date', [$start, $end])
-            ->orWhereBetween('completion_date', [$start, $end])
+            ->orWhereBetween('completed_date', [$start, $end])
             ->get();
 
         $events = [];
@@ -47,7 +47,7 @@ class MaintenanceCalendarController extends Controller
                         'equipment' => $maintenance->equipment->name,
                         'type' => $maintenance->type,
                         'status' => $maintenance->status,
-                        'technician' => $maintenance->technician,
+                        'technician' => $maintenance->performedBy->name ?? 'No asignado',
                         'event_type' => 'scheduled'
                     ],
                     'url' => route('maintenance.show', $maintenance->id)
@@ -55,22 +55,22 @@ class MaintenanceCalendarController extends Controller
             }
 
             // Completed maintenance event (if different from scheduled)
-            if ($maintenance->completion_date && 
+            if ($maintenance->completed_date && 
                 (!$maintenance->scheduled_date || 
-                 Carbon::parse($maintenance->completion_date)->format('Y-m-d') !== 
+                 Carbon::parse($maintenance->completed_date)->format('Y-m-d') !== 
                  Carbon::parse($maintenance->scheduled_date)->format('Y-m-d'))) {
                 $events[] = [
                     'id' => 'completed-' . $maintenance->id,
                     'title' => $maintenance->equipment->name . ' - Completado',
-                    'start' => $maintenance->completion_date,
-                    'end' => $maintenance->completion_date,
+                    'start' => $maintenance->completed_date,
+                    'end' => $maintenance->completed_date,
                     'color' => '#10b981', // Verde para completados
                     'extendedProps' => [
                         'maintenance_id' => $maintenance->id,
                         'equipment' => $maintenance->equipment->name,
                         'type' => $maintenance->type,
-                        'status' => 'completado',
-                        'technician' => $maintenance->technician,
+                        'status' => 'completed',
+                        'technician' => $maintenance->performedBy->name ?? 'No asignado',
                         'event_type' => 'completed'
                     ],
                     'url' => route('maintenance.show', $maintenance->id)
@@ -121,10 +121,10 @@ class MaintenanceCalendarController extends Controller
     private function getEventColor($status)
     {
         return match($status) {
-            'pendiente' => '#f59e0b', // Amarillo
-            'en_progreso' => '#3b82f6', // Azul
-            'completado' => '#10b981', // Verde
-            'cancelado' => '#ef4444', // Rojo
+            'scheduled' => '#f59e0b', // Amarillo
+            'in_progress' => '#3b82f6', // Azul
+            'completed' => '#10b981', // Verde
+            'cancelled' => '#ef4444', // Rojo
             default => '#6b7280' // Gris
         };
     }

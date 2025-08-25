@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
         Commands\GenerateMonthlyReports::class,
         Commands\CleanupTempFiles::class,
         Commands\CheckWarranties::class,
+        Commands\SendMaintenanceNotifications::class,
     ];
 
     protected function schedule(Schedule $schedule): void
@@ -41,6 +42,14 @@ class Kernel extends ConsoleKernel
         // Limpiar archivos temporales semanalmente
         $schedule->command('cleanup:temp-files')
                  ->weekly();
+        
+        // Enviar notificaciones de mantenimiento diariamente a las 8:30 AM
+        $schedule->command('maintenance:send-notifications --days=1')
+                 ->dailyAt('08:30');
+                 
+        // Enviar recordatorios de mantenimientos para la próxima semana los lunes a las 10:00 AM
+        $schedule->command('maintenance:send-notifications --days=7')
+                 ->weeklyOn(1, '10:00');
     }
 
     protected function commands(): void
