@@ -81,172 +81,284 @@
 @endsection
 
 @push('styles')
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <style>
-    .fc-toolbar-title {
-        font-size: 1.5rem !important;
-        font-weight: 600 !important;
+    .calendar-loading {
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8fafc;
+        border-radius: 8px;
     }
-    .fc-button {
-        background-color: #3b82f6 !important;
-        border-color: #3b82f6 !important;
-    }
-    .fc-button:hover {
-        background-color: #2563eb !important;
-        border-color: #2563eb !important;
-    }
-    .fc-button:disabled {
-        opacity: 0.6 !important;
-    }
-    .fc-event {
-        border-radius: 4px !important;
-        border: none !important;
-        color: white !important;
-    }
-    .fc-daygrid-event {
-        margin: 1px 0 !important;
+    
+    .dark .calendar-loading {
+        background-color: #1f2937;
     }
 </style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM cargado, inicializando calendario...');
+// Estado de depuración
+const DEBUG_MODE = true;
+
+function log(...args) {
+    if (DEBUG_MODE) {
+        console.log('[CALENDAR]', ...args);
+    }
+}
+
+function error(...args) {
+    console.error('[CALENDAR ERROR]', ...args);
+}
+
+// Función para cargar FullCalendar
+function loadFullCalendar() {
+    return new Promise((resolve, reject) => {
+        // Verificar si ya está cargado
+        if (typeof FullCalendar !== 'undefined') {
+            log('FullCalendar ya está disponible');
+            resolve();
+            return;
+        }
+        
+        log('Cargando FullCalendar desde CDN...');
+        
+        // Cargar CSS
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css';
+        document.head.appendChild(cssLink);
+        
+        // Cargar JS principal
+        const script1 = document.createElement('script');
+        script1.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js';
+        
+        script1.onload = function() {
+            log('Script principal de FullCalendar cargado');
+            
+            // Cargar localización español
+            const script2 = document.createElement('script');
+            script2.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js';
+            
+            script2.onload = function() {
+                log('Localización española cargada');
+                resolve();
+            };
+            
+            script2.onerror = function() {
+                error('Error cargando localización española');
+                // Continuar sin localización
+                resolve();
+            };
+            
+            document.head.appendChild(script2);
+        };
+        
+        script1.onerror = function() {
+            error('Error cargando FullCalendar');
+            reject(new Error('No se pudo cargar FullCalendar'));
+        };
+        
+        document.head.appendChild(script1);
+    });
+}
+
+// Función para mostrar estado de carga
+function showLoadingState() {
+    const calendarEl = document.getElementById('calendar');
+    calendarEl.innerHTML = `
+        <div class="calendar-loading">
+            <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Cargando calendario...</p>
+            </div>
+        </div>
+    `;
+}
+
+// Función para mostrar error
+function showErrorState(message) {
+    const calendarEl = document.getElementById('calendar');
+    calendarEl.innerHTML = `
+        <div class="calendar-loading">
+            <div class="text-center">
+                <div class="text-red-500 text-4xl mb-4">⚠️</div>
+                <p class="text-red-600 font-semibold mb-2">Error al cargar el calendario</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${message}</p>
+                <div class="space-x-3">
+                    <button onclick="initializeCalendar()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Intentar de nuevo
+                    </button>
+                    <button onclick="showFallbackCalendar()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                        Vista simple
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Vista de respaldo simple
+function showFallbackCalendar() {
+    log('Mostrando calendario de respaldo');
+    
+    fetch('{{ route("maintenance.calendar.events") }}')
+        .then(response => response.json())
+        .then(events => {
+            const calendarEl = document.getElementById('calendar');
+            
+            // Agrupar eventos por fecha
+            const eventsByDate = {};
+            events.forEach(event => {
+                const date = new Date(event.start).toISOString().split('T')[0];
+                if (!eventsByDate[date]) {
+                    eventsByDate[date] = [];
+                }
+                eventsByDate[date].push(event);
+            });
+            
+            // Crear vista simple
+            let html = `
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Eventos de Mantenimiento</h3>
+                    <div class="space-y-4">
+            `;
+            
+            if (Object.keys(eventsByDate).length === 0) {
+                html += '<p class="text-gray-500 dark:text-gray-400 text-center py-8">No hay eventos programados</p>';
+            } else {
+                // Ordenar fechas
+                const sortedDates = Object.keys(eventsByDate).sort();
+                
+                sortedDates.forEach(date => {
+                    const dateObj = new Date(date + 'T12:00:00');
+                    const dateStr = dateObj.toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    html += `
+                        <div class="border dark:border-gray-600 rounded-lg p-4">
+                            <h4 class="font-semibold text-lg mb-3 text-gray-900 dark:text-gray-100">${dateStr}</h4>
+                            <div class="space-y-2">
+                    `;
+                    
+                    eventsByDate[date].forEach(event => {
+                        html += `
+                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4" style="border-left-color: ${event.color}">
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-gray-100">${event.title}</p>
+                                    ${event.extendedProps?.technician ? `<p class="text-sm text-gray-600 dark:text-gray-400">Técnico: ${event.extendedProps.technician}</p>` : ''}
+                                </div>
+                                ${event.url ? `<a href="${event.url}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">Ver detalles →</a>` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div></div>';
+                });
+            }
+            
+            html += `
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button onclick="initializeCalendar()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            🔄 Intentar cargar calendario completo
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            calendarEl.innerHTML = html;
+        })
+        .catch(err => {
+            error('Error cargando vista de respaldo:', err);
+            showErrorState('No se pudieron cargar los eventos del servidor');
+        });
+}
+
+// Función principal de inicialización
+function initializeCalendar() {
+    log('Iniciando carga del calendario...');
     
     const calendarEl = document.getElementById('calendar');
-    let currentEventUrl = '';
-    
-    console.log('Elemento calendario:', calendarEl);
-    console.log('URL de eventos:', '{{ route("maintenance.calendar.events") }}');
-
-    // Verificar si FullCalendar está cargado
-    if (typeof FullCalendar === 'undefined') {
-        console.error('FullCalendar no está cargado');
-        calendarEl.innerHTML = '<p class="text-red-600 text-center py-8">Error: No se pudo cargar el calendario. Por favor, recarga la página.</p>';
+    if (!calendarEl) {
+        error('Elemento #calendar no encontrado');
         return;
     }
     
-    console.log('FullCalendar detectado, versión:', FullCalendar.VERSION || 'desconocida');
+    showLoadingState();
     
-    try {
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            buttonText: {
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día'
-            },
-            events: {
-                url: '{{ route("maintenance.calendar.events") }}',
-                method: 'GET',
-                failure: function(error) {
-                    console.error('Error al cargar eventos:', error);
-                    alert('Error al cargar los eventos del calendario. Revisa la consola para más detalles.');
+    loadFullCalendar()
+        .then(() => {
+            log('FullCalendar cargado, inicializando calendario...');
+            
+            if (typeof FullCalendar === 'undefined') {
+                throw new Error('FullCalendar no está disponible después de la carga');
+            }
+            
+            log('Versión de FullCalendar:', FullCalendar.VERSION || 'desconocida');
+            
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                success: function(events) {
-                    console.log('Eventos cargados exitosamente:', events.length, 'eventos');
-                }
-            },
-            eventClick: function(info) {
-                info.jsEvent.preventDefault();
-                
-                const event = info.event;
-                currentEventUrl = event.url;
-                
-                // Obtener información del evento
-                const modalContent = document.getElementById('modalContent');
-                const extendedProps = event.extendedProps || {};
-                
-                modalContent.innerHTML = `
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Equipo:</label>
-                            <p class="text-sm text-gray-900">${extendedProps.equipment || event.title}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Tipo de Mantenimiento:</label>
-                            <p class="text-sm text-gray-900">${extendedProps.type || 'No especificado'}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Fecha:</label>
-                            <p class="text-sm text-gray-900">${event.start.toLocaleDateString('es-ES', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Estado:</label>
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" 
-                                  style="background-color: ${event.backgroundColor}20; color: ${event.backgroundColor};">
-                                ${extendedProps.status || getStatusText(event.backgroundColor)}
-                            </span>
-                        </div>
-                        ${extendedProps.technician ? `
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Técnico:</label>
-                            <p class="text-sm text-gray-900">${extendedProps.technician}</p>
-                        </div>
-                        ` : ''}
-                    </div>
-                `;
-                
-                // Mostrar modal
-                document.getElementById('eventModal').classList.remove('hidden');
-            },
-            eventMouseEnter: function(info) {
-                info.el.style.cursor = 'pointer';
-            },
-            height: 'auto',
-            dayMaxEvents: 3,
-            moreLinkClick: 'popover'
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día'
+                },
+                height: 'auto',
+                events: {
+                    url: '{{ route("maintenance.calendar.events") }}',
+                    method: 'GET',
+                    failure: function(error) {
+                        error('Error al cargar eventos:', error);
+                        showErrorState('Error al cargar los eventos del servidor');
+                    },
+                    success: function(events) {
+                        log('Eventos cargados exitosamente:', events.length, 'eventos');
+                    }
+                },
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    if (info.event.url) {
+                        window.location.href = info.event.url;
+                    }
+                },
+                eventMouseEnter: function(info) {
+                    info.el.style.cursor = 'pointer';
+                },
+                dayMaxEvents: 3,
+                moreLinkClick: 'popover'
+            });
+            
+            calendar.render();
+            log('✅ Calendario renderizado exitosamente');
+            
+        })
+        .catch(err => {
+            error('Error durante la inicialización:', err);
+            showErrorState(err.message || 'Error desconocido');
         });
+}
 
-        calendar.render();
-        console.log('Calendario renderizado exitosamente');
-    } catch (error) {
-        console.error('Error al inicializar el calendario:', error);
-        calendarEl.innerHTML = '<p class="text-red-600 text-center py-8">Error al inicializar el calendario. Por favor, verifica la consola para más detalles.</p>';
-    }
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCalendar);
+} else {
+    initializeCalendar();
+}
 
-    // Funciones del modal
-    window.closeModal = function() {
-        document.getElementById('eventModal').classList.add('hidden');
-    };
-
-    window.viewDetails = function() {
-        if (currentEventUrl) {
-            window.location.href = currentEventUrl;
-        }
-    };
-
-    function getStatusText(color) {
-        const statusMap = {
-            '#f59e0b': 'Programado',    // Amarillo - scheduled
-            '#3b82f6': 'En Progreso',   // Azul - in_progress 
-            '#10b981': 'Completado',    // Verde - completed
-            '#ef4444': 'Cancelado',     // Rojo - cancelled
-            '#6b7280': 'Otro'           // Gris - default
-        };
-        return statusMap[color] || 'Desconocido';
-    }
-
-    // Cerrar modal al hacer clic fuera
-    document.getElementById('eventModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
-});
+// Función global para reintento manual
+window.initializeCalendar = initializeCalendar;
 </script>
 @endpush

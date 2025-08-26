@@ -84,6 +84,11 @@ Route::middleware(['admin'])->group(function () {
     Route::get('maintenance-calendar/events', [\App\Http\Controllers\MaintenanceCalendarController::class, 'events'])
         ->name('maintenance.calendar.events');
     
+    // Ruta temporal para pruebas del calendario
+    Route::get('maintenance-calendar-test', function() {
+        return view('maintenance.calendar-test');
+    })->name('maintenance.calendar.test');
+    
     // Resource route
     Route::resource('maintenance', MaintenanceController::class);
     
