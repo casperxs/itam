@@ -6,8 +6,8 @@
 <div class="mb-6">
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800">Calendario de Mantenimientos</h1>
-            <p class="text-gray-600">Vista de calendario para programación de mantenimientos</p>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Calendario de Mantenimientos</h1>
+            <p class="text-gray-600 dark:text-gray-400">Vista de calendario para programación de mantenimientos</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('maintenance.index') }}" 
@@ -23,15 +23,15 @@
 </div>
 
 <!-- Leyenda de colores -->
-<div class="bg-white rounded-lg shadow-md p-4 mb-6">
-    <h3 class="text-lg font-semibold mb-3">Leyenda:</h3>
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+    <h3 class="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Leyenda:</h3>
     <div class="flex flex-wrap gap-6">
         <div class="flex items-center">
-            <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+            <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
             <span class="text-sm">Programado</span>
         </div>
         <div class="flex items-center">
-            <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
             <span class="text-sm">En Progreso</span>
         </div>
         <div class="flex items-center">
@@ -42,11 +42,15 @@
             <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
             <span class="text-sm">Cancelado</span>
         </div>
+        <div class="flex items-center">
+            <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
+            <span class="text-sm">Próximos (de equipos)</span>
+        </div>
     </div>
 </div>
 
 <!-- Calendario -->
-<div class="bg-white rounded-lg shadow-md p-6">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
     <div id="calendar"></div>
 </div>
 
@@ -110,8 +114,13 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando calendario...');
+    
     const calendarEl = document.getElementById('calendar');
     let currentEventUrl = '';
+    
+    console.log('Elemento calendario:', calendarEl);
+    console.log('URL de eventos:', '{{ route("maintenance.calendar.events") }}');
 
     // Verificar si FullCalendar está cargado
     if (typeof FullCalendar === 'undefined') {
@@ -119,6 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
         calendarEl.innerHTML = '<p class="text-red-600 text-center py-8">Error: No se pudo cargar el calendario. Por favor, recarga la página.</p>';
         return;
     }
+    
+    console.log('FullCalendar detectado, versión:', FullCalendar.VERSION || 'desconocida');
     
     try {
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -138,8 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
             events: {
                 url: '{{ route("maintenance.calendar.events") }}',
                 method: 'GET',
-                failure: function() {
-                    alert('Error al cargar los eventos del calendario.');
+                failure: function(error) {
+                    console.error('Error al cargar eventos:', error);
+                    alert('Error al cargar los eventos del calendario. Revisa la consola para más detalles.');
+                },
+                success: function(events) {
+                    console.log('Eventos cargados exitosamente:', events.length, 'eventos');
                 }
             },
             eventClick: function(info) {
@@ -217,10 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getStatusText(color) {
         const statusMap = {
-            '#3498db': 'Programado',
-            '#f39c12': 'En Progreso', 
-            '#27ae60': 'Completado',
-            '#e74c3c': 'Cancelado'
+            '#f59e0b': 'Programado',    // Amarillo - scheduled
+            '#3b82f6': 'En Progreso',   // Azul - in_progress 
+            '#10b981': 'Completado',    // Verde - completed
+            '#ef4444': 'Cancelado',     // Rojo - cancelled
+            '#6b7280': 'Otro'           // Gris - default
         };
         return statusMap[color] || 'Desconocido';
     }
