@@ -47,6 +47,7 @@ php artisan generate:monthly-reports    # Create automated monthly reports
 php artisan send:contract-alerts        # Send contract expiration notifications
 php artisan process:email-tickets       # Batch process email tickets
 php artisan cleanup:temp-files          # Clean temporary import files
+php artisan equipment:sync-status       # Synchronize equipment status with assignments
 ```
 
 ## Architecture Overview

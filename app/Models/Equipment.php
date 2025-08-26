@@ -109,4 +109,12 @@ class Equipment extends Model
     {
         return trim($this->brand . ' ' . $this->model);
     }
+
+    /**
+     * Check if the equipment is currently assigned to a user
+     */
+    public function isCurrentlyAssigned()
+    {
+        return $this->currentAssignment()->exists();
+    }
 }

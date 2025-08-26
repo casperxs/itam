@@ -15,8 +15,9 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_equipment' => Equipment::count(),
-            'assigned_equipment' => Equipment::where('status', 'assigned')->count(),
-            'available_equipment' => Equipment::where('status', 'available')->count(),
+            'assigned_equipment' => Equipment::whereHas('currentAssignment')->count(),
+            'available_equipment' => Equipment::where('status', 'available')
+                ->whereDoesntHave('currentAssignment')->count(),
             'maintenance_equipment' => Equipment::where('status', 'maintenance')->count(),
             'pending_maintenance' => MaintenanceRecord::where('status', 'scheduled')->count(),
             'expired_warranties' => Equipment::whereDate('warranty_end_date', '<', now())->count(),
@@ -44,7 +45,8 @@ class DashboardController extends Controller
             ->get();
 
         $totalEquipment = Equipment::count();
-        $availableEquipment = Equipment::where('status', 'available')->count();
+        $availableEquipment = Equipment::where('status', 'available')
+            ->whereDoesntHave('currentAssignment')->count();
         $expiringSoon = Equipment::whereDate('warranty_end_date', '<=', now()->addDays(30))
             ->whereDate('warranty_end_date', '>=', now())
             ->count();
