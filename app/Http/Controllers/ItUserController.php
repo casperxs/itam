@@ -245,8 +245,7 @@ class ItUserController extends Controller
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('employee_id', 'like', "%{$search}%")
                   ->orWhere('department', 'like', "%{$search}%")
-                  ->orWhere('position', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                  ->orWhere('position', 'like', "%{$search}%");
                 
                 // Si hay múltiples términos, buscar combinaciones entre campos
                 if (count($searchTerms) > 1) {

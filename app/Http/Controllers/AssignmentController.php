@@ -32,8 +32,7 @@ class AssignmentController extends Controller
                           ->orWhere('email', 'like', "%{$search}%")
                           ->orWhere('employee_id', 'like', "%{$search}%")
                           ->orWhere('department', 'like', "%{$search}%")
-                          ->orWhere('position', 'like', "%{$search}%")
-                          ->orWhere('phone', 'like', "%{$search}%");
+                          ->orWhere('position', 'like', "%{$search}%");
                 })
                 
                 // Búsqueda en equipo asignado
@@ -304,8 +303,7 @@ class AssignmentController extends Controller
                           ->orWhere('email', 'like', "%{$search}%")
                           ->orWhere('employee_id', 'like', "%{$search}%")
                           ->orWhere('department', 'like', "%{$search}%")
-                          ->orWhere('position', 'like', "%{$search}%")
-                          ->orWhere('phone', 'like', "%{$search}%");
+                          ->orWhere('position', 'like', "%{$search}%");
                 })
                 
                 // Búsqueda en equipo asignado
