@@ -57,8 +57,9 @@
         </form>
 
         <div class="mt-6 text-center text-sm text-gray-600">
-            <p>BKB - Soporte IT</p>
+            <p>ITAM BKB - Soporte IT</p>
             <p>VER 1.5</p>
+            <p>Designed, Hosted & Supported by <a href="https://garey.mx/" target="_blank"> GAREY AW </a></p>
         </div>
     </div>
 </body>
