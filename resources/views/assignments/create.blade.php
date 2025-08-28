@@ -15,6 +15,53 @@
     </div>
 </div>
 
+<!-- Indicador de equipos disponibles -->
+<div class="bg-blue-50 rounded-lg p-4 mb-6">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-blue-800 font-medium">Equipos Disponibles para Asignación</span>
+        </div>
+        <div class="text-blue-600 font-bold text-lg" id="available-count">
+            {{ isset($availableEquipment) ? $availableEquipment->count() : 0 }} equipos
+        </div>
+    </div>
+    <p class="text-blue-700 text-sm mt-1">Usa la búsqueda para encontrar equipos específicos por tipo, marca, modelo o número de serie</p>
+</div>
+
+<!-- Equipos disponibles recientes -->
+@if(isset($availableEquipment) && $availableEquipment->count() > 0)
+<div class="bg-gray-50 rounded-lg p-4 mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">Equipos Disponibles Recientemente</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        @foreach($availableEquipment->take(6) as $equipment)
+        <div class="bg-white p-3 rounded border border-green-200 hover:border-green-400 transition-colors cursor-pointer equipment-quick-select"
+             data-equipment-id="{{ $equipment->id }}"
+             data-equipment-text="{{ $equipment->equipmentType->name ?? 'N/A' }} - {{ $equipment->brand }} {{ $equipment->model }} ({{ $equipment->serial_number }})">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center mb-1">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        <span class="text-sm font-medium text-gray-900">{{ $equipment->equipmentType->name ?? 'N/A' }}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">{{ $equipment->brand }} {{ $equipment->model }}</p>
+                    <p class="text-xs text-gray-500">S/N: {{ $equipment->serial_number }}</p>
+                </div>
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Disponible</span>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @if($availableEquipment->count() > 6)
+    <p class="text-sm text-gray-600 mt-3 text-center">
+        Mostrando 6 de {{ $availableEquipment->count() }} equipos disponibles. Usa la búsqueda para ver más opciones.
+    </p>
+    @endif
+</div>
+@endif
+
 <div class="bg-white rounded-lg shadow">
     <form method="POST" action="{{ route('assignments.store') }}" class="p-6">
         @csrf
@@ -254,7 +301,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.results && data.results.length > 0) {
                 dropdown.innerHTML = data.results.map(item => 
-                    `<div class="p-2 hover:bg-gray-100 cursor-pointer" data-id="${item.id}">${item.text}</div>`
+                    `<div class="p-2 hover:bg-gray-100 cursor-pointer border-l-4 border-green-500" data-id="${item.id}">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            <span class="flex-1">${item.text}</span>
+                            <span class="text-xs text-green-600 font-medium">DISPONIBLE</span>
+                        </div>
+                    </div>`
                 ).join('');
                 
                 // Agregar event listeners a las opciones
@@ -338,6 +391,41 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdown.innerHTML = '<div class="p-2 text-red-500">Error en la búsqueda</div>';
         });
     }
+    
+    // Funcionalidad de selección rápida de equipos
+    document.querySelectorAll('.equipment-quick-select').forEach(card => {
+        card.addEventListener('click', function() {
+            const equipmentId = this.dataset.equipmentId;
+            const equipmentText = this.dataset.equipmentText;
+            
+            // Limpiar selecciones previas
+            document.querySelectorAll('.equipment-quick-select').forEach(c => {
+                c.classList.remove('border-blue-500', 'bg-blue-50');
+                c.classList.add('border-green-200');
+            });
+            
+            // Marcar como seleccionado
+            this.classList.remove('border-green-200');
+            this.classList.add('border-blue-500', 'bg-blue-50');
+            
+            // Actualizar el select
+            equipmentSelect.value = equipmentId;
+            
+            // Crear option si no existe
+            if (!equipmentSelect.querySelector(`option[value="${equipmentId}"]`)) {
+                const newOption = document.createElement('option');
+                newOption.value = equipmentId;
+                newOption.textContent = equipmentText;
+                newOption.selected = true;
+                equipmentSelect.appendChild(newOption);
+            } else {
+                equipmentSelect.querySelector(`option[value="${equipmentId}"]`).selected = true;
+            }
+            
+            // Scroll suave al formulario
+            document.querySelector('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
     
     // Inicializar las búsquedas
     setupEquipmentSearch();

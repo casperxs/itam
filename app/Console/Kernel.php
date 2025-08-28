@@ -16,9 +16,11 @@ class Kernel extends ConsoleKernel
         Commands\CheckWarranties::class,
         Commands\SendMaintenanceNotifications::class,
     ];
-
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
+        // Sincronizar status de equipos diariamente a las 2:00 AM (opcional)
+        $schedule->command('equipment:sync-status')->daily()->at('02:00');
+        //
         // Procesar emails cada 15 minutos
         $schedule->command('email:process-tickets')
                  ->everyFifteenMinutes();
