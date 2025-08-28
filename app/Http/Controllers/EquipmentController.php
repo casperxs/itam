@@ -331,8 +331,10 @@ class EquipmentController extends Controller
     {
         $search = $request->get('search', '');
         
+        // Solo equipos con status 'available' - equipos listos para asignación
         $query = Equipment::with(['equipmentType'])
-            ->where('status', 'available');
+            ->where('status', 'available')
+            ->whereDoesntHave('currentAssignment'); // Asegurar que no tenga asignación activa
             
         if (!empty($search)) {
             $searchTerms = explode(' ', $search);
