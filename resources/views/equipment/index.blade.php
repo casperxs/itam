@@ -22,7 +22,7 @@
                     type="text"
                     name="search"
                     value="{{ request('search') }}"
-                    placeholder="Serial, Asset Tag, Marca, Modelo..."
+                    placeholder="Equipo, usuario, marca, proveedor, tipo..."
                     class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
@@ -57,109 +57,110 @@
         </form>
     </div>
 
+    <!-- Loading indicator -->
+    <div id="loading-indicator" class="hidden px-6 py-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-blue-500 bg-blue-100 dark:bg-blue-900 dark:text-blue-200 transition ease-in-out duration-150">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Buscando...
+        </div>
+    </div>
+
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valoración</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asignado a</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Garantía</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Equipo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valoración</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Asignado a</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Garantía</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($equipment as $item)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $item->brand }} {{ $item->model }}</div>
-                                <div class="text-sm text-gray-500">S/N: {{ $item->serial_number }}</div>
-                                @if($item->asset_tag)
-                                    <div class="text-sm text-gray-500">Tag: {{ $item->asset_tag }}</div>
-                                @endif
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $item->equipmentType->name ?? 'N/A' }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if($item->status === 'available') bg-green-100 text-green-800
-                                @elseif($item->status === 'assigned') bg-blue-100 text-blue-800
-                                @elseif($item->status === 'maintenance') bg-yellow-100 text-yellow-800
-                                @elseif($item->status === 'retired') bg-gray-100 text-gray-800
-                                @else bg-red-100 text-red-800
-                                @endif
-                            ">
-                                {{ ucfirst($item->status) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            @if($item->valoracion)
-                                <span class="px-2 py-1 rounded-full text-xs font-medium
-                                    @if(str_contains($item->valoracion, 'Excelente')) bg-green-100 text-green-800
-                                    @elseif(str_contains($item->valoracion, 'Óptimo')) bg-blue-100 text-blue-800
-                                    @elseif(str_contains($item->valoracion, 'Regular')) bg-yellow-100 text-yellow-800
-                                    @elseif(str_contains($item->valoracion, 'Para Cambio')) bg-orange-100 text-orange-800
-                                    @elseif(str_contains($item->valoracion, 'Reemplazo')) bg-red-100 text-red-800
-                                    @else bg-gray-100 text-gray-800
-                                    @endif">
-                                    {{ $item->valoracion }}
-                                </span>
-                            @else
-                                @if($item->isNewEquipment())
-                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Nuevo</span>
-                                @else
-                                    <span class="text-gray-500">Sin Evaluar</span>
-                                @endif
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            @if($item->currentAssignment)
-                                {{ $item->currentAssignment->itUser->name }}
-                            @else
-                                <span class="text-gray-500">No asignado</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            @if($item->warranty_end_date)
-                                <div class="{{ $item->warrantyExpiresIn(30) ? 'text-red-600' : ($item->isWarrantyExpired() ? 'text-gray-500' : 'text-gray-900') }}">
-                                    {{ $item->warranty_end_date->format('d/m/Y') }}
-                                </div>
-                            @else
-                                <span class="text-gray-500">N/A</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('equipment.show', $item) }}" class="text-blue-600 hover:text-blue-900 mr-3">Ver</a>
-                            <a href="{{ route('equipment.edit', $item) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</a>
-                            <form method="POST" action="{{ route('equipment.destroy', $item) }}" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Está seguro?')">
-                                    Eliminar
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                            No se encontraron equipos
-                        </td>
-                    </tr>
-                @endforelse
+            <tbody id="equipment-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                @include('equipment.partials.table-rows')
             </tbody>
         </table>
     </div>
 
     @if($equipment->hasPages())
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
             {{ $equipment->appends(request()->query())->links() }}
         </div>
     @endif
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="search"]');
+    const statusSelect = document.querySelector('select[name="status"]');
+    const typeSelect = document.querySelector('select[name="type"]');
+    const tableBody = document.getElementById('equipment-table-body');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const paginationContainer = document.getElementById('pagination-container');
+    let searchTimeout;
+
+    // Función para realizar la búsqueda AJAX
+    function performSearch() {
+        const formData = new FormData();
+        formData.append('search', searchInput.value);
+        formData.append('status', statusSelect.value);
+        formData.append('type', typeSelect.value);
+
+        // Mostrar indicador de carga
+        loadingIndicator.classList.remove('hidden');
+        tableBody.style.opacity = '0.6';
+
+        fetch('{{ route("api.equipment.ajax-search") }}?' + new URLSearchParams(formData), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Actualizar el contenido de la tabla
+            tableBody.innerHTML = data.html;
+            
+            // Actualizar paginación si existe
+            if (paginationContainer && data.pagination) {
+                paginationContainer.innerHTML = data.pagination;
+            }
+            
+            // Ocultar indicador de carga
+            loadingIndicator.classList.add('hidden');
+            tableBody.style.opacity = '1';
+
+            // console.log('Total encontrados:', data.count);
+        })
+        .catch(error => {
+            console.error('Error en la búsqueda:', error);
+            loadingIndicator.classList.add('hidden');
+            tableBody.style.opacity = '1';
+        });
+    }
+
+    // Event listeners para búsqueda en tiempo real
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 500); // Esperar 500ms después de que el usuario deje de escribir
+    });
+
+    // Event listeners para los filtros (cambio inmediato)
+    statusSelect.addEventListener('change', performSearch);
+    typeSelect.addEventListener('change', performSearch);
+
+    // Prevenir el envío del formulario tradicional cuando se hace clic en "Filtrar"
+    const filterButton = document.querySelector('button[type="submit"]');
+    filterButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+});
+</script>
 @endsection

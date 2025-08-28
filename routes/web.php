@@ -114,6 +114,10 @@ Route::middleware(['admin'])->group(function () {
     Route::get('api/maintenance/search', [MaintenanceController::class, 'ajaxSearch'])
         ->name('api.maintenance.search');
     
+    // AJAX route for equipment search
+    Route::get('api/equipment/ajax-search', [EquipmentController::class, 'ajaxSearch'])
+        ->name('api.equipment.ajax-search');
+    
     // ICS and email routes
     Route::post('maintenance/{maintenance}/send-email', [MaintenanceController::class, 'sendEmailNotification'])
         ->name('maintenance.send-email');
