@@ -14,6 +14,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserDocumentController;
 use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\DeletedUsersController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to login if not authenticated, otherwise to dashboard
@@ -49,6 +50,9 @@ Route::middleware(['admin'])->group(function () {
         ->name('it-users.download-document');
     Route::delete('it-users/{itUser}/documents/{userDocument}', [ItUserController::class, 'deleteDocument'])
         ->name('it-users.delete-document');
+
+    // System Users (Administrators and Operators)
+    Route::resource('users', UserController::class);
 
     // Deleted Users
     Route::get('deleted-users', [DeletedUsersController::class, 'index'])->name('deleted-users.index');

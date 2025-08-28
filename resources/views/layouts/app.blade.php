@@ -19,6 +19,7 @@
                 <a href="{{ route('dashboard') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Dashboard</a>
                 <a href="{{ route('equipment.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Equipos</a>
                 <a href="{{ route('it-users.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Usuarios TI</a>
+                <a href="{{ route('users.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Administradores</a>
                 <a href="{{ route('assignments.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Asignaciones</a>
                 <a href="{{ route('maintenance.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Mantenimiento</a>
                 <a href="{{ route('contracts.index') }}" class="hover:text-blue-200 dark:hover:text-gray-300">Contratos</a>
