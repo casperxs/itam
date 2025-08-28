@@ -117,4 +117,26 @@ class Equipment extends Model
     {
         return $this->currentAssignment()->exists();
     }
+
+    /**
+     * Sync the equipment status based on current assignment
+     */
+    public function syncStatus()
+    {
+        $hasCurrentAssignment = $this->isCurrentlyAssigned();
+        $currentStatus = $this->status;
+        
+        // Determine what the status should be
+        $correctStatus = $hasCurrentAssignment ? 'assigned' : 'available';
+        
+        // Update if there's a mismatch (but don't override maintenance, retired, lost status)
+        if ($currentStatus !== 'maintenance' && $currentStatus !== 'retired' && $currentStatus !== 'lost') {
+            if ($currentStatus !== $correctStatus) {
+                $this->update(['status' => $correctStatus]);
+                return true; // Status was changed
+            }
+        }
+        
+        return false; // No change needed
+    }
 }

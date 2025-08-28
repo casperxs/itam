@@ -82,7 +82,8 @@ class AssignmentController extends Controller
             'user_position' => $user->position,
         ]);
 
-        $equipment->update(['status' => 'assigned']);
+        // Sync status automatically based on assignment
+        $equipment->syncStatus();
 
         // Generar documento PDF
         $pdfPath = $this->pdfService->generateAssignmentDocument($assignment);
@@ -115,7 +116,8 @@ class AssignmentController extends Controller
             'return_notes' => $validated['return_notes'],
         ]);
 
-        $assignment->equipment->update(['status' => 'available']);
+        // Sync status automatically based on assignment state
+        $assignment->equipment->syncStatus();
 
         return redirect()->route('assignments.index')
             ->with('success', 'Equipo devuelto exitosamente.');
