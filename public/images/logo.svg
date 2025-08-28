@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="500" height="400">
+  <!-- ITAM BKB text -->
+  <text x="30" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#000">
+    ITAM
+  </text>
+  <text x="30" y="180" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#000">
+    BKB
+  </text>
+  
+  <!-- BY GAREY text -->
+  <text x="70" y="360" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="#000" letter-spacing="2px">
+    BY GAREY
+  </text>
+  
+  <!-- Orange geometric shapes -->
+  <!-- Top small square -->
+  <rect x="302" y="138" width="40" height="40" rx="8" fill="#CD7A47"/>
+  
+  <!-- Top right rectangle -->
+  <rect x="342" y="158" width="80" height="40" rx="8" fill="#CD7A47"/>
+  
+  <!-- Middle left rectangle -->
+  <rect x="268" y="198" width="80" height="80" rx="8" fill="#CD7A47"/>
+  
+  <!-- Bottom connector -->
+  <rect x="342" y="258" width="40" height="40" rx="8" fill="#CD7A47"/>
+  
+  <!-- Bottom right square -->
+  <rect x="428" y="258" width="60" height="60" rx="8" fill="#CD7A47"/>
+  
+  <!-- Bottom center circle -->
+  <rect x="368" y="358" width="40" height="40" rx="8" fill="#CD7A47"/>
+</svg>

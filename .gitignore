@@ -65,3 +65,5 @@ package-lock.json
 .DS_Store
 .gitignore
 database/factories/UserFactory.php
+public/.DS_Store
+.DS_Store

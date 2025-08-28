@@ -8,9 +8,9 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">
-            Iniciar Sesión - ITAM BKB
-        </h2>
+        <div class="text-center mb-8">
+            <img src="{{ asset('images/logo.svg') }}" alt="ITAM BKB Logo" class="mx-auto h-24 w-auto">
+        </div>
 
         <form method="POST" action="{{ route('login.store') }}">
             @csrf
