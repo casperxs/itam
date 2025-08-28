@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'ITAM - Sistema de Gestión de Activos TI')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @yield('styles')
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <nav class="bg-blue-600 dark:bg-gray-800 text-white p-4 transition-colors duration-200">
@@ -63,5 +64,9 @@
 
         @yield('content')
     </div>
+    
+    <!-- jQuery necesario para Select2 y otros componentes -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @yield('scripts')
 </body>
 </html>

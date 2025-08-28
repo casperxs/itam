@@ -110,135 +110,238 @@
 </div>
 @endsection
 
-@section('styles')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style>
-.select2-container .select2-selection--single {
-    height: 42px !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 0.375rem !important;
-}
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 40px !important;
-    padding-left: 12px !important;
-}
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 40px !important;
-    right: 10px !important;
-}
-.select2-dropdown {
-    border: 1px solid #d1d5db !important;
-    border-radius: 0.375rem !important;
-}
-</style>
-@endsection
-
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Select2 para equipos
-    $('#equipment_id').select2({
-        ajax: {
-            url: '{{ route("api.equipment.search-available") }}',
-            dataType: 'json',
-            delay: 300,
-            data: function (params) {
-                return {
-                    search: params.term || ''
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.results || []
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 2,
-        placeholder: 'Escribe para buscar equipos...',
-        allowClear: true,
-        language: {
-            inputTooShort: function(args) {
-                return 'Escribe al menos 2 caracteres para buscar';
-            },
-            noResults: function() {
-                return 'No se encontraron equipos';
-            },
-            searching: function() {
-                return 'Buscando...';
-            },
-            loadingMore: function() {
-                return 'Cargando más resultados...';
+    const equipmentSelect = document.getElementById('equipment_id');
+    const userSelect = document.getElementById('it_user_id');
+    
+    let equipmentTimeout;
+    let userTimeout;
+
+    // Función para crear input de búsqueda personalizado para equipos
+    function setupEquipmentSearch() {
+        const container = equipmentSelect.parentNode;
+        
+        // Crear input de búsqueda
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Escribe para buscar equipos...';
+        searchInput.className = equipmentSelect.className;
+        searchInput.style.display = 'none';
+        
+        // Crear dropdown personalizado
+        const dropdown = document.createElement('div');
+        dropdown.className = 'absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto hidden';
+        dropdown.style.position = 'absolute';
+        dropdown.style.top = '100%';
+        dropdown.style.left = '0';
+        
+        // Posicionar container como relativo
+        container.style.position = 'relative';
+        
+        // Agregar elementos
+        container.appendChild(searchInput);
+        container.appendChild(dropdown);
+        
+        // Mostrar input al hacer click en el select
+        equipmentSelect.addEventListener('click', function(e) {
+            e.preventDefault();
+            equipmentSelect.style.display = 'none';
+            searchInput.style.display = 'block';
+            searchInput.focus();
+        });
+        
+        // Buscar equipos mientras se escribe
+        searchInput.addEventListener('input', function() {
+            clearTimeout(equipmentTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
             }
-        }
-    });
-
-    // Inicializar Select2 para usuarios
-    $('#it_user_id').select2({
-        ajax: {
-            url: '{{ route("api.users.search-active") }}',
-            dataType: 'json',
-            delay: 300,
-            data: function (params) {
-                return {
-                    search: params.term || ''
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.results || []
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 2,
-        placeholder: 'Escribe para buscar usuarios...',
-        allowClear: true,
-        language: {
-            inputTooShort: function(args) {
-                return 'Escribe al menos 2 caracteres para buscar';
-            },
-            noResults: function() {
-                return 'No se encontraron usuarios';
-            },
-            searching: function() {
-                return 'Buscando...';
-            },
-            loadingMore: function() {
-                return 'Cargando más resultados...';
+            
+            equipmentTimeout = setTimeout(() => {
+                searchEquipment(query, dropdown, searchInput, equipmentSelect);
+            }, 300);
+        });
+        
+        // Ocultar dropdown al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!container.contains(e.target)) {
+                dropdown.classList.add('hidden');
+                if (equipmentSelect.value === '') {
+                    searchInput.style.display = 'none';
+                    equipmentSelect.style.display = 'block';
+                }
             }
-        }
-    });
-
-    // Manejar errores de AJAX
-    $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
-        if (settings.url.includes('search-available') || settings.url.includes('search-active')) {
-            console.error('Error en la búsqueda AJAX:', thrownError);
-            // Opcional: mostrar notificación al usuario
-        }
-    });
-
-    // Pre-seleccionar opciones si hay valores old() de Laravel
-    @if(old('equipment_id'))
-        // Si hay un valor old para equipment_id, mantenerlo seleccionado
-        var equipmentId = '{{ old("equipment_id") }}';
-        var equipmentText = $('#equipment_id option[value="' + equipmentId + '"]').text();
-        if (equipmentText) {
-            var equipmentOption = new Option(equipmentText, equipmentId, true, true);
-            $('#equipment_id').append(equipmentOption).trigger('change');
-        }
-    @endif
-
-    @if(old('it_user_id', request('user_id')))
-        // Si hay un valor old para it_user_id, mantenerlo seleccionado
-        var userId = '{{ old("it_user_id", request("user_id")) }}';
-        var userText = $('#it_user_id option[value="' + userId + '"]').text();
-        if (userText) {
-            var userOption = new Option(userText, userId, true, true);
-            $('#it_user_id').append(userOption).trigger('change');
-        }
-    @endif
+        });
+    }
+    
+    // Función para crear input de búsqueda personalizado para usuarios
+    function setupUserSearch() {
+        const container = userSelect.parentNode;
+        
+        // Crear input de búsqueda
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Escribe para buscar usuarios...';
+        searchInput.className = userSelect.className;
+        searchInput.style.display = 'none';
+        
+        // Crear dropdown personalizado
+        const dropdown = document.createElement('div');
+        dropdown.className = 'absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto hidden';
+        dropdown.style.position = 'absolute';
+        dropdown.style.top = '100%';
+        dropdown.style.left = '0';
+        
+        // Posicionar container como relativo
+        container.style.position = 'relative';
+        
+        // Agregar elementos
+        container.appendChild(searchInput);
+        container.appendChild(dropdown);
+        
+        // Mostrar input al hacer click en el select
+        userSelect.addEventListener('click', function(e) {
+            e.preventDefault();
+            userSelect.style.display = 'none';
+            searchInput.style.display = 'block';
+            searchInput.focus();
+        });
+        
+        // Buscar usuarios mientras se escribe
+        searchInput.addEventListener('input', function() {
+            clearTimeout(userTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            userTimeout = setTimeout(() => {
+                searchUsers(query, dropdown, searchInput, userSelect);
+            }, 300);
+        });
+        
+        // Ocultar dropdown al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!container.contains(e.target)) {
+                dropdown.classList.add('hidden');
+                if (userSelect.value === '') {
+                    searchInput.style.display = 'none';
+                    userSelect.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // Función para buscar equipos
+    function searchEquipment(query, dropdown, input, select) {
+        dropdown.innerHTML = '<div class="p-2 text-gray-500">Buscando...</div>';
+        dropdown.classList.remove('hidden');
+        
+        fetch(`{{ route("api.equipment.search-available") }}?search=${encodeURIComponent(query)}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.results && data.results.length > 0) {
+                dropdown.innerHTML = data.results.map(item => 
+                    `<div class="p-2 hover:bg-gray-100 cursor-pointer" data-id="${item.id}">${item.text}</div>`
+                ).join('');
+                
+                // Agregar event listeners a las opciones
+                dropdown.querySelectorAll('[data-id]').forEach(option => {
+                    option.addEventListener('click', function() {
+                        select.value = this.dataset.id;
+                        input.value = this.textContent;
+                        input.style.display = 'none';
+                        select.style.display = 'block';
+                        
+                        // Crear option si no existe
+                        if (!select.querySelector(`option[value="${this.dataset.id}"]`)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = this.dataset.id;
+                            newOption.textContent = this.textContent;
+                            newOption.selected = true;
+                            select.appendChild(newOption);
+                        } else {
+                            select.querySelector(`option[value="${this.dataset.id}"]`).selected = true;
+                        }
+                        
+                        dropdown.classList.add('hidden');
+                    });
+                });
+            } else {
+                dropdown.innerHTML = '<div class="p-2 text-gray-500">No se encontraron equipos</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            dropdown.innerHTML = '<div class="p-2 text-red-500">Error en la búsqueda</div>';
+        });
+    }
+    
+    // Función para buscar usuarios
+    function searchUsers(query, dropdown, input, select) {
+        dropdown.innerHTML = '<div class="p-2 text-gray-500">Buscando...</div>';
+        dropdown.classList.remove('hidden');
+        
+        fetch(`{{ route("api.users.search-active") }}?search=${encodeURIComponent(query)}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.results && data.results.length > 0) {
+                dropdown.innerHTML = data.results.map(item => 
+                    `<div class="p-2 hover:bg-gray-100 cursor-pointer" data-id="${item.id}">${item.text}</div>`
+                ).join('');
+                
+                // Agregar event listeners a las opciones
+                dropdown.querySelectorAll('[data-id]').forEach(option => {
+                    option.addEventListener('click', function() {
+                        select.value = this.dataset.id;
+                        input.value = this.textContent;
+                        input.style.display = 'none';
+                        select.style.display = 'block';
+                        
+                        // Crear option si no existe
+                        if (!select.querySelector(`option[value="${this.dataset.id}"]`)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = this.dataset.id;
+                            newOption.textContent = this.textContent;
+                            newOption.selected = true;
+                            select.appendChild(newOption);
+                        } else {
+                            select.querySelector(`option[value="${this.dataset.id}"]`).selected = true;
+                        }
+                        
+                        dropdown.classList.add('hidden');
+                    });
+                });
+            } else {
+                dropdown.innerHTML = '<div class="p-2 text-gray-500">No se encontraron usuarios</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            dropdown.innerHTML = '<div class="p-2 text-red-500">Error en la búsqueda</div>';
+        });
+    }
+    
+    // Inicializar las búsquedas
+    setupEquipmentSearch();
+    setupUserSearch();
 });
 </script>
 @endsection
