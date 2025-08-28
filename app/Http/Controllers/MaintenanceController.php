@@ -24,22 +24,69 @@ class MaintenanceController extends Controller
     }
     public function index(Request $request)
     {
-        $query = MaintenanceRecord::with(['equipment.equipmentType', 'performedBy']);
+        $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
 
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->whereHas('equipment', function($q) use ($search) {
-                $q->where('serial_number', 'like', "%{$search}%")
-                  ->orWhere('asset_tag', 'like', "%{$search}%");
+        // Búsqueda avanzada similar a la de equipos
+        if ($request->has('search') && !empty(trim($request->search))) {
+            $search = trim($request->search);
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda en información del equipo
+                $q->whereHas('equipment', function($equipQ) use ($search, $searchTerms) {
+                    $equipQ->where('serial_number', 'like', "%{$search}%")
+                           ->orWhere('asset_tag', 'like', "%{$search}%")
+                           ->orWhere('brand', 'like', "%{$search}%")
+                           ->orWhere('model', 'like', "%{$search}%")
+                           // Búsqueda por tipo de equipo
+                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
+                               $typeQ->where('name', 'like', "%{$search}%");
+                           })
+                           // Búsqueda por usuario asignado
+                           ->orWhereHas('currentAssignment.itUser', function($userQ) use ($search) {
+                               $userQ->where('name', 'like', "%{$search}%")
+                                    ->orWhere('employee_id', 'like', "%{$search}%")
+                                    ->orWhere('department', 'like', "%{$search}%");
+                           });
+                    
+                    // Si hay múltiples términos, buscar combinaciones
+                    if (count($searchTerms) > 1) {
+                        foreach ($searchTerms as $term) {
+                            if (!empty(trim($term))) {
+                                $equipQ->orWhere('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%")
+                                       ->orWhere('asset_tag', 'like', "%{$term}%");
+                            }
+                        }
+                    }
+                })
+                // Búsqueda en técnico asignado
+                ->orWhereHas('performedBy', function($techQ) use ($search) {
+                    $techQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+                })
+                // Búsqueda en descripción y notas del mantenimiento
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('notes', 'like', "%{$search}%")
+                ->orWhere('performed_actions', 'like', "%{$search}%");
             });
         }
 
-        if ($request->has('status')) {
+        // Filtro por estado
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('type')) {
+        // Filtro por tipo
+        if ($request->has('type') && !empty($request->type)) {
             $query->where('type', $request->type);
+        }
+
+        // Filtro por fecha
+        if ($request->has('date') && !empty($request->date)) {
+            $date = $request->date;
+            $query->whereDate('scheduled_date', $date);
         }
 
         $maintenanceRecords = $query->orderBy('scheduled_date', 'desc')->paginate(15);
@@ -445,6 +492,88 @@ class MaintenanceController extends Controller
         }
         
         return redirect()->back()->with('error', 'No se pudo generar el archivo ICS.');
+    }
+
+    /**
+     * Búsqueda AJAX para mantenimientos
+     */
+    public function ajaxSearch(Request $request)
+    {
+        $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
+
+        // Búsqueda avanzada similar al método index
+        if ($request->has('search') && !empty(trim($request->search))) {
+            $search = trim($request->search);
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda en información del equipo
+                $q->whereHas('equipment', function($equipQ) use ($search, $searchTerms) {
+                    $equipQ->where('serial_number', 'like', "%{$search}%")
+                           ->orWhere('asset_tag', 'like', "%{$search}%")
+                           ->orWhere('brand', 'like', "%{$search}%")
+                           ->orWhere('model', 'like', "%{$search}%")
+                           // Búsqueda por tipo de equipo
+                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
+                               $typeQ->where('name', 'like', "%{$search}%");
+                           })
+                           // Búsqueda por usuario asignado
+                           ->orWhereHas('currentAssignment.itUser', function($userQ) use ($search) {
+                               $userQ->where('name', 'like', "%{$search}%")
+                                    ->orWhere('employee_id', 'like', "%{$search}%")
+                                    ->orWhere('department', 'like', "%{$search}%");
+                           });
+                    
+                    // Si hay múltiples términos, buscar combinaciones
+                    if (count($searchTerms) > 1) {
+                        foreach ($searchTerms as $term) {
+                            if (!empty(trim($term))) {
+                                $equipQ->orWhere('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%")
+                                       ->orWhere('asset_tag', 'like', "%{$term}%");
+                            }
+                        }
+                    }
+                })
+                // Búsqueda en técnico asignado
+                ->orWhereHas('performedBy', function($techQ) use ($search) {
+                    $techQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+                })
+                // Búsqueda en descripción y notas del mantenimiento
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('notes', 'like', "%{$search}%")
+                ->orWhere('performed_actions', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtro por estado
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        // Filtro por tipo
+        if ($request->has('type') && !empty($request->type)) {
+            $query->where('type', $request->type);
+        }
+
+        // Filtro por fecha
+        if ($request->has('date') && !empty($request->date)) {
+            $date = $request->date;
+            $query->whereDate('scheduled_date', $date);
+        }
+
+        $maintenanceRecords = $query->orderBy('scheduled_date', 'desc')->paginate(15);
+        
+        // Generar el HTML de la tabla
+        $html = view('maintenance.partials.table-rows', compact('maintenanceRecords'))->render();
+        
+        return response()->json([
+            'html' => $html,
+            'pagination' => $maintenanceRecords->appends(request()->query())->links()->toHtml(),
+            'count' => $maintenanceRecords->total()
+        ]);
     }
 
     /**
