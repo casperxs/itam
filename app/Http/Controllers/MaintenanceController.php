@@ -26,50 +26,66 @@ class MaintenanceController extends Controller
     {
         $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
 
-        // Búsqueda avanzada similar a la de equipos
+        // Búsqueda global mejorada
         if ($request->has('search') && !empty(trim($request->search))) {
             $search = trim($request->search);
             $searchTerms = explode(' ', $search);
             
             $query->where(function($q) use ($search, $searchTerms) {
-                // Búsqueda en información del equipo
-                $q->whereHas('equipment', function($equipQ) use ($search, $searchTerms) {
+                // Búsqueda directa en el equipo (marca, modelo, serie, asset_tag)
+                $q->whereHas('equipment', function($equipQ) use ($search) {
                     $equipQ->where('serial_number', 'like', "%{$search}%")
                            ->orWhere('asset_tag', 'like', "%{$search}%")
                            ->orWhere('brand', 'like', "%{$search}%")
-                           ->orWhere('model', 'like', "%{$search}%")
-                           // Búsqueda por tipo de equipo
-                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
-                               $typeQ->where('name', 'like', "%{$search}%");
-                           })
-                           // Búsqueda por usuario asignado
-                           ->orWhereHas('currentAssignment.itUser', function($userQ) use ($search) {
-                               $userQ->where('name', 'like', "%{$search}%")
-                                    ->orWhere('employee_id', 'like', "%{$search}%")
-                                    ->orWhere('department', 'like', "%{$search}%");
-                           });
-                    
-                    // Si hay múltiples términos, buscar combinaciones
-                    if (count($searchTerms) > 1) {
-                        foreach ($searchTerms as $term) {
-                            if (!empty(trim($term))) {
-                                $equipQ->orWhere('brand', 'like', "%{$term}%")
-                                       ->orWhere('model', 'like', "%{$term}%")
-                                       ->orWhere('serial_number', 'like', "%{$term}%")
-                                       ->orWhere('asset_tag', 'like', "%{$term}%");
-                            }
-                        }
-                    }
+                           ->orWhere('model', 'like', "%{$search}%");
+                })
+                // Búsqueda en tipo de equipo
+                ->orWhereHas('equipment.equipmentType', function($typeQ) use ($search) {
+                    $typeQ->where('name', 'like', "%{$search}%");
+                })
+                // Búsqueda en usuario asignado al equipo
+                ->orWhereHas('equipment.currentAssignment.itUser', function($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('employee_id', 'like', "%{$search}%")
+                          ->orWhere('department', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
                 })
                 // Búsqueda en técnico asignado
                 ->orWhereHas('performedBy', function($techQ) use ($search) {
                     $techQ->where('name', 'like', "%{$search}%")
                           ->orWhere('email', 'like', "%{$search}%");
                 })
-                // Búsqueda en descripción y notas del mantenimiento
+                // Búsqueda en campos del mantenimiento
                 ->orWhere('description', 'like', "%{$search}%")
                 ->orWhere('notes', 'like', "%{$search}%")
                 ->orWhere('performed_actions', 'like', "%{$search}%");
+                
+                // Búsqueda adicional para múltiples términos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        $term = trim($term);
+                        if (!empty($term)) {
+                            // Buscar cada término individualmente
+                            $q->orWhereHas('equipment', function($equipQ) use ($term) {
+                                $equipQ->where('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%")
+                                       ->orWhere('asset_tag', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment.equipmentType', function($typeQ) use ($term) {
+                                $typeQ->where('name', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment.currentAssignment.itUser', function($userQ) use ($term) {
+                                $userQ->where('name', 'like', "%{$term}%")
+                                      ->orWhere('employee_id', 'like', "%{$term}%")
+                                      ->orWhere('department', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('performedBy', function($techQ) use ($term) {
+                                $techQ->where('name', 'like', "%{$term}%");
+                            });
+                        }
+                    }
+                }
             });
         }
 
@@ -501,50 +517,66 @@ class MaintenanceController extends Controller
     {
         $query = MaintenanceRecord::with(['equipment.equipmentType', 'equipment.currentAssignment.itUser', 'performedBy']);
 
-        // Búsqueda avanzada similar al método index
+        // Búsqueda global mejorada
         if ($request->has('search') && !empty(trim($request->search))) {
             $search = trim($request->search);
             $searchTerms = explode(' ', $search);
             
             $query->where(function($q) use ($search, $searchTerms) {
-                // Búsqueda en información del equipo
-                $q->whereHas('equipment', function($equipQ) use ($search, $searchTerms) {
+                // Búsqueda directa en el equipo (marca, modelo, serie, asset_tag)
+                $q->whereHas('equipment', function($equipQ) use ($search) {
                     $equipQ->where('serial_number', 'like', "%{$search}%")
                            ->orWhere('asset_tag', 'like', "%{$search}%")
                            ->orWhere('brand', 'like', "%{$search}%")
-                           ->orWhere('model', 'like', "%{$search}%")
-                           // Búsqueda por tipo de equipo
-                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
-                               $typeQ->where('name', 'like', "%{$search}%");
-                           })
-                           // Búsqueda por usuario asignado
-                           ->orWhereHas('currentAssignment.itUser', function($userQ) use ($search) {
-                               $userQ->where('name', 'like', "%{$search}%")
-                                    ->orWhere('employee_id', 'like', "%{$search}%")
-                                    ->orWhere('department', 'like', "%{$search}%");
-                           });
-                    
-                    // Si hay múltiples términos, buscar combinaciones
-                    if (count($searchTerms) > 1) {
-                        foreach ($searchTerms as $term) {
-                            if (!empty(trim($term))) {
-                                $equipQ->orWhere('brand', 'like', "%{$term}%")
-                                       ->orWhere('model', 'like', "%{$term}%")
-                                       ->orWhere('serial_number', 'like', "%{$term}%")
-                                       ->orWhere('asset_tag', 'like', "%{$term}%");
-                            }
-                        }
-                    }
+                           ->orWhere('model', 'like', "%{$search}%");
+                })
+                // Búsqueda en tipo de equipo
+                ->orWhereHas('equipment.equipmentType', function($typeQ) use ($search) {
+                    $typeQ->where('name', 'like', "%{$search}%");
+                })
+                // Búsqueda en usuario asignado al equipo
+                ->orWhereHas('equipment.currentAssignment.itUser', function($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('employee_id', 'like', "%{$search}%")
+                          ->orWhere('department', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
                 })
                 // Búsqueda en técnico asignado
                 ->orWhereHas('performedBy', function($techQ) use ($search) {
                     $techQ->where('name', 'like', "%{$search}%")
                           ->orWhere('email', 'like', "%{$search}%");
                 })
-                // Búsqueda en descripción y notas del mantenimiento
+                // Búsqueda en campos del mantenimiento
                 ->orWhere('description', 'like', "%{$search}%")
                 ->orWhere('notes', 'like', "%{$search}%")
                 ->orWhere('performed_actions', 'like', "%{$search}%");
+                
+                // Búsqueda adicional para múltiples términos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        $term = trim($term);
+                        if (!empty($term)) {
+                            // Buscar cada término individualmente
+                            $q->orWhereHas('equipment', function($equipQ) use ($term) {
+                                $equipQ->where('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%")
+                                       ->orWhere('asset_tag', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment.equipmentType', function($typeQ) use ($term) {
+                                $typeQ->where('name', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment.currentAssignment.itUser', function($userQ) use ($term) {
+                                $userQ->where('name', 'like', "%{$term}%")
+                                      ->orWhere('employee_id', 'like', "%{$term}%")
+                                      ->orWhere('department', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('performedBy', function($techQ) use ($term) {
+                                $techQ->where('name', 'like', "%{$term}%");
+                            });
+                        }
+                    }
+                }
             });
         }
 
