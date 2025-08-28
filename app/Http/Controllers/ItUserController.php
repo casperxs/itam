@@ -226,4 +226,78 @@ class ItUserController extends Controller
 
         return redirect()->back()->with('success', 'Documento eliminado exitosamente.');
     }
+
+    /**
+     * Búsqueda AJAX para usuarios activos (para asignaciones)
+     */
+    public function searchActive(Request $request)
+    {
+        $search = $request->get('search', '');
+        
+        $query = ItUser::where('status', 'active');
+            
+        if (!empty($search)) {
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda del término completo en cada campo
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('employee_id', 'like', "%{$search}%")
+                  ->orWhere('department', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+                
+                // Si hay múltiples términos, buscar combinaciones entre campos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        if (!empty(trim($term))) {
+                            $q->orWhere('name', 'like', "%{$term}%")
+                              ->orWhere('email', 'like', "%{$term}%")
+                              ->orWhere('employee_id', 'like', "%{$term}%")
+                              ->orWhere('department', 'like', "%{$term}%")
+                              ->orWhere('position', 'like', "%{$term}%");
+                        }
+                    }
+                    
+                    // Búsqueda cruzada: nombre + departamento, nombre + email, etc.
+                    $q->orWhere(function($subQ) use ($searchTerms) {
+                        foreach ($searchTerms as $i => $term1) {
+                            foreach ($searchTerms as $j => $term2) {
+                                if ($i !== $j && !empty(trim($term1)) && !empty(trim($term2))) {
+                                    // Nombre + Departamento
+                                    $subQ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term1}%")
+                                               ->where('department', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term2}%")
+                                               ->where('department', 'like', "%{$term1}%");
+                                    })
+                                    // Nombre + Email
+                                    ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term1}%")
+                                               ->where('email', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('name', 'like', "%{$term2}%")
+                                               ->where('email', 'like', "%{$term1}%");
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        
+        $users = $query->limit(50)->get();
+        
+        return response()->json([
+            'results' => $users->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'text' => $user->name . ' (' . $user->employee_id . ') - ' . $user->department
+                ];
+            })
+        ]);
+    }
 }

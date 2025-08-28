@@ -323,4 +323,76 @@ class EquipmentController extends Controller
             'count' => $equipment->total()
         ]);
     }
+
+    /**
+     * Búsqueda AJAX para equipos disponibles (para asignaciones)
+     */
+    public function searchAvailable(Request $request)
+    {
+        $search = $request->get('search', '');
+        
+        $query = Equipment::with(['equipmentType'])
+            ->where('status', 'available');
+            
+        if (!empty($search)) {
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda directa en campos del equipo
+                $q->where('serial_number', 'like', "%{$search}%")
+                  ->orWhere('asset_tag', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
+                  ->orWhere('specifications', 'like', "%{$search}%")
+                  
+                  // Búsqueda en tipo de equipo
+                  ->orWhereHas('equipmentType', function($typeQ) use ($search) {
+                      $typeQ->where('name', 'like', "%{$search}%");
+                  });
+                
+                // Búsqueda por múltiples términos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        $term = trim($term);
+                        if (!empty($term)) {
+                            $q->orWhere('brand', 'like', "%{$term}%")
+                              ->orWhere('model', 'like', "%{$term}%")
+                              ->orWhere('serial_number', 'like', "%{$term}%")
+                              ->orWhereHas('equipmentType', function($typeQ) use ($term) {
+                                  $typeQ->where('name', 'like', "%{$term}%");
+                              });
+                        }
+                    }
+                    
+                    // Búsqueda cruzada: marca + modelo
+                    $q->orWhere(function($subQ) use ($searchTerms) {
+                        foreach ($searchTerms as $i => $term1) {
+                            foreach ($searchTerms as $j => $term2) {
+                                if ($i !== $j && !empty(trim($term1)) && !empty(trim($term2))) {
+                                    $subQ->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('brand', 'like', "%{$term1}%")
+                                               ->where('model', 'like', "%{$term2}%");
+                                    })->orWhere(function($crossQ) use ($term1, $term2) {
+                                        $crossQ->where('brand', 'like', "%{$term2}%")
+                                               ->where('model', 'like', "%{$term1}%");
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        
+        $equipment = $query->limit(50)->get();
+        
+        return response()->json([
+            'results' => $equipment->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => ($item->equipmentType->name ?? 'N/A') . ' - ' . $item->brand . ' ' . $item->model . ' (' . $item->serial_number . ')'
+                ];
+            })
+        ]);
+    }
 }

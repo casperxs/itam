@@ -122,6 +122,14 @@ Route::middleware(['admin'])->group(function () {
     Route::get('api/assignments/ajax-search', [AssignmentController::class, 'ajaxSearch'])
         ->name('api.assignments.ajax-search');
     
+    // AJAX route for available equipment search (for assignments)
+    Route::get('api/equipment/search-available', [EquipmentController::class, 'searchAvailable'])
+        ->name('api.equipment.search-available');
+    
+    // AJAX route for active users search (for assignments)
+    Route::get('api/users/search-active', [ItUserController::class, 'searchActive'])
+        ->name('api.users.search-active');
+    
     // ICS and email routes
     Route::post('maintenance/{maintenance}/send-email', [MaintenanceController::class, 'sendEmailNotification'])
         ->name('maintenance.send-email');
