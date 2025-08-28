@@ -21,15 +21,72 @@ class AssignmentController extends Controller
     {
         $query = Assignment::with(['equipment.equipmentType', 'itUser', 'assignedBy']);
 
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->whereHas('itUser', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('employee_id', 'like', "%{$search}%");
-            })->orWhereHas('equipment', function($q) use ($search) {
-                $q->where('serial_number', 'like', "%{$search}%")
-                  ->orWhere('asset_tag', 'like', "%{$search}%");
+        if ($request->has('search') && !empty(trim($request->search))) {
+            $search = trim($request->search);
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda en usuario IT
+                $q->whereHas('itUser', function($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%")
+                          ->orWhere('employee_id', 'like', "%{$search}%")
+                          ->orWhere('department', 'like', "%{$search}%")
+                          ->orWhere('position', 'like', "%{$search}%")
+                          ->orWhere('phone', 'like', "%{$search}%");
+                })
+                
+                // Búsqueda en equipo asignado
+                ->orWhereHas('equipment', function($equipQ) use ($search) {
+                    $equipQ->where('serial_number', 'like', "%{$search}%")
+                           ->orWhere('asset_tag', 'like', "%{$search}%")
+                           ->orWhere('brand', 'like', "%{$search}%")
+                           ->orWhere('model', 'like', "%{$search}%")
+                           
+                           // Búsqueda en tipo de equipo
+                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
+                               $typeQ->where('name', 'like', "%{$search}%");
+                           })
+                           
+                           // Búsqueda en proveedor del equipo
+                           ->orWhereHas('supplier', function($supplierQ) use ($search) {
+                               $supplierQ->where('name', 'like', "%{$search}%");
+                           });
+                })
+                
+                // Búsqueda en quien asignó el equipo
+                ->orWhereHas('assignedBy', function($adminQ) use ($search) {
+                    $adminQ->where('name', 'like', "%{$search}%")
+                           ->orWhere('email', 'like', "%{$search}%");
+                })
+                
+                // Búsqueda en campos de la asignación
+                ->orWhere('assignment_notes', 'like', "%{$search}%")
+                ->orWhere('return_notes', 'like', "%{$search}%")
+                ->orWhere('user_name', 'like', "%{$search}%")
+                ->orWhere('user_email', 'like', "%{$search}%")
+                ->orWhere('user_employee_id', 'like', "%{$search}%")
+                ->orWhere('user_department', 'like', "%{$search}%")
+                ->orWhere('user_position', 'like', "%{$search}%");
+                
+                // Búsqueda por múltiples términos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        $term = trim($term);
+                        if (!empty($term)) {
+                            $q->orWhereHas('itUser', function($userQ) use ($term) {
+                                $userQ->where('name', 'like', "%{$term}%")
+                                      ->orWhere('employee_id', 'like', "%{$term}%")
+                                      ->orWhere('department', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment', function($equipQ) use ($term) {
+                                $equipQ->where('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%");
+                            });
+                        }
+                    }
+                }
             });
         }
 
@@ -39,6 +96,14 @@ class AssignmentController extends Controller
             } elseif ($request->status === 'returned') {
                 $query->whereNotNull('returned_at');
             }
+        }
+
+        if ($request->has('date_from') && !empty($request->date_from)) {
+            $query->whereDate('assigned_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && !empty($request->date_to)) {
+            $query->whereDate('assigned_at', '<=', $request->date_to);
         }
 
         $assignments = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -219,5 +284,109 @@ class AssignmentController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error al generar el documento de salida: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Búsqueda AJAX para asignaciones
+     */
+    public function ajaxSearch(Request $request)
+    {
+        $query = Assignment::with(['equipment.equipmentType', 'equipment.supplier', 'itUser', 'assignedBy']);
+
+        if ($request->has('search') && !empty(trim($request->search))) {
+            $search = trim($request->search);
+            $searchTerms = explode(' ', $search);
+            
+            $query->where(function($q) use ($search, $searchTerms) {
+                // Búsqueda en usuario IT
+                $q->whereHas('itUser', function($userQ) use ($search) {
+                    $userQ->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%")
+                          ->orWhere('employee_id', 'like', "%{$search}%")
+                          ->orWhere('department', 'like', "%{$search}%")
+                          ->orWhere('position', 'like', "%{$search}%")
+                          ->orWhere('phone', 'like', "%{$search}%");
+                })
+                
+                // Búsqueda en equipo asignado
+                ->orWhereHas('equipment', function($equipQ) use ($search) {
+                    $equipQ->where('serial_number', 'like', "%{$search}%")
+                           ->orWhere('asset_tag', 'like', "%{$search}%")
+                           ->orWhere('brand', 'like', "%{$search}%")
+                           ->orWhere('model', 'like', "%{$search}%")
+                           
+                           // Búsqueda en tipo de equipo
+                           ->orWhereHas('equipmentType', function($typeQ) use ($search) {
+                               $typeQ->where('name', 'like', "%{$search}%");
+                           })
+                           
+                           // Búsqueda en proveedor del equipo
+                           ->orWhereHas('supplier', function($supplierQ) use ($search) {
+                               $supplierQ->where('name', 'like', "%{$search}%");
+                           });
+                })
+                
+                // Búsqueda en quien asignó el equipo
+                ->orWhereHas('assignedBy', function($adminQ) use ($search) {
+                    $adminQ->where('name', 'like', "%{$search}%")
+                           ->orWhere('email', 'like', "%{$search}%");
+                })
+                
+                // Búsqueda en campos de la asignación
+                ->orWhere('assignment_notes', 'like', "%{$search}%")
+                ->orWhere('return_notes', 'like', "%{$search}%")
+                ->orWhere('user_name', 'like', "%{$search}%")
+                ->orWhere('user_email', 'like', "%{$search}%")
+                ->orWhere('user_employee_id', 'like', "%{$search}%")
+                ->orWhere('user_department', 'like', "%{$search}%")
+                ->orWhere('user_position', 'like', "%{$search}%");
+                
+                // Búsqueda por múltiples términos
+                if (count($searchTerms) > 1) {
+                    foreach ($searchTerms as $term) {
+                        $term = trim($term);
+                        if (!empty($term)) {
+                            $q->orWhereHas('itUser', function($userQ) use ($term) {
+                                $userQ->where('name', 'like', "%{$term}%")
+                                      ->orWhere('employee_id', 'like', "%{$term}%")
+                                      ->orWhere('department', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('equipment', function($equipQ) use ($term) {
+                                $equipQ->where('brand', 'like', "%{$term}%")
+                                       ->orWhere('model', 'like', "%{$term}%")
+                                       ->orWhere('serial_number', 'like', "%{$term}%");
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        if ($request->has('status')) {
+            if ($request->status === 'active') {
+                $query->whereNull('returned_at');
+            } elseif ($request->status === 'returned') {
+                $query->whereNotNull('returned_at');
+            }
+        }
+
+        if ($request->has('date_from') && !empty($request->date_from)) {
+            $query->whereDate('assigned_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && !empty($request->date_to)) {
+            $query->whereDate('assigned_at', '<=', $request->date_to);
+        }
+
+        $assignments = $query->orderBy('created_at', 'desc')->paginate(15);
+        
+        // Generar el HTML de la tabla
+        $html = view('assignments.partials.table-rows', compact('assignments'))->render();
+        
+        return response()->json([
+            'html' => $html,
+            'pagination' => $assignments->appends(request()->query())->links()->toHtml(),
+            'count' => $assignments->total()
+        ]);
     }
 }

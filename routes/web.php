@@ -118,6 +118,10 @@ Route::middleware(['admin'])->group(function () {
     Route::get('api/equipment/ajax-search', [EquipmentController::class, 'ajaxSearch'])
         ->name('api.equipment.ajax-search');
     
+    // AJAX route for assignments search
+    Route::get('api/assignments/ajax-search', [AssignmentController::class, 'ajaxSearch'])
+        ->name('api.assignments.ajax-search');
+    
     // ICS and email routes
     Route::post('maintenance/{maintenance}/send-email', [MaintenanceController::class, 'sendEmailNotification'])
         ->name('maintenance.send-email');
