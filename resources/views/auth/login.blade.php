@@ -58,7 +58,7 @@
 
         <div class="mt-6 text-center text-sm text-gray-600">
             <p>BKB - Soporte IT</p>
-            <p>VER 1.1</p>
+            <p>VER 1.5</p>
         </div>
     </div>
 </body>
