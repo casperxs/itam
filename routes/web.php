@@ -70,6 +70,8 @@ Route::middleware(['admin'])->group(function () {
         ->name('assignments.download');
     Route::post('assignments/{assignment}/mark-signed', [AssignmentController::class, 'markSigned'])
         ->name('assignments.mark-signed');
+    Route::post('assignments/{assignment}/regenerate-document', [AssignmentController::class, 'regenerateDocument'])
+        ->name('assignments.regenerate-document');
     Route::post('it-users/{itUser}/generate-consolidated-document', [AssignmentController::class, 'generateConsolidatedDocument'])
         ->name('assignments.generate-consolidated');
     Route::get('it-users/{itUser}/download-consolidated-document', [AssignmentController::class, 'downloadConsolidatedDocument'])

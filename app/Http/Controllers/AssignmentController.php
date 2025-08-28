@@ -127,7 +127,13 @@ class AssignmentController extends Controller
             return redirect()->back()->with('error', 'Documento no encontrado.');
         }
 
-        return response()->download(storage_path('app/private/assignments/' . $assignment->assignment_document));
+        $filePath = storage_path('app/private/assignments/' . $assignment->assignment_document);
+        
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'El archivo del documento no existe. Por favor, regenera el documento.');
+        }
+
+        return response()->download($filePath);
     }
 
     public function markSigned(Assignment $assignment)
@@ -135,6 +141,19 @@ class AssignmentController extends Controller
         $assignment->update(['document_signed' => true]);
         
         return redirect()->back()->with('success', 'Documento marcado como firmado.');
+    }
+
+    public function regenerateDocument(Assignment $assignment)
+    {
+        try {
+            // Generar documento PDF
+            $pdfPath = $this->pdfService->generateAssignmentDocument($assignment);
+            $assignment->update(['assignment_document' => $pdfPath]);
+            
+            return redirect()->back()->with('success', 'Documento regenerado exitosamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al regenerar el documento: ' . $e->getMessage());
+        }
     }
 
     public function generateConsolidatedDocument(ItUser $itUser)
@@ -165,7 +184,13 @@ class AssignmentController extends Controller
             return redirect()->back()->with('error', 'Documento consolidado no encontrado.');
         }
 
-        return response()->download(storage_path('app/private/assignments/' . $assignment->assignment_document));
+        $filePath = storage_path('app/private/assignments/' . $assignment->assignment_document);
+        
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'El archivo del documento consolidado no existe. Por favor, regenera el documento.');
+        }
+
+        return response()->download($filePath);
     }
 
     public function generateExitDocument(ItUser $itUser)
@@ -178,9 +203,19 @@ class AssignmentController extends Controller
             return redirect()->back()->with('error', 'El usuario no tiene equipos asignados actualmente.');
         }
 
-        $pdfPath = $this->pdfService->generateEquipmentExitDocument($itUser, $assignments);
-        
-        return response()->download(storage_path('app/private/assignments/' . $pdfPath))
-            ->deleteFileAfterSend(false);
+        try {
+            $pdfPath = $this->pdfService->generateEquipmentExitDocument($itUser, $assignments);
+            
+            $fullPath = storage_path('app/private/assignments/' . $pdfPath);
+            
+            if (!file_exists($fullPath)) {
+                return redirect()->back()->with('error', 'Error al generar el documento de salida.');
+            }
+            
+            return response()->download($fullPath)
+                ->deleteFileAfterSend(false);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al generar el documento de salida: ' . $e->getMessage());
+        }
     }
 }
