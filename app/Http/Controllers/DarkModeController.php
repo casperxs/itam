@@ -8,9 +8,15 @@ class DarkModeController extends Controller
 {
     public function toggle(Request $request)
     {
+        \Log::info('Dark mode toggle called');
+        
         $user = auth()->user();
+        \Log::info('Current dark_mode: ' . ($user->dark_mode ? 'true' : 'false'));
+        
         $user->dark_mode = !$user->dark_mode;
         $user->save();
+        
+        \Log::info('New dark_mode: ' . ($user->dark_mode ? 'true' : 'false'));
 
         // Si es una request AJAX, devolver JSON
         if ($request->expectsJson() || $request->wantsJson()) {

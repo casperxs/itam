@@ -6,6 +6,9 @@
 @source '../**/*.js';
 
 @theme {
+    /* Configurar dark mode para usar clases en lugar de media queries */
+    --dark-mode: class;
+    
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     

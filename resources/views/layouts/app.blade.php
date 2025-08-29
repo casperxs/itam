@@ -4,8 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>@yield('title', 'ITAM - Sistema de Gestión de Activos TI')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        /* ROUND 2: DESTRUCCIÓN TOTAL DEL CACHE EN DASHBOARD */
+        html, body { 
+            color-scheme: {{ $isDarkMode ? 'dark' : 'light' }} !important;
+            background-color: {{ $isDarkMode ? '#0f172a' : '#f9fafb' }} !important;
+        }
+        
+        /* LIGHT MODE FORZADO */
+        @if (!$isDarkMode)
+        html, body { 
+            background-color: #f9fafb !important;
+            color: #111827 !important;
+        }
+        .bg-white { background-color: #ffffff !important; }
+        .bg-gray-50 { background-color: #f9fafb !important; }
+        .text-gray-900 { color: #111827 !important; }
+        .text-gray-600 { color: #6b7280 !important; }
+        .text-gray-500 { color: #6b7280 !important; }
+        .border-gray-200 { border-color: #e5e7eb !important; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+        @endif
+        
+        /* DARK MODE FORZADO */
+        @if ($isDarkMode)
+        html, body { 
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+        }
+        .dark\:bg-slate-900 { background-color: #0f172a !important; }
+        .dark\:bg-slate-800 { background-color: #1e293b !important; }
+        .dark\:text-slate-100 { color: #f1f5f9 !important; }
+        .dark\:text-slate-400 { color: #94a3b8 !important; }
+        .dark\:border-slate-700 { border-color: #334155 !important; }
+        @endif
+    </style>
     @yield('styles')
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
@@ -21,7 +59,7 @@
 
                 @auth
                 <!-- Controles de la derecha -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
                     <!-- Dark Mode Toggle -->
                     <form method="POST" action="{{ route('dark-mode.toggle') }}" class="inline" id="darkModeForm">
                         @csrf
@@ -31,6 +69,16 @@
                             </svg>
                             <svg id="lightModeIcon" class="w-5 h-5 {{ $isDarkMode ? '' : 'hidden' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- Cerrar Sesión -->
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300" title="Cerrar Sesión">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
                         </button>
                     </form>
@@ -107,19 +155,6 @@
                         Reportes
                     </a>
                 </div>
-                
-                <!-- Logout en el menú -->
-                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="flex items-center w-full p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                            </svg>
-                            Cerrar Sesión
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
         @endauth
@@ -144,7 +179,7 @@
     <!-- jQuery necesario para Select2 y otros componentes -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
-    <!-- JavaScript para menú hamburguesa -->
+    <!-- JavaScript para menú hamburguesa y GUERRA CONTRA CACHE -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const hamburgerBtn = document.getElementById('hamburger-menu');
@@ -170,7 +205,115 @@
                     });
                 });
             }
+            
+            // AJAX TOGGLE - No refresh, solo AJAX
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeForm = document.getElementById('darkModeForm');
+            
+            if (darkModeToggle && darkModeForm) {
+                darkModeToggle.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevenir submit normal
+                    
+                    console.log('Toggle clicked - usando AJAX');
+                    
+                    // Hacer request AJAX
+                    fetch(darkModeForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Response:', data);
+                        
+                        if (data.success) {
+                            // Aplicar inmediatamente el nuevo modo
+                            const isDark = data.dark_mode;
+                            
+                            if (isDark) {
+                                document.documentElement.classList.add('dark');
+                            } else {
+                                document.documentElement.classList.remove('dark');
+                            }
+                            
+                            // Cambiar iconos
+                            const darkIcon = document.getElementById('darkModeIcon');
+                            const lightIcon = document.getElementById('lightModeIcon');
+                            
+                            if (isDark) {
+                                darkIcon.classList.add('hidden');
+                                lightIcon.classList.remove('hidden');
+                            } else {
+                                darkIcon.classList.remove('hidden');
+                                lightIcon.classList.add('hidden');
+                            }
+                            
+                            // Aplicar estilos
+                            applyModeStyles(isDark);
+                            
+                            console.log('Dark mode cambiado a:', isDark);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            }
         });
+        
+        // SIMPLE: Solo verificar cada segundo si cambió el modo
+        let lastMode = document.documentElement.classList.contains('dark');
+        
+        setInterval(function() {
+            const currentMode = document.documentElement.classList.contains('dark');
+            if (currentMode !== lastMode) {
+                lastMode = currentMode;
+                applyModeStyles(currentMode);
+            }
+        }, 500);
+        
+        function applyModeStyles(isDark) {
+            // Remover estilo previo
+            const existing = document.getElementById('mode-override');
+            if (existing) existing.remove();
+            
+            // Crear nuevo estilo
+            const style = document.createElement('style');
+            style.id = 'mode-override';
+            
+            if (isDark) {
+                style.textContent = `
+                    body { background-color: #0f172a !important; }
+                    nav { background-color: #0f172a !important; }
+                    .bg-white { background-color: #1e293b !important; }
+                    .text-gray-900 { color: #f1f5f9 !important; }
+                `;
+            } else {
+                style.textContent = `
+                    body { background-color: #f9fafb !important; }
+                    nav { background-color: #ffffff !important; }
+                    .bg-white { background-color: #ffffff !important; }
+                    .text-gray-900 { color: #111827 !important; }
+                `;
+            }
+            
+            document.head.appendChild(style);
+        }
+        
+        // SOLUCIÓN DEFINITIVA: Usar SOLO el valor de la DB
+        const realDarkMode = {{ auth()->user()->fresh()->dark_mode ? 'true' : 'false' }};
+        
+        // Aplicar el modo real
+        if (realDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        applyModeStyles(realDarkMode);
     </script>
     
     @yield('scripts')
